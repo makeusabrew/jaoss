@@ -33,6 +33,7 @@ abstract class Controller {
 		if (class_exists($c_class)) {
 			return new $c_class;
 		}
+		// can force a path if required
 		if ($app_path !== NULL) {
 			$path = "apps/{$app_path}/controllers/".strtolower($controller).".php";
 			if (file_exists($path)) {
