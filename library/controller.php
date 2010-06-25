@@ -4,7 +4,6 @@ abstract class Controller {
 	protected $path = NULL;
 	protected $adminUser = NULL;
 	protected $session = NULL;
-	protected $base_href = NULL;
     protected $request = NULL;
 
     protected function init() {
@@ -24,13 +23,14 @@ abstract class Controller {
 		
 		$this->smarty->template_dir	= $tpl_dirs;
 		$this->smarty->compile_dir = Settings::getValue("smarty", "compile_dir");
+
+        $this->request = $request;
 		
-		$this->base_href = "http://".$_SERVER["SERVER_NAME"].substr($_SERVER["PHP_SELF"], 0, strpos($_SERVER["PHP_SELF"], "index.php"));
-		$this->assign("base_href", $this->base_href);
+		$this->assign("base_href", $this->request->getBaseHref());
+        $this->assign("current_url", $this->request->getUrl());
 
         $this->session = Session::getInstance();
 
-        $this->request = $request;
         $this->init();
 	}
 	
@@ -68,6 +68,10 @@ abstract class Controller {
 		}
 		return $this->path->matches[$match];
 	}
+
+    public function redirect($url) {
+        header("Location: {$url}", TRUE, 303);
+    }
 	
 	public function render($template) {
 		return $this->smarty->fetch($template.".tpl");

@@ -1,11 +1,13 @@
 <?php
 class Request {
-	protected $folder_base = NULL;
-	protected $url = NULL;
-    protected $method = NULL;
+	private $folder_base = NULL;
+	private $url = NULL;
+    private $method = NULL;
+    private $base_href = NULL;
 	
 	public function __construct() {
 		$this->folder_base = substr($_SERVER["PHP_SELF"], 0, strpos($_SERVER["PHP_SELF"], "index.php"));
+        $this->base_href = "http://".$_SERVER["SERVER_NAME"].$this->folder_base;
 		$this->url = substr($_SERVER["REQUEST_URI"], strlen($this->folder_base)-1);
         $this->method = isset($_SERVER["REQUEST_METHOD"]) ? $_SERVER["REQUEST_METHOD"] : NULL;
 	}
@@ -22,5 +24,30 @@ class Request {
 		return $path->run($this);
 	}
 
-    public function
+    public function getMethod() {
+        return $this->method;
+    }
+
+    public function getBaseHref() {
+        return $this->base_href;
+    }
+
+    public function getUrl() {
+        return $this->url;
+    }
+
+    public function isGet() {
+        return $this->method == "GET";
+    }
+
+    public function isPost() {
+        return $this->method == "POST";
+    }
+
+    public function getVar($var) {
+        if ($this->isPost()) {
+            return $_POST[$var];
+        }
+        return $_GET[$var];
+    }
 }

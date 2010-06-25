@@ -12,13 +12,11 @@ class Session {
 
     public function __construct($namespace = NULL) {
         if ($namespace === NULL) {
-            // get from site settings...
+            $namespace = Settings::getValue("site.namespace");
         }
+        
         $this->namespace = $namespace;
-        if (session_id() == "") {
-            session_start();
-        }
-        $_SESSION[$this->namespace] = array();
+        session_start();
     }
 
     public function __set($var, $val) {
@@ -30,7 +28,12 @@ class Session {
             // any array stuff or whatever need unserializing?
             return $_SESSION[$this->namespace][$var];
         }
+        return NULL;
     }
+    
+    public function __unset($var) {
+    	unset($_SESSION[$this->namespace][$var]);
+   	}
 
     public function destroy() {
         unset($_SESSION[$this->namespace]);

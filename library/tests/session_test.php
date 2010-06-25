@@ -48,4 +48,11 @@ class SessionTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals($o, $this->session->foo);
     }
+    
+    public function testUnset() {
+    	$this->session->foo = "bar";
+    	$this->assertEquals("bar", $this->session->foo);
+    	unset($this->session->foo);
+    	$this->assertNull($this->session->foo);
+    }
 }

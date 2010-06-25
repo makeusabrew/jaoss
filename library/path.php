@@ -16,8 +16,9 @@ class Path {
 				$controller->setPath($this);
 				$return = call_user_func(array($controller, $this->action));
                 if ($return === NULL) {
-                    return $controller->render("index");
+                    return $controller->render($this->action);
                 }
+                return $return;
 			} else {
 				throw new CoreException("Controller action is not callable");
 			}

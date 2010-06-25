@@ -68,6 +68,24 @@ class Table {
 		$sth->execute($params);
 		return $sth->fetchAll();
 	}
+
+    public function find($where = NULL, $params = NULL, $order_by = NULL) {
+		$q = "SELECT * FROM `".$this->getTableName()."`";
+		if ($where !== NULL) {
+			$q .= " WHERE {$where}";
+		}
+		if ($order_by !== NULL) {
+			$q .= " ORDER BY {$order_by}";
+		} else if ($this->order_by !== NULL) {
+			$q .= " ORDER BY {$this->order_by}";
+		}
+		$dbh = Db::getInstance();
+		$sth = $dbh->prepare($q);
+		$sth->setFetchMode(PDO::FETCH_CLASS, $this->getObjectName());
+
+		$sth->execute($params);
+		return $sth->fetch();
+	}
 	
 	public function read($id = NULL) {
 		$q = "SELECT * FROM `".$this->getTableName()."` WHERE `{$this->primary_key}` = ?";
