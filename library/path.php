@@ -1,6 +1,6 @@
 <?php
 class Path {
-	public function run() {
+	public function run($request = NULL) {
 		$path = $this->location."/controllers/".strtolower($this->controller).".php";
 		if (!file_exists($path)) {
 			throw new CoreException("Controller file does not exist");
@@ -10,11 +10,14 @@ class Path {
 		if (!class_exists($controller)) {
 			throw new CoreException("Controller class does not exist");
 		}
-		$controller = new $controller();
+		$controller = new $controller($request);
 		if (method_exists($controller, $this->action)) {
 			if (is_callable(array($controller, $this->action))) {
 				$controller->setPath($this);
-				return call_user_func(array($controller, $this->action));
+				$return = call_user_func(array($controller, $this->action));
+                if ($return === NULL) {
+                    return $controller->render("index");
+                }
 			} else {
 				throw new CoreException("Controller action is not callable");
 			}

@@ -4,9 +4,12 @@ abstract class Object {
 	protected $id = NULL;
 	protected $created = NULL;
 	protected $updated = NULL;
+    protected $table_name = NULL;
 	
 	protected $values = array();
 	protected $externals = array();
+
+    private $pk = "id";
 	
 	public function __set($var, $val) {
 		if (property_exists($this, $var)) {
@@ -46,4 +49,9 @@ abstract class Object {
 		$table = Table::factory($this->getTableName());
 		return $table->getColumnInfo($column);
 	}
+
+    public function getId() {
+        $pk = $this->pk;
+        return $this->$pk;
+    }
 }

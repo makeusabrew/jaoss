@@ -1,7 +1,9 @@
 <?php
 require_once 'PHPUnit/Framework.php';
 
-define("BASE", __DIR__."/../");
+if (!defined("BASE")) {
+	define("BASE", __DIR__."/../");
+}
 
 require(BASE."app.php");
 

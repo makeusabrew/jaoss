@@ -70,9 +70,11 @@ class Table {
 	}
 	
 	public function read($id = NULL) {
-		$q = "SELECT * FROM `".$this->getTableName()."` WHERE `{$this->primary_key}` = {$id}";
+		$q = "SELECT * FROM `".$this->getTableName()."` WHERE `{$this->primary_key}` = ?";
 		$dbh = Db::getInstance();
-		$sth = $dbh->query($q, PDO::FETCH_CLASS, $this->getObjectName());
+		$sth = $dbh->prepare($q);
+        $sth->setFetchMode(PDO::FETCH_CLASS, $this->getObjectName());
+        $sth->execute(array($id));
 		return $sth->fetch();
 	}
 	

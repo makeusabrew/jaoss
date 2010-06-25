@@ -5,8 +5,13 @@ abstract class Controller {
 	protected $adminUser = NULL;
 	protected $session = NULL;
 	protected $base_href = NULL;
-	
-	public function __construct() {
+    protected $request = NULL;
+
+    protected function init() {
+
+    }
+
+	public function __construct($request = NULL) {
 		require_once("library/Smarty-3.0rc1/libs/Smarty.class.php");
 		
 		$this->smarty = new Smarty();
@@ -22,6 +27,11 @@ abstract class Controller {
 		
 		$this->base_href = "http://".$_SERVER["SERVER_NAME"].substr($_SERVER["PHP_SELF"], 0, strpos($_SERVER["PHP_SELF"], "index.php"));
 		$this->assign("base_href", $this->base_href);
+
+        $this->session = Session::getInstance();
+
+        $this->request = $request;
+        $this->init();
 	}
 	
 	public function setPath($path) {
