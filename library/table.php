@@ -6,13 +6,17 @@ class Table {
 	protected $order_by = "`created` ASC";
 	
 	protected $object_name = NULL;
-	protected $table_name = NULL;
+	protected $table = NULL;
 	
 	protected $meta = array();
 	
 	public static function getNewObject($model) {
 		$model = self::factory($model);
-		$name = $model->getObjectName();
+		return $model->newObject();
+	}
+	
+	public function newObject() {
+		$name = $this->getObjectName();
 		return new $name;
 	}
 	
@@ -29,7 +33,7 @@ class Table {
 				return self::factory($model);
 			}
 		}
-		throw new CoreException("Could not find model in any path");
+		throw new CoreException("Could not find model in any path: {$model}");
 	}
 	
 	public function getObjectName() {
@@ -40,16 +44,16 @@ class Table {
 		return $this->object_name;
 	}
 	
-	public function getTableName() {
-		if (!isset($this->table_name)) {
+	public function getTable() {
+		if (!isset($this->table)) {
 			$table = strtolower(get_class($this));
-			$this->table_name = "app_{$table}";
+			$this->table = "app_{$table}";
 		}
-		return $this->table_name;
+		return $this->table;
 	}
 	
 	public function findAll($where = NULL, $params = NULL, $order_by = NULL, $limit = NULL) {
-		$q = "SELECT * FROM `".$this->getTableName()."`";
+		$q = "SELECT * FROM `".$this->getTable()."`";
 		if ($where !== NULL) {
 			$q .= " WHERE {$where}";
 		}
@@ -70,7 +74,7 @@ class Table {
 	}
 
     public function find($where = NULL, $params = NULL, $order_by = NULL) {
-		$q = "SELECT * FROM `".$this->getTableName()."`";
+		$q = "SELECT * FROM `".$this->getTable()."`";
 		if ($where !== NULL) {
 			$q .= " WHERE {$where}";
 		}
@@ -88,7 +92,7 @@ class Table {
 	}
 	
 	public function read($id = NULL) {
-		$q = "SELECT * FROM `".$this->getTableName()."` WHERE `{$this->primary_key}` = ?";
+		$q = "SELECT * FROM `".$this->getTable()."` WHERE `{$this->primary_key}` = ?";
 		$dbh = Db::getInstance();
 		$sth = $dbh->prepare($q);
         $sth->setFetchMode(PDO::FETCH_CLASS, $this->getObjectName());
@@ -97,7 +101,15 @@ class Table {
 	}
 	
 	public function getColumnInfo($column) {
-		return $this->meta["columns"][$column];
+		return isset($this->meta["columns"][$column]) ? $this->meta["columns"][$column] : NULL;
+	}
+	
+	public function getHasManyInfo($column) {
+		return isset($this->meta["has_many"][$column]) ? $this->meta["has_many"][$column] : NULL;
+	}
+	
+	public function getColumns() {
+		return $this->meta["columns"];
 	}
 		
 }

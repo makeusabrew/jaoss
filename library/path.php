@@ -14,6 +14,10 @@ class Path {
 		if (method_exists($controller, $this->action)) {
 			if (is_callable(array($controller, $this->action))) {
 				$controller->setPath($this);
+				$init_val = $controller->init();
+				if ($init_val !== TRUE) {
+					return $init_val;
+				}
 				$return = call_user_func(array($controller, $this->action));
                 if ($return === NULL) {
                     return $controller->render($this->action);

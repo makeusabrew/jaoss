@@ -6,7 +6,7 @@ abstract class Controller {
 	protected $session = NULL;
     protected $request = NULL;
 
-    protected function init() {
+    public function init() {
 
     }
 
@@ -30,8 +30,6 @@ abstract class Controller {
         $this->assign("current_url", $this->request->getUrl());
 
         $this->session = Session::getInstance();
-
-        $this->init();
 	}
 	
 	public function setPath($path) {
