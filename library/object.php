@@ -41,7 +41,7 @@ abstract class Object {
 			return $this->externals[$var];
 		} else if (substr($var, -1) == "s" && ($table = $this->getHasManyInfo($var))) {
 			// one -> many
-			$foreign_id = strtolower(get_class($this))."_id";
+			$foreign_id = $this->getFkName();
 			$this->externals[$var] = Table::factory($table)->findAll("`{$foreign_id}` = ?", array($this->getId()));
 			return $this->externals[$var];
 		}
@@ -73,6 +73,10 @@ abstract class Object {
     public function getId() {
         $pk = $this->pk;
         return $this->$pk;
+    }
+    
+    public function getFkName() {
+    	return strtolower(get_class($this))."_id";
     }
     
     public function getColumns() {
@@ -110,5 +114,13 @@ abstract class Object {
 		$sth = $dbh->prepare($sql);
         $sth->execute($values);
 		return $dbh->lastInsertId();
+    }
+    
+    public function owns($object) {
+    	if (!is_object($object)) {
+    		return FALSE;
+    	}
+    	$fk = $this->getFkName();
+    	return $object->$fk == $this->getId();
     }
 }

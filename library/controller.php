@@ -5,6 +5,8 @@ abstract class Controller {
 	protected $adminUser = NULL;
 	protected $session = NULL;
     protected $request = NULL;
+    
+    protected $var_stack = array();
 
     public function init() {
 
@@ -26,8 +28,10 @@ abstract class Controller {
 
         $this->request = $request;
 		
-		$this->assign("base_href", $this->request->getBaseHref());
-        $this->assign("current_url", $this->request->getUrl());
+		if (!$this->request->isAjax()) {
+			$this->assign("base_href", $this->request->getBaseHref());
+	        $this->assign("current_url", $this->request->getUrl());
+	    }
 
         $this->session = Session::getInstance();
 	}
@@ -72,6 +76,20 @@ abstract class Controller {
     }
 	
 	public function render($template) {
+		if ($this->request->isAjax()) {
+			if (!isset($this->var_stack["msg"])) {
+				$this->var_stack["msg"] = "OK";
+			}
+			foreach ($this->var_stack as $var => $val) {
+				$data[$var] = $val;
+			}
+			return json_encode($data);
+		}
+		// normal request
+		foreach ($this->var_stack as $var => $val) {
+			$this->smarty->assign($var, $val);
+		}
+		
 		return $this->smarty->fetch($template.".tpl");
 	}
 	
@@ -89,6 +107,6 @@ abstract class Controller {
 	}
 	
 	public function assign($var, $value) {
-		$this->smarty->assign($var, $value);
+		$this->var_stack[$var] = $value;
 	}
 }

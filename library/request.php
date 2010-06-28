@@ -4,12 +4,14 @@ class Request {
 	private $url = NULL;
     private $method = NULL;
     private $base_href = NULL;
+    private $ajax = NULL;
 	
 	public function __construct() {
 		$this->folder_base = substr($_SERVER["PHP_SELF"], 0, strpos($_SERVER["PHP_SELF"], "index.php"));
         $this->base_href = "http://".$_SERVER["SERVER_NAME"].$this->folder_base;
 		$this->url = substr($_SERVER["REQUEST_URI"], strlen($this->folder_base)-1);
         $this->method = isset($_SERVER["REQUEST_METHOD"]) ? $_SERVER["REQUEST_METHOD"] : NULL;
+        $this->ajax = isset($_SERVER["HTTP_X_REQUESTED_WITH"]) ? TRUE : FALSE;
 	}
 	
 	public function overrideUrl($url) {
@@ -49,5 +51,9 @@ class Request {
             return $_POST[$var];
         }
         return $_GET[$var];
+    }
+    
+    public function isAjax() {
+    	return $this->ajax;
     }
 }
