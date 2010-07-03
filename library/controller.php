@@ -72,6 +72,11 @@ abstract class Controller {
 	}
 
     public function redirect($url) {
+    	// override for ajax requests, but add the URL to the response
+    	if ($this->request->isAjax()) {
+    		$this->assign("redirect", $url);
+    		return $this->render(null);
+    	}
         header("Location: {$url}", TRUE, 303);
     }
 	

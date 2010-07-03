@@ -48,6 +48,10 @@ abstract class Object {
 		return null;
 	}
 	
+	public function getValues() {
+		return array_merge(array($this->pk => $this->getId()), $this->values);
+	}
+	
 	public function setValues($values) {
 		$this->values = $values;
 		return TRUE;
@@ -113,7 +117,11 @@ abstract class Object {
    		$dbh = Db::getInstance();
 		$sth = $dbh->prepare($sql);
         $sth->execute($values);
-		return $dbh->lastInsertId();
+		$id = $dbh->lastInsertId();
+		if (!$this->getId()) {
+			$this->id = $id;
+		}
+		return TRUE;
     }
     
     public function owns($object) {

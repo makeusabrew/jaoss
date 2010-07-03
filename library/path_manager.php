@@ -65,7 +65,12 @@ class PathManager {
 		if (empty(self::$paths)) {
 			throw new CoreException("No paths loaded");
 		}
+		
 		foreach (self::$paths as $path) {
+			// check for simple(r) routes
+			if (substr($path->pattern, 0, 1) != "^" && substr($path->pattern, -1) != "$") {
+				$path->pattern = "^{$path->pattern}$";
+			}
 			if (preg_match("@{$path->pattern}@", $url, $matches)) {
 				$path->matches = $matches;
 				return $path;
