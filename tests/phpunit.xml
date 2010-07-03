@@ -1,0 +1,6 @@
+<phpunit colors="true"
+		 bootstrap="bootstrap.php">
+	<testsuite name="Library Tests">
+        <directory>library</directory>
+	</testsuite>
+</phpunit>

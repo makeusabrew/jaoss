@@ -1,11 +1,5 @@
 <?php
-require_once 'PHPUnit/Framework.php';
-
-if (!defined("BASE")) {
-	define("BASE", __DIR__."/../");
-}
-
-require(BASE."session.php");
+require("session.php");
 
 class SessionTest extends PHPUnit_Framework_TestCase {
     private $session = NULL;

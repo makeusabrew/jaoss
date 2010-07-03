@@ -1,11 +1,5 @@
 <?php
-require_once 'PHPUnit/Framework.php';
-
-if (!defined("BASE")) {
-	define("BASE", __DIR__."/../");
-}
-
-require(BASE."app.php");
+require("app.php");
 
 class AppTest extends PHPUnit_Framework_TestCase {
 	protected function setUp() {

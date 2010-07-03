@@ -1,8 +1,0 @@
-<phpunit>
-	<testsuite name="Library Tests">
-        <file>/var/www/nick/jaoss/library/tests/app_test.php</file>
-        <file>/var/www/nick/jaoss/library/tests/app_manager_test.php</file>
-        <file>/var/www/nick/jaoss/library/tests/path_manager_test.php</file>
-        <file>/var/www/nick/jaoss/library/tests/session_test.php</file>
-	</testsuite>
-</phpunit>

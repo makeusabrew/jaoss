@@ -1,12 +1,7 @@
 <?php
-require_once 'PHPUnit/Framework.php';
-
-if (!defined("BASE")) {
-	define("BASE", __DIR__."/../");
-}
-require(BASE."core_exception.php");
-require(BASE."path.php");
-require(BASE."path_manager.php");
+require("core_exception.php");
+require("path.php");
+require("path_manager.php");
 
 class PathManagerTest extends PHPUnit_Framework_TestCase {
 
