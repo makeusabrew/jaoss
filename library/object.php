@@ -57,6 +57,10 @@ abstract class Object {
 		return TRUE;
 	}
 	
+	public function updateValues($values) {
+		return $this->setValues(array_merge($this->getValues(), $values));
+	}
+	
 	public function getTableName() {
 		if (!isset($this->table_name)) {
 			$this->table_name = get_class($this)."s";
@@ -91,6 +95,8 @@ abstract class Object {
     	$sql = "";
     	$values = array();
     	if ($this->getId()) {
+    		// unset PK, just in case
+    		unset($this->values[$this->pk]);
     		$sql = "UPDATE `".$this->getTable()."` SET `updated` = NOW(),";
     		foreach ($this->getColumns() as $key => $val) {
     			if (isset($this->values[$key])) {
@@ -99,6 +105,8 @@ abstract class Object {
 	    		}
     		}
     		$sql = substr($sql, 0, -1);
+    		$sql .= " WHERE `{$this->pk}` = ?";
+    		$values[] = $this->getId();
     	} else {
     		$sql = "INSERT INTO `".$this->getTable()."` (`created`, `updated`,";
     		$params = "";
@@ -119,7 +127,8 @@ abstract class Object {
         $sth->execute($values);
 		$id = $dbh->lastInsertId();
 		if (!$this->getId()) {
-			$this->id = $id;
+			$pk = $this->pk;
+			$this->$pk = $id;
 		}
 		return TRUE;
     }
