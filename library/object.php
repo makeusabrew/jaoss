@@ -23,7 +23,7 @@ abstract class Object {
 	public function getTable() {
 		if (!isset($this->table)) {
 			$table = strtolower(get_class($this));
-			$this->table = "app_{$table}";
+			$this->table = "{$table}";
 		}
 		return $this->table;
 	}

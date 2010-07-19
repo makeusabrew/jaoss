@@ -34,7 +34,7 @@ class PathManager {
 		$n_args = func_num_args();
 		$args = func_get_args();
 		$trace = debug_backtrace();
-		//var_dump($trace); die();
+
 		foreach ($args as $path) {
 			if (!is_array($path)) {
 				throw new CoreException("loadPaths called without array");
