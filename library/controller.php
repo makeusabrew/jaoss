@@ -65,9 +65,9 @@ abstract class Controller {
 		throw new CoreException("Could not find controller in any path: {$controller}");
 	}
 	
-	public function getMatch($match) {
+	public function getMatch($match, $default=NULL) {
 		if (!isset($this->path->matches[$match])) {
-			throw new CoreException("No matching path index");
+			return $default;
 		}
 		return $this->path->matches[$match];
 	}
