@@ -31,6 +31,7 @@ abstract class Controller {
 		if (!$this->request->isAjax()) {
 			$this->assign("base_href", $this->request->getBaseHref());
 	        $this->assign("current_url", $this->request->getUrl());
+	        $this->assign("messages", FlashMessenger::getMessages());
 	    }
 
         $this->session = Session::getInstance();
@@ -71,11 +72,14 @@ abstract class Controller {
 		return $this->path->matches[$match];
 	}
 
-    public function redirect($url) {
+    public function redirect($url, $message = NULL) {
     	// override for ajax requests, but add the URL to the response
     	if ($this->request->isAjax()) {
     		$this->assign("redirect", $url);
     		return $this->render(null);
+    	}
+    	if ($message) {
+    		FlashMessenger::addMessage($message);
     	}
         header("Location: {$url}", TRUE, 303);
     }
