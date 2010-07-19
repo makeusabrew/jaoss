@@ -16,8 +16,10 @@ class Path {
 				$controller->setPath($this);
 				$init_val = $controller->init();
 				if ($init_val !== TRUE) {
+					Log::debug("[".$this->controller."Controller->init() did not return true!", "-v");
 					return $init_val;
 				}
+				Log::debug("running [".$this->controller."Controller->".$this->action."]");
 				$return = call_user_func(array($controller, $this->action));
                 if ($return === NULL) {
                     return $controller->render($this->action);

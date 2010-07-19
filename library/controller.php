@@ -9,7 +9,7 @@ abstract class Controller {
     protected $var_stack = array();
 
     public function init() {
-
+		return TRUE;
     }
 
 	public function __construct($request = NULL) {

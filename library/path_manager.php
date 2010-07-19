@@ -27,6 +27,7 @@ class PathManager {
 		$path->controller = $controller;
 		$path->action = $action;
 		self::$paths[] = $path;
+		Log::debug("Loading path: pattern [".$path->pattern."] location [".$path->location."] controller [".$path->controller."] action [".$path->action."]", "-v");
 	}
 	
 	public static function loadPaths() {
@@ -65,16 +66,18 @@ class PathManager {
 		if (empty(self::$paths)) {
 			throw new CoreException("No paths loaded");
 		}
-		
+		Log::debug("Looking for match against URL [".$url."]", "-v");
 		foreach (self::$paths as $path) {
 			// check for simple(r) routes
 			if (substr($path->pattern, 0, 1) != "^" && substr($path->pattern, -1) != "$") {
 				$path->pattern = "^{$path->pattern}$";
 			}
 			if (preg_match("@{$path->pattern}@", $url, $matches)) {
+				Log::debug("matched pattern [".$path->pattern."] against URL [".$url."]");
 				$path->matches = $matches;
 				return $path;
 			}
+			Log::debug("Discarding path pattern [".$path->pattern."]", "-v");
 		}
 		// no match :(
 		throw new CoreException("No matching path for URL");
