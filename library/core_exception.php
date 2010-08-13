@@ -3,6 +3,7 @@ class CoreException extends Exception {
 	const OK = 0;
 	const URL_NOT_FOUND = 1;
 	const ACTION_NOT_FOUND = 2;
+	const TPL_NOT_FOUND = 3;
 	
 	private $args = array();
 	
@@ -14,5 +15,9 @@ class CoreException extends Exception {
 	
 	public function getArg($a) {
 		return (isset($this->args[$a])) ? $this->args[$a] : NULL;
+	}
+	
+	public function ga($a) {
+		return "<strong>".$this->getArg($a)."</strong>";
 	}	
 }

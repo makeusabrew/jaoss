@@ -92,8 +92,18 @@ abstract class Controller {
 		foreach ($this->var_stack as $var => $val) {
 			$this->smarty->assign($var, $val);
 		}
-		
-		return $this->smarty->fetch($template.".tpl");
+		if ($this->smarty->templateExists($template.".tpl")) {
+			return $this->smarty->fetch($template.".tpl");
+		} else {
+			throw new CoreException(
+				"Template Not Found",
+				CoreException::TPL_NOT_FOUND,
+				array(
+					"paths" => $this->smarty->template_dir,
+					"tpl" => $template,
+				)
+			);
+		}
 	}
 	
 	public function renderJson() {
