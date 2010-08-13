@@ -56,4 +56,8 @@ class Request {
     public function isAjax() {
     	return $this->ajax;
     }
+	
+	public function disableAjax() {
+		$this->ajax = FALSE;
+	}
 }

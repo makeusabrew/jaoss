@@ -64,7 +64,9 @@ class PathManager {
 	
 	public static function matchUrl($url) {
 		if (empty(self::$paths)) {
-			throw new CoreException("No paths loaded");
+			throw new CoreException(
+				"No paths loaded"
+			);
 		}
 		Log::debug("Looking for match against URL [".$url."]", "-v");
 		foreach (self::$paths as $path) {
@@ -80,7 +82,14 @@ class PathManager {
 			Log::debug("Discarding path pattern [".$path->pattern."]", "-v");
 		}
 		// no match :(
-		throw new CoreException("No matching path for URL");
+		throw new CoreException(
+			"No matching path for URL",
+			CoreException::URL_NOT_FOUND,
+			array(
+				"paths" => self::$paths,
+				"url" => $url,
+			)
+		);
 	}
 	
 	public function getPaths() {

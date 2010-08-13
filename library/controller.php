@@ -86,13 +86,7 @@ abstract class Controller {
 	
 	public function render($template) {
 		if ($this->request->isAjax()) {
-			if (!isset($this->var_stack["msg"])) {
-				$this->var_stack["msg"] = "OK";
-			}
-			foreach ($this->var_stack as $var => $val) {
-				$data[$var] = $val;
-			}
-			return json_encode($data);
+			return $this->renderJson();
 		}
 		// normal request
 		foreach ($this->var_stack as $var => $val) {
@@ -100,6 +94,16 @@ abstract class Controller {
 		}
 		
 		return $this->smarty->fetch($template.".tpl");
+	}
+	
+	public function renderJson() {
+		if (!isset($this->var_stack["msg"])) {
+			$this->var_stack["msg"] = "OK";
+		}
+		foreach ($this->var_stack as $var => $val) {
+			$data[$var] = $val;
+		}
+		return json_encode($data);
 	}
 	
 	public function renderStatic($template) {

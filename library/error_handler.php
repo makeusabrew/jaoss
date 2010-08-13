@@ -11,7 +11,8 @@ class ErrorHandler {
 	}
 		
 	public function handleError($e) {
+		$code = $e->getCode();
 		$this->smarty->assign("e", $e);
-		return $this->smarty->fetch("base.tpl");
+		return $this->smarty->fetch("core/{$code}.tpl");
 	}
 }
