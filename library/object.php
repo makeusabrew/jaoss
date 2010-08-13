@@ -22,7 +22,7 @@ abstract class Object {
 	
 	public function getTable() {
 		if (!isset($this->table)) {
-			$table = strtolower(get_class($this));
+			$table = Utils::fromCamelCase(get_class($this));
 			$this->table = "{$table}s";
 		}
 		return $this->table;

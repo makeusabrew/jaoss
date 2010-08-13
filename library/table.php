@@ -27,7 +27,7 @@ class Table {
 		}
 		$apps = AppManager::getAppPaths();
 		foreach ($apps as $app) {
-			$path = "apps/{$app}/models/".strtolower($model).".php";
+			$path = "apps/{$app}/models/".Utils::fromCamelCase($model).".php";
 			if (file_exists($path)) {
 				include($path);
 				return self::factory($model);
@@ -46,7 +46,7 @@ class Table {
 	
 	public function getTable() {
 		if (!isset($this->table)) {
-			$table = strtolower(get_class($this));
+			$table = Utils::fromCamelCase(get_class($this));
 			$this->table = "{$table}";
 		}
 		return $this->table;
@@ -110,6 +110,18 @@ class Table {
 	
 	public function getColumns() {
 		return $this->meta["columns"];
+	}
+	
+	public function getColumnString($prefix = NULL) {
+		$cols = $this->getColumns();
+		$cols = array_keys($cols);
+		array_unshift($cols, "id");
+		if ($prefix) {
+			foreach ($cols as &$col) {
+				$col = $prefix.".".$col;
+			}
+		}
+		return implode($cols, ",");
 	}
 		
 }
