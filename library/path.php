@@ -29,7 +29,15 @@ class Path {
 				throw new CoreException("Controller action is not callable");
 			}
 		} else {
-			throw new CoreException("Controller action does not exist");
+			throw new CoreException(
+				"Controller action does not exist",
+				CoreException::ACTION_NOT_FOUND,
+				array(
+					"controller" => get_class($controller),
+					"action" => $this->action,
+					"path" => $path,
+				)
+			);
 		}
 	}
 }

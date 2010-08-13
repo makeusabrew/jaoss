@@ -2,6 +2,7 @@
 class CoreException extends Exception {
 	const OK = 0;
 	const URL_NOT_FOUND = 1;
+	const ACTION_NOT_FOUND = 2;
 	
 	private $args = array();
 	
