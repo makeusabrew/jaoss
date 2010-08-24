@@ -65,6 +65,15 @@ class Request {
         return $_GET[$var];
     }
     
+    public function getPost() {
+    	return $_POST;
+    }
+    
+    // euch, clumsy
+    public function getGet() {
+    	return $_GET;
+    }
+    
     public function isAjax() {
     	return $this->ajax;
     }
