@@ -4,6 +4,7 @@ class CoreException extends Exception {
 	const URL_NOT_FOUND = 1;
 	const ACTION_NOT_FOUND = 2;
 	const TPL_NOT_FOUND = 3;
+	const TPL_DIR_NOT_WRITABLE = 4;
 	
 	private $args = array();
 	
