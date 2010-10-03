@@ -10,12 +10,7 @@ class PathManager {
 			throw new CoreException("No action passed");
 		}
 		if (!isset($location)) {
-			$trace = debug_backtrace();
-			if (!isset($trace[0]["file"])) {
-				throw new CoreException("No controller passed and file location not available");
-			}
-			$dir = dirname($trace[0]["file"]);
-			$location = substr($dir, strrpos($dir, "/")+1);
+            $location = self::getLocationFromTrace();
 		}
 		if (!isset($controller)) {
 			$controller = ucwords($location);
@@ -33,7 +28,6 @@ class PathManager {
 	public static function loadPaths() {
 		$n_args = func_num_args();
 		$args = func_get_args();
-		$trace = debug_backtrace();
 
 		foreach ($args as $path) {
 			if (!is_array($path)) {
@@ -49,8 +43,7 @@ class PathManager {
 			$action = isset($path[1]) ? $path[1] : NULL;
 			$controller = isset($path[2]) ? $path[2] : NULL;
 			if (!isset($path[3])) {
-				$dir = dirname($trace[0]["file"]);
-				$location = substr($dir, strrpos($dir, "/")+1);
+                $location = self::getLocationFromTrace();
 			} else {
 				$location = $path[3];
 			}
@@ -58,6 +51,24 @@ class PathManager {
 		}
 	}
 	
+    public static function loadPathsFromController($controller) {
+        $location = self::getLocationFromTrace();
+        $path = "apps/".$location."/controllers/".strtolower($controller).".php";
+        Log::debug("looking for controller [".$path."]");
+        if (!file_exists($path)) {
+            throw new CoreException("file does not exist");
+        }
+        include_once($path);
+        if (!class_exists($controller."Controller")) {
+            throw new CoreException("controller class does not exist");
+        }
+        $reflection = new ReflectionClass($controller."Controller");
+        $methods = $reflection->getMethods(ReflectionMethod::IS_PUBLIC);
+        //@todo filter out methods declared in child class only
+        //@todo map to paths
+        throw new CoreException("Not Implemented");
+    }
+
 	public function resetPaths() {
 		self::$paths = array();
 	}
@@ -95,4 +106,13 @@ class PathManager {
 	public function getPaths() {
 		return self::$paths;
 	}
+
+    private static function getLocationFromTrace() {
+        $trace = debug_backtrace();
+        if (!isset($trace[1]["file"])) {
+            throw new CoreException("file location not available");
+        }
+        $dir = dirname($trace[1]["file"]);
+        return substr($dir, strrpos($dir, "/")+1);
+    }
 }
