@@ -132,4 +132,12 @@ abstract class Controller {
 	public function assign($var, $value) {
 		$this->var_stack[$var] = $value;
 	}
+    
+    public function setFlash($flash) {
+        $this->session->setFlash($flash);
+    }
+
+    public function getFlash($flash) {
+        $this->session->getFlash($flash);
+    }
 }

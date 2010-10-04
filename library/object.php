@@ -9,6 +9,7 @@ abstract class Object {
 	
 	protected $values = array();
 	protected $externals = array();
+    protected $errors = array();
 
     private $pk = "id";
 	
@@ -54,7 +55,8 @@ abstract class Object {
 	
 	public function setValues($values) {
 		$this->values = $values;
-		return TRUE;
+
+		return true;
 	}
 	
 	public function updateValues($values) {
@@ -139,5 +141,9 @@ abstract class Object {
     	}
     	$fk = $this->getFkName();
     	return $object->$fk == $this->getId();
+    }
+
+    public function getErrors() {
+        return $this->errors;
     }
 }

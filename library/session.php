@@ -40,4 +40,17 @@ class Session {
         self::$instance = NULL;
         session_destroy();
     }
+    
+    public function setFlash($flash, $value = true) {
+        $_SESSION[$this->namespace]["_flash_"][$flash] = $value;
+    }
+
+    public function getFlash($flash) {
+        if (isset($_SESSION[$this->namespace]["_flash_"][$flash])) {
+            $flash = $_SESSION[$this->namespace]["_flash_"][$flash];
+            unset($_SESSION[$this->namespace]["_flash_"][$flash]);
+            return $flash;
+        }
+        return false;
+    }
 }
