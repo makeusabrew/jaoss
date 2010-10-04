@@ -138,6 +138,6 @@ abstract class Controller {
     }
 
     public function getFlash($flash) {
-        $this->session->getFlash($flash);
+       return $this->session->getFlash($flash);
     }
 }

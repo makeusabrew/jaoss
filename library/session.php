@@ -42,15 +42,19 @@ class Session {
     }
     
     public function setFlash($flash, $value = true) {
+        Log::debug("setting flash [".$flash."] with val [".$value."]");
         $_SESSION[$this->namespace]["_flash_"][$flash] = $value;
     }
 
     public function getFlash($flash) {
+        Log::debug("looking for flash [".$flash."]");
         if (isset($_SESSION[$this->namespace]["_flash_"][$flash])) {
+            Log::debug("found flash [".$flash."]");
             $flash = $_SESSION[$this->namespace]["_flash_"][$flash];
             unset($_SESSION[$this->namespace]["_flash_"][$flash]);
             return $flash;
         }
+        Log::debug("Could not find flash [".$flash."]");
         return false;
     }
 }
