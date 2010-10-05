@@ -73,6 +73,14 @@ class Request {
     public function getGet() {
     	return $_GET;
     }
+
+    public function getFiles() {
+        return $_FILES;
+    }
+
+    public function getFile($file) {
+        return isset($_FILES[$file]) ? $_FILES[$file] : null;
+    }
     
     public function isAjax() {
     	return $this->ajax;

@@ -35,6 +35,10 @@ class Session {
     	unset($_SESSION[$this->namespace][$var]);
    	}
 
+    public function __isset($var) {
+        return isset($_SESSION[$this->namespace][$var]);
+    }
+
     public function destroy() {
         unset($_SESSION[$this->namespace]);
         self::$instance = NULL;
