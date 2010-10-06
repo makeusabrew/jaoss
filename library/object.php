@@ -134,6 +134,19 @@ abstract class Object {
 		}
 		return TRUE;
     }
+
+    public function delete() {
+        if (!$this->getId()) {
+            Log::debug("trying to delete unsaved object");
+            return false;
+        }
+        $sql = "DELETE FROM `".$this->getTable()."` WHERE `".$this->pk."` = ?";
+        $dbh = Db::getInstance();
+        $sth = $dbh->prepare($sql);
+        $sth->execute(array($this->getId()));
+        return true;
+    }
+        
     
     public function owns($object) {
     	if (!is_object($object)) {

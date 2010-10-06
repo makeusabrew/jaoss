@@ -81,6 +81,11 @@ class Request {
     public function getFile($file) {
         return isset($_FILES[$file]) ? $_FILES[$file] : null;
     }
+
+    public function processFile($file) {
+        $file = $this->getFile($file);
+        return new File($file);
+    }
     
     public function isAjax() {
     	return $this->ajax;
