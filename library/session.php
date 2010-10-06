@@ -1,10 +1,10 @@
 <?php
 
 class Session {
-    private static $instance;
+    private static $instance = NULL;
     private $namespace = NULL;
     public static function getInstance($namespace = NULL) {
-        if (!is_a(self::$instance, 'Session')) {
+        if (self::$instance === NULL) {
                 self::$instance = new Session($namespace);
         }
         return self::$instance;
