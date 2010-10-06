@@ -4,15 +4,16 @@ class Db extends PDO {
 	/**
 	 * @var Db Singleton instance
 	 */
-	private static $instance;
+	private static $instance = NULL;
 
 	/**
 	 * Get the singleton instance
 	 * @return Db
 	 */
 	public static function getInstance() {
-		if (!is_a(self::$instance, 'Db')) {
+		if (self::$instance === NULL) {
 
+            Log::debug("Instantiating db");
 			self::$instance = new Db(
 				Settings::getValue("db", "dsn"),
 				Settings::getValue("db", "user"),

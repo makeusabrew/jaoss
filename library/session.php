@@ -5,7 +5,8 @@ class Session {
     private $namespace = NULL;
     public static function getInstance($namespace = NULL) {
         if (self::$instance === NULL) {
-                self::$instance = new Session($namespace);
+            Log::debug("Instantiating session");
+            self::$instance = new Session($namespace);
         }
         return self::$instance;
     }
