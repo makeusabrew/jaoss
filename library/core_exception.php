@@ -9,8 +9,8 @@ class CoreException extends Exception {
 	
 	private $args = array();
 	
-	public function __construct($msg = "", $code = 0, $args = array(), Exception $previous = NULL) {
-		parent::__construct($msg, $code, $previous);
+	public function __construct($msg = "", $code = 0, $args = array()) {
+		parent::__construct($msg, $code);
 		$this->args = $args;
         if ($code != CoreException::LOG_FILE_ERROR) {
             Log::debug("CoreException thrown [".$this->getMessage()."]", "-v");
