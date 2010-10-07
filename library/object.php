@@ -54,9 +54,28 @@ abstract class Object {
 	}
 	
 	public function setValues($values) {
-		$this->values = $values;
+        $this->errors = array();
 
-		return true;
+        $columns = $this->getColumns();
+        foreach($columns as $field => $settings) {
+            $value = isset($values[$field]) ? $values[$field] : null;
+            $required = (isset($settings["required"]) && $settings["required"] === true) ? true : false;
+            $title = isset($settings["title"]) ? $settings["title"] : $field;
+            $result = $this->validate($value, $settings, $title);
+            if ($result !== true) {
+                $this->errors[$field] = $result;
+            } else {
+                if (isset($settings["confirm"])) {
+                    $confirm = isset($values["confirm_{$field}"]) ? $values["confirm_{$field}"] : "";
+                    $result = Validate::match($value, array("confirm" => $confirm));
+                    if ($result !== true) {
+                        $this->errors["confirm_{$field}"] = Validate::getMessage("match", $title);
+                    }
+                }
+            }
+
+        }
+        return (count($this->errors) == 0) ? true : false;
 	}
 	
 	public function updateValues($values) {
@@ -150,7 +169,7 @@ abstract class Object {
     
     public function owns($object) {
     	if (!is_object($object)) {
-    		return FALSE;
+    		return false;
     	}
     	$fk = $this->getFkName();
     	return $object->$fk == $this->getId();
@@ -158,5 +177,35 @@ abstract class Object {
 
     public function getErrors() {
         return $this->errors;
+    }
+
+    public function validate($value, $settings, $title) {
+        $validation = array();
+        $required = false;
+        if (isset($settings["required"]) && $settings["required"]) {
+            $validation[] = "required";
+            $required = true;
+        }
+
+        if ($settings["type"] == "email") {
+            $validation[] = "email";
+        }
+
+        if (isset($settings["validation"])) {
+            if (!is_array($settings["validation"])) {
+                $settings["validation"] = array($settings["validation"]);
+            }
+            $validation = array_merge($validation, $settings["validation"]);
+        }
+
+        foreach ($validation as $func) {
+            Log::debug("Validate::$func($value)");
+            $result = Validate::$func($value, $settings);
+            if ($result !== true) {
+                return Validate::getMessage($func, $title, $settings, $value);
+            }
+        }
+        // all good
+        return true;
     }
 }
