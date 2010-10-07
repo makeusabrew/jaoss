@@ -30,8 +30,12 @@ class Validate {
         return $object ? false : true;
     }
 
-    public function numbersSpaces($value, $settings) {
+    public static function numbersSpaces($value, $settings) {
         return preg_match("#^\d[\d\s]+\d$#", $value) > 0;
+    }
+
+    public static function date($value, $settings) {
+        return preg_match("#(\d{2})/(\d{2})/(\d{2,4})#", $value) > 0;
     }
     
     public static function getMessage($function, $settings, $value = null) {
@@ -51,6 +55,8 @@ class Validate {
                 return "{$title} must contain only numbers and spaces";
             case "numbers":
                 return "{$title} must contain only numbers";
+            case "date":
+                return "{$title} must be in the format dd/mm/yyyy"; 
             default:
                 return "{$title} is not valid";
         }

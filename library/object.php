@@ -192,6 +192,10 @@ abstract class Object {
             $validation[] = "email";
         }
 
+        if ($settings["type"] == "date") {
+            $validation[] = "date";
+        }
+
         if (isset($settings["validation"])) {
             if (!is_array($settings["validation"])) {
                 $settings["validation"] = array($settings["validation"]);
@@ -226,6 +230,15 @@ abstract class Object {
                 }
             case "password":
                 return $this->encode($value);
+            case "date":
+                if (preg_match("#(\d{2})/(\d{2})/(\d{2,4})#", $value, $matches)) {
+                    if (strlen($matches[3]) == 2) {
+                        $matches[3] = "20".$matches[3];
+                    }
+                    return $matches[3]."-".$matches[2]."-".$matches[1];
+                } else {
+                    return $value;
+                }
             default:
                 return $value;
         }
