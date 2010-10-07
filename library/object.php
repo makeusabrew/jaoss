@@ -204,7 +204,7 @@ abstract class Object {
                 $settings["method"] = "find";
                 $settings["field"] = $field;
             }
-            Log::debug("Validate::$func($value)");
+            Log::debug("Validate::$func($value) [$field]");
             $result = Validate::$func($value, $settings);
             if ($result !== true) {
                 return Validate::getMessage($func, $settings, $value);
