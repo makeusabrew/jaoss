@@ -74,6 +74,8 @@ abstract class Object {
                     }
                 }
             }
+            // always set, regardless of validation problems etc
+            $this->values[$field] = $this->process($value, $settings["type"]);
 
         }
         return (count($this->errors) == 0) ? true : false;
@@ -180,7 +182,7 @@ abstract class Object {
         return $this->errors;
     }
 
-    public function validate($field, $value, $settings) {
+    protected function validate($field, $value, $settings) {
         $validation = array();
         if (isset($settings["required"]) && $settings["required"]) {
             $validation[] = "required";
@@ -212,5 +214,25 @@ abstract class Object {
         }
         // all good
         return true;
+    }
+    
+    protected function process($value, $type) {
+        switch ($type) {
+            case "checkbox":
+                if (isset($value)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            case "password":
+                return $this->encode($value);
+            default:
+                return $value;
+        }
+    }
+
+    // override this if you want to change how a field of type "password" is hashed
+    protected function encode($value) {
+        return sha1($value);
     }
 }
