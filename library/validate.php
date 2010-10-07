@@ -18,6 +18,22 @@ class Validate {
         return (strlen($value) >= $length);
     }
 
+    public static function match($value, $settings) {
+        return ($value == $settings["confirm"]);
+    }
+
+    public static function unique($value, $settings) {
+        $model = $settings["model"];
+        $method = $settings["method"];
+        $field = $settings["field"];
+        $object = $model->$method("`{$field}` = ?", array($value));
+        return $object ? false : true;
+    }
+
+    public function numbersSpaces($value, $settings) {
+        return preg_match("#^\d[\d\s]+\d$#", $value) > 0;
+    }
+    
     public static function getMessage($function, $settings, $value = null) {
         $title = $settings["title"];
         switch ($function) {
@@ -31,20 +47,12 @@ class Validate {
                 return "the two {$title}s do not match";
             case "unique":
                 return "this {$title} is already in use";
+            case "numbersSpaces":
+                return "{$title} must contain only numbers and spaces";
+            case "numbers":
+                return "{$title} must contain only numbers";
             default:
                 return "{$title} is not valid";
         }
-    }
-
-    public static function match($value, $settings) {
-        return ($value == $settings["confirm"]);
-    }
-
-    public static function unique($value, $settings) {
-        $model = $settings["model"];
-        $method = $settings["method"];
-        $field = $settings["field"];
-        $object = $model->$method("`{$field}` = ?", array($value));
-        return $object ? false : true;
     }
 }
