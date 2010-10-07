@@ -18,7 +18,8 @@ class Validate {
         return (strlen($value) >= $length);
     }
 
-    public static function getMessage($function, $title, $settings = null, $value = null) {
+    public static function getMessage($function, $settings, $value = null) {
+        $title = $settings["title"];
         switch ($function) {
             case "email":
                 return "{$title} is not a valid email address";
@@ -28,6 +29,8 @@ class Validate {
                 return "{$title} must be at least {$settings["length"]} characters long";
             case "match":
                 return "the two {$title}s do not match";
+            case "unique":
+                return "this {$title} is already in use";
             default:
                 return "{$title} is not valid";
         }
@@ -35,5 +38,13 @@ class Validate {
 
     public static function match($value, $settings) {
         return ($value == $settings["confirm"]);
+    }
+
+    public static function unique($value, $settings) {
+        $model = $settings["model"];
+        $method = $settings["method"];
+        $field = $settings["field"];
+        $object = $model->$method("`{$field}` = ?", array($value));
+        return $object ? false : true;
     }
 }

@@ -59,10 +59,7 @@ class Request {
     }
 
     public function getVar($var) {
-        if ($this->isPost()) {
-            return $_POST[$var];
-        }
-        return $_GET[$var];
+        return (isset($_REQUEST[$var])) ? $_REQUEST[$var] : null;
     }
     
     public function getPost() {

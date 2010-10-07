@@ -59,9 +59,10 @@ abstract class Object {
         $columns = $this->getColumns();
         foreach($columns as $field => $settings) {
             $value = isset($values[$field]) ? $values[$field] : null;
-            $required = (isset($settings["required"]) && $settings["required"] === true) ? true : false;
-            $title = isset($settings["title"]) ? $settings["title"] : $field;
-            $result = $this->validate($value, $settings, $title);
+            if (!isset($settings["title"])) {
+                $settings["title"] = $field;
+            }
+            $result = $this->validate($field, $value, $settings);
             if ($result !== true) {
                 $this->errors[$field] = $result;
             } else {
@@ -69,7 +70,7 @@ abstract class Object {
                     $confirm = isset($values["confirm_{$field}"]) ? $values["confirm_{$field}"] : "";
                     $result = Validate::match($value, array("confirm" => $confirm));
                     if ($result !== true) {
-                        $this->errors["confirm_{$field}"] = Validate::getMessage("match", $title);
+                        $this->errors["confirm_{$field}"] = Validate::getMessage("match", $settings);
                     }
                 }
             }
@@ -179,12 +180,10 @@ abstract class Object {
         return $this->errors;
     }
 
-    public function validate($value, $settings, $title) {
+    public function validate($field, $value, $settings) {
         $validation = array();
-        $required = false;
         if (isset($settings["required"]) && $settings["required"]) {
             $validation[] = "required";
-            $required = true;
         }
 
         if ($settings["type"] == "email") {
@@ -199,10 +198,16 @@ abstract class Object {
         }
 
         foreach ($validation as $func) {
+            if ($func == "unique") {
+                // stuff in some extra bits
+                $settings["model"] = Table::factory($this->getTableName());
+                $settings["method"] = "find";
+                $settings["field"] = $field;
+            }
             Log::debug("Validate::$func($value)");
             $result = Validate::$func($value, $settings);
             if ($result !== true) {
-                return Validate::getMessage($func, $title, $settings, $value);
+                return Validate::getMessage($func, $settings, $value);
             }
         }
         // all good
