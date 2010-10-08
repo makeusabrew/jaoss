@@ -75,7 +75,7 @@ abstract class Object {
                 }
             }
             // always set, regardless of validation problems etc
-            $this->values[$field] = $this->process($value, $settings["type"]);
+            $this->values[$field] = $this->process($field, $value, $settings["type"]);
 
         }
         return (count($this->errors) == 0) ? true : false;
@@ -220,7 +220,7 @@ abstract class Object {
         return true;
     }
     
-    protected function process($value, $type) {
+    protected function process($field, $value, $type) {
         switch ($type) {
             case "checkbox":
                 if (isset($value)) {
@@ -229,7 +229,13 @@ abstract class Object {
                     return false;
                 }
             case "password":
-                return $this->encode($value);
+                $old_pass = isset($this->values[$field]) ? $this->values[$field] : "";
+                if ($value != $old_pass) {
+                    // new value is different, so re-encode
+                    return $this->encode($value);
+                } else {
+                    return $value;
+                }
             case "date":
                 if (preg_match("#(\d{2})/(\d{2})/(\d{2,4})#", $value, $matches)) {
                     if (strlen($matches[3]) == 2) {
