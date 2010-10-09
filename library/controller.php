@@ -88,6 +88,20 @@ abstract class Controller {
 		if ($this->request->isAjax()) {
 			return $this->renderJson();
 		}
+        return $this->renderTemplate($template);
+	}
+	
+	public function renderJson() {
+		if (!isset($this->var_stack["msg"])) {
+			$this->var_stack["msg"] = "OK";
+		}
+		foreach ($this->var_stack as $var => $val) {
+			$data[$var] = $val;
+		}
+		return json_encode($data);
+	}
+
+    public function renderTemplate($template) {
 		// normal request
 		foreach ($this->var_stack as $var => $val) {
 			$this->smarty->assign($var, $val);
@@ -104,17 +118,7 @@ abstract class Controller {
 				)
 			);
 		}
-	}
-	
-	public function renderJson() {
-		if (!isset($this->var_stack["msg"])) {
-			$this->var_stack["msg"] = "OK";
-		}
-		foreach ($this->var_stack as $var => $val) {
-			$data[$var] = $val;
-		}
-		return json_encode($data);
-	}
+    }
 	
 	public function renderStatic($template) {
 		if ($this->smarty->templateExists("static/".$template.".tpl")) {
@@ -132,6 +136,10 @@ abstract class Controller {
 	public function assign($var, $value) {
 		$this->var_stack[$var] = $value;
 	}
+
+    public function unassign($var) {
+        unset($this->var_stack[$var]);
+    }
     
     public function setFlash($flash) {
         $this->session->setFlash($flash);

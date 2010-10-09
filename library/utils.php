@@ -36,4 +36,16 @@ class Utils {
 		return preg_replace_callback('/([A-Z])/', $func, $str);
 	}
 
+    /* borrowed with thanks from http://wiki.jumba.com.au/wiki/PHP_Generate_random_password */
+    public static function generatePassword($length) {
+        $chars = "234567890abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        $i = 0;
+        $password = "";
+        while ($i <= $length) {
+            $password .= $chars{mt_rand(0,strlen($chars))};
+            $i++;
+        }
+        return $password;
+    }
+
 }
