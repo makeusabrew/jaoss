@@ -31,7 +31,6 @@ abstract class Controller {
 		if (!$this->request->isAjax()) {
 			$this->assign("base_href", $this->request->getBaseHref());
 	        $this->assign("current_url", $this->request->getUrl());
-	        $this->assign("messages", FlashMessenger::getMessages());
 	    }
 
         $this->session = Session::getInstance();
