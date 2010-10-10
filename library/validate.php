@@ -1,7 +1,7 @@
 <?php
 
 class Validate {
-    public static function required($value, $settings) {
+    public static function required($value, $settings = null) {
         $type = isset($settings["type"]) ? $settings["type"] : "text";
         switch ($type) {
             default:
@@ -9,11 +9,11 @@ class Validate {
         }
     }
 
-    public static function email($value, $settings) {
+    public static function email($value, $settings = null) {
         return preg_match("#^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$#", $value) > 0;
     }
 
-    public static function minLength($value, $settings) {
+    public static function minLength($value, $settings = null) {
         $length = isset($settings["length"]) ? $settings["length"] : 0;
         return (strlen($value) >= $length);
     }
@@ -30,11 +30,11 @@ class Validate {
         return $object ? false : true;
     }
 
-    public static function numbersSpaces($value, $settings) {
+    public static function numbersSpaces($value, $settings = null) {
         return preg_match("#^\d[\d\s]+\d$#", $value) > 0;
     }
 
-    public static function date($value, $settings) {
+    public static function date($value, $settings = null) {
         return preg_match("#(\d{2})/(\d{2})/(\d{2,4})#", $value) > 0;
     }
     

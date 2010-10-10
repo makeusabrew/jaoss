@@ -46,8 +46,8 @@ class Email {
 
         if ($canSend) {
             $this->setHeader("From", $this->from);
-            Log::debug("sending mail to [".$this->to."], from [".$this->from."], subject [".$this->subject."], body length [".strlen($this->body)."]");
-            return mail($this->to, $this->subject, $this->body, $this->getHeadersAsString());
+            Log::debug("sending mail to [".$this->getToAsString()."], from [".$this->from."], subject [".$this->subject."], body length [".strlen($this->body)."]");
+            return mail($this->getToAsString(), $this->subject, $this->body, $this->getHeadersAsString());
         }
         return false;
     }
@@ -63,5 +63,17 @@ class Email {
         }
         $str = substr($str, 0, -2);
         return $str;
+    }
+
+    public function getToAsString() {
+        if (is_array($this->to)) {
+            $str = "";
+            foreach ($this->to as $to) {
+                $str .= $to.",";
+            }
+            $str = substr($str, 0, -1);
+            return $str;
+        }
+        return $this->to;
     }
 }

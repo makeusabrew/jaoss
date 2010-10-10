@@ -3,6 +3,9 @@ class FlashMessenger {
 	
 	public static function addMessage($str) {
 		$messages = Session::getInstance()->flash_messages;
+        if (!$messages) {
+            $messages = array();
+        }
 		$messages[] = $str;
 		Session::getInstance()->flash_messages = $messages;
 	}
