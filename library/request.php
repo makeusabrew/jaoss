@@ -6,6 +6,7 @@ class Request {
     private $method = NULL;
     private $base_href = NULL;
     private $ajax = NULL;
+	private $referer = NULL;
 	
 	public function __construct() {
 		$this->folder_base = substr($_SERVER["PHP_SELF"], 0, strpos($_SERVER["PHP_SELF"], "index.php"));
@@ -20,6 +21,11 @@ class Request {
 		}
         $this->method = isset($_SERVER["REQUEST_METHOD"]) ? $_SERVER["REQUEST_METHOD"] : NULL;
         $this->ajax = isset($_SERVER["HTTP_X_REQUESTED_WITH"]) ? TRUE : FALSE;
+		if(isset($_SERVER['HTTP_REFERER'])){
+			$this->referer = $_SERVER['HTTP_REFERER'];
+		} else {
+			$this->referer = "REFERRER NOT SET";	
+		}
 	}
 	
 	public function overrideUrl($url) {
@@ -45,6 +51,10 @@ class Request {
     public function getUrl() {
         return $this->url;
     }
+	
+	public function getReferer(){
+		return $this->referer;	
+	}
     
     public function getQueryString() {
     	return $this->query_string;
