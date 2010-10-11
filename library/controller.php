@@ -28,11 +28,6 @@ abstract class Controller {
 
         $this->request = $request;
 		
-		if (!$this->request->isAjax()) {
-			$this->assign("base_href", $this->request->getBaseHref());
-	        $this->assign("current_url", $this->request->getUrl());
-	    }
-
         $this->session = Session::getInstance();
 	}
 	
@@ -72,15 +67,16 @@ abstract class Controller {
 	}
 
     public function redirect($url, $message = NULL) {
-    	// override for ajax requests, but add the URL to the response
-    	if ($this->request->isAjax()) {
-    		$this->assign("redirect", $url);
-    		return $this->render(null);
-    	}
+        // always add the flash message - if the ajax handler obeys the 
+        // redirect we will pick it up next render
     	if ($message) {
     		FlashMessenger::addMessage($message);
     	}
-        header("Location: {$url}", TRUE, 303);
+    	if ($this->request->isAjax()) {
+    		$this->assign("redirect", $url);
+            return $this->renderJson();
+    	}
+        return $this->request->doRedirect($url, 303);
     }
 	
 	public function render($template) {
@@ -101,22 +97,25 @@ abstract class Controller {
 	}
 
     public function renderTemplate($template) {
-		// normal request
-		foreach ($this->var_stack as $var => $val) {
-			$this->smarty->assign($var, $val);
-		}
 		if ($this->smarty->templateExists($template.".tpl")) {
+            $this->assign("base_href", $this->request->getBaseHref());
+            $this->assign("current_url", $this->request->getUrl());
+            $this->assign("messages", FlashMessenger::getMessages());
+
+            foreach ($this->var_stack as $var => $val) {
+                $this->smarty->assign($var, $val);
+            }
 			return $this->smarty->fetch($template.".tpl");
-		} else {
-			throw new CoreException(
-				"Template Not Found",
-				CoreException::TPL_NOT_FOUND,
-				array(
-					"paths" => $this->smarty->template_dir,
-					"tpl" => $template,
-				)
-			);
 		}
+
+        throw new CoreException(
+            "Template Not Found",
+            CoreException::TPL_NOT_FOUND,
+            array(
+                "paths" => $this->smarty->template_dir,
+                "tpl" => $template,
+            )
+        );
     }
 	
 	public function renderStatic($template) {

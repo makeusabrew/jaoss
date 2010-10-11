@@ -89,6 +89,11 @@ class Request {
     }
 	
 	public function disableAjax() {
-		$this->ajax = FALSE;
+		$this->ajax = false;
 	}
+
+    public function doRedirect($url, $code) {
+        header("Location: {$url}", true, $code);
+        return true;
+    }
 }
