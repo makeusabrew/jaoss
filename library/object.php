@@ -210,6 +210,11 @@ abstract class Object {
                 $settings["method"] = "find";
                 $settings["field"] = $field;
             }
+            if ($func != "required" && $value == "") {
+                // don't try and validate empty non-requireds
+                Log::debug("not validating empty value against [".$func."]");
+                continue;
+            }
             Log::debug("Validate::$func($value) [$field]");
             $result = Validate::$func($value, $settings);
             if ($result !== true) {
