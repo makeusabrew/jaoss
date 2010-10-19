@@ -41,6 +41,13 @@ Settings::setFromArray(array(
     ),
 ));
 
+// log some debug straight away to check the file is there
+try {
+    Log::debug("Bootstrapping test process");
+} catch (CoreException $e) {
+    die("Could not initialise library test logfile [../../library.log]. Please ensure it exists.\n");
+}
+
 $library_settings = "../../library.ini";
 if (file_exists($library_settings) && is_readable($library_settings)) {
     Settings::loadFromFile($library_settings);
