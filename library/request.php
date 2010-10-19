@@ -5,10 +5,14 @@ class Request {
 	private $query_string = NULL;
     private $method = NULL;
     private $base_href = NULL;
-    private $ajax = NULL;
+    private $ajax = false;
 	private $referer = NULL;
 	
 	public function __construct() {
+        if (php_sapi_name() == "cli") {
+            // abadon all hope... for now @todo improve
+            return;
+        }
 		$this->folder_base = substr($_SERVER["PHP_SELF"], 0, strpos($_SERVER["PHP_SELF"], "index.php"));
         $this->base_href = "http://".$_SERVER["SERVER_NAME"].$this->folder_base;
 		$this->url = substr($_SERVER["REQUEST_URI"], strlen($this->folder_base)-1);
