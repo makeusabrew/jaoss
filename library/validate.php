@@ -35,7 +35,7 @@ class Validate {
     }
 
     public static function date($value, $settings = null) {
-        return preg_match("#(\d{2})/(\d{2})/(\d{2,4})#", $value) > 0;
+        return preg_match("#^\d{2}/\d{2}/(\d{2}|\d{4})$#", $value) > 0;
     }
     
     public static function getMessage($function, $settings, $value = null) {

@@ -22,11 +22,10 @@ class Utils {
 		
 		// catch all
 		$days = floor($elapsed / 86400);
-		$str = $days." day";
-		if ($days != 1) {
-			$str .= "s";
+		if ($days == 1) {
+            return "Yesterday";
 		}
-		$str .= " ago";
+		$str = $days." days ago";
 		return $str;
 	}
 	

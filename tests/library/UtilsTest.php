@@ -1,6 +1,4 @@
 <?php
-require_once("utils.php");
-
 class UtilsTest extends PHPUnit_Framework_TestCase {
 
 	public function testFuzzyTimeWithIdenticalTimestamps() {
@@ -22,4 +20,13 @@ class UtilsTest extends PHPUnit_Framework_TestCase {
 		$to = $from + 30;
 		$this->assertEquals("About a minute ago", Utils::fuzzyTime($from, $to));
 	}
+
+    public function testFuzzyTimeWithLargeGaps() {
+        $this->assertEquals("25 days ago", Utils::fuzzyTime(date("Y-m-d H:i:s", strtotime("-25 days"))));
+        $this->assertEquals("Yesterday", Utils::fuzzyTime(date("Y-m-d H:i:s", strtotime("-1 day"))));
+    }
+
+    public function testFromCamelCase() {
+        $this->assertEquals("camel_case", Utils::fromCamelCase("CamelCase"));
+    }
 }
