@@ -3,7 +3,7 @@
 class ErrorHandler {
 	private $smarty;
 	public function __construct() {
-		require_once("library/Smarty-3.0rc1/libs/Smarty.class.php");
+		require_once("library/Smarty-3.0rc4/libs/Smarty.class.php");
 		
 		$this->smarty = new Smarty();		
 		$this->smarty->template_dir	= array("library/errors");
