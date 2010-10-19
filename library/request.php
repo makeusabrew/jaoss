@@ -20,12 +20,8 @@ class Request {
 			$this->query_string = "";
 		}
         $this->method = isset($_SERVER["REQUEST_METHOD"]) ? $_SERVER["REQUEST_METHOD"] : NULL;
-        $this->ajax = isset($_SERVER["HTTP_X_REQUESTED_WITH"]) ? TRUE : FALSE;
-		if(isset($_SERVER['HTTP_REFERER'])){
-			$this->referer = $_SERVER['HTTP_REFERER'];
-		} else {
-			$this->referer = "REFERRER NOT SET";	
-		}
+        $this->ajax = isset($_SERVER["HTTP_X_REQUESTED_WITH"]) ? true : false;
+        $this->referer = isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : NULL;
 	}
 	
 	public function overrideUrl($url) {
