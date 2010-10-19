@@ -25,4 +25,8 @@ class Settings {
 	public static function getSettings($section=NULL) {
 		return $section ? self::$settings[$section] : self::$settings;
 	}
+
+    public static function setFromArray($settings) {
+        self::$settings = $settings;
+    }
 }

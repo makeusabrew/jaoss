@@ -1,8 +1,4 @@
 <?php
-require("core_exception.php");
-require("path.php");
-require("path_manager.php");
-
 class PathManagerTest extends PHPUnit_Framework_TestCase {
 
 	public function testPathsStartsEmptyAndIsArray() {
