@@ -76,8 +76,7 @@ abstract class Controller {
     	}
     	if ($this->request->isAjax()) {
     		$this->assign("redirect", $url);
-            $this->response->setBody($this->renderJson());
-            return true;
+            return $this->renderJson();
     	} else {
             $this->response->setRedirect($url, 303);
             return true;
@@ -86,11 +85,9 @@ abstract class Controller {
 	
 	public function render($template) {
 		if ($this->request->isAjax()) {
-			$this->response->setBody($this->renderJson());
-            return true;
+            return $this->renderJson();
 		} else {
-            $this->response->setBody($this->renderTemplate($template));
-            return true;
+            return $this->renderTemplate($template);
         }
 	}
 	
@@ -101,7 +98,8 @@ abstract class Controller {
 		foreach ($this->var_stack as $var => $val) {
 			$data[$var] = $val;
 		}
-		return json_encode($data);
+		$this->response->setBody(json_encode($data));
+        return true;
 	}
 
     public function renderTemplate($template) {
@@ -113,7 +111,8 @@ abstract class Controller {
             foreach ($this->var_stack as $var => $val) {
                 $this->smarty->assign($var, $val);
             }
-			return $this->smarty->fetch($template.".tpl");
+			$this->response->setBody($this->smarty->fetch($template.".tpl"));
+            return true;
 		}
 
         throw new CoreException(
