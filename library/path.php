@@ -1,7 +1,7 @@
 <?php
 class Path {
 	public function run($request = NULL) {
-		$path = $this->location."/controllers/".strtolower($this->controller).".php";
+		$path = PROJECT_ROOT.$this->location."/controllers/".strtolower($this->controller).".php";
 		if (!file_exists($path)) {
 			throw new CoreException("Controller file does not exist");
 		}
@@ -15,16 +15,16 @@ class Path {
 			if (is_callable(array($controller, $this->action))) {
 				$controller->setPath($this);
 				$init_val = $controller->init();
-				if ($init_val !== TRUE) {
-					Log::debug("[".$this->controller."Controller->init() did not return true!", "-v");
-					return $init_val;
+				if ($init_val !== "OK") {
+					Log::debug($this->controller."Controller->init() did not return status [OK]!", "-v");
+                    return $controller->getResponse();
 				}
 				Log::debug("running [".$this->controller."Controller->".$this->action."]");
-				$return = call_user_func(array($controller, $this->action));
-                if ($return === NULL) {
-                    return $controller->render($this->action);
+				$result = call_user_func(array($controller, $this->action));
+                if ($result === NULL) {
+                    $controller->render($this->action);
                 }
-                return $return;
+                return $controller->getResponse();
 			} else {
 				throw new CoreException("Controller action is not callable");
 			}

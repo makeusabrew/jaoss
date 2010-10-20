@@ -27,7 +27,7 @@ class Table {
 		}
 		$apps = AppManager::getAppPaths();
 		foreach ($apps as $app) {
-			$path = "apps/{$app}/models/".Utils::fromCamelCase($model).".php";
+			$path = PROJECT_ROOT."apps/{$app}/models/".Utils::fromCamelCase($model).".php";
 			if (file_exists($path)) {
 				include($path);
 				return self::factory($model);

@@ -1,25 +1,27 @@
 <?php
 class Request {
-	private $folder_base = NULL;
-	private $url = NULL;
-	private $query_string = NULL;
-    private $method = NULL;
-    private $base_href = NULL;
-    private $ajax = false;
-	private $referer = NULL;
+	protected $folder_base = NULL;
+	protected $url = NULL;
+	protected $query_string = NULL;
+    protected $method = NULL;
+    protected $base_href = NULL;
+    protected $ajax = false;
+	protected $referer = NULL;
+    protected $sapi = NULL;
 	
 	public function __construct() {
-        if (php_sapi_name() == "cli") {
+        $this->sapi = php_sapi_name();
+        if ($this->sapi == "cli") {
             // abadon all hope... for now @todo improve
             return;
         }
 		$this->folder_base = substr($_SERVER["PHP_SELF"], 0, strpos($_SERVER["PHP_SELF"], "index.php"));
         $this->base_href = "http://".$_SERVER["SERVER_NAME"].$this->folder_base;
-		$this->url = substr($_SERVER["REQUEST_URI"], strlen($this->folder_base)-1);
+		$this->setUrl(substr($_SERVER["REQUEST_URI"], strlen($this->folder_base)-1));
 		$queryString = strrpos($this->url, "?");
 		if ($queryString !== FALSE) {
 			$this->query_string = substr($this->url, $queryString+1);
-			$this->url = substr($this->url, 0, $queryString);
+			$this->setUrl(substr($this->url, 0, $queryString));
 		} else {
 			$this->query_string = "";
 		}
@@ -27,18 +29,27 @@ class Request {
         $this->ajax = isset($_SERVER["HTTP_X_REQUESTED_WITH"]) ? true : false;
         $this->referer = isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : NULL;
 	}
-	
-	public function overrideUrl($url) {
+
+	public function setUrl($url) {
 		$this->url = $url;
 	}
 	
-	public function dispatch() {
+	public function dispatch($url = null) {
+        if ($url !== null) {
+            $this->setUrl($url);
+        }
 		if ($this->url === NULL) {
 			throw new CoreException("No URL to dispatch");
 		}
 		$path = PathManager::matchUrl($this->url);
-		return $path->run($this);
+        
+        $this->response = $path->run($this);
+        return $this->response;
 	}
+
+    public function getResponse() {
+        return $this->response;
+    }
 
     public function getMethod() {
         return $this->method;
@@ -101,9 +112,4 @@ class Request {
 	public function disableAjax() {
 		$this->ajax = false;
 	}
-
-    public function doRedirect($url, $code) {
-        header("Location: {$url}", true, $code);
-        return true;
-    }
 }

@@ -17,6 +17,7 @@ class Settings {
 			list($section, $key) = explode(".", $section);
 		}
 		if (!isset(self::$settings[$section][$key])) {
+            Log::debug("setting [$section] [$key] does not exist");
 			throw new CoreException("Setting not found");
 		}
 		return self::$settings[$section][$key];

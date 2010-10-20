@@ -39,7 +39,7 @@ class App {
 			return FALSE;
 		}
 		
-        $path = "apps/".$this->folder."/paths.php";
+        $path = PROJECT_ROOT."apps/".$this->folder."/paths.php";
         Log::debug("Looking for [".$path."]");
 		if (file_exists($path)) {
 			include($path);

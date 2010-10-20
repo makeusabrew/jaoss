@@ -5,6 +5,7 @@ abstract class Controller {
 	protected $adminUser = NULL;
 	protected $session = NULL;
     protected $request = NULL;
+    protected $response = NULL;
     
     protected $var_stack = array();
 
@@ -18,15 +19,16 @@ abstract class Controller {
 		$this->smarty = new Smarty();
 		
 		$apps = AppManager::getAppPaths();
-		$tpl_dirs = array("apps/");
+		$tpl_dirs = array(PROJECT_ROOT."apps/");
 		foreach ($apps as $app) {
-			$tpl_dirs[] = "apps/{$app}/views/";
+			$tpl_dirs[] = PROJECT_ROOT."apps/{$app}/views/";
 		}
 		
 		$this->smarty->template_dir	= $tpl_dirs;
 		$this->smarty->compile_dir = Settings::getValue("smarty", "compile_dir");
 
         $this->request = $request;
+        $this->response = new JaossResponse();
 		
         $this->session = Session::getInstance();
 	}
@@ -42,7 +44,7 @@ abstract class Controller {
 		}
 		// can force a path if required
 		if ($app_path !== NULL) {
-			$path = "apps/{$app_path}/controllers/".strtolower($controller).".php";
+			$path = PROJECT_ROOT."apps/{$app_path}/controllers/".strtolower($controller).".php";
 			if (file_exists($path)) {
 				include($path);
 				return self::factory($controller);
@@ -50,7 +52,7 @@ abstract class Controller {
 		}
 		$apps = AppManager::getAppPaths();
 		foreach ($apps as $app) {
-			$path = "apps/{$app}/controllers/".strtolower($controller).".php";
+			$path = PROJECT_ROOT."apps/{$app}/controllers/".strtolower($controller).".php";
 			if (file_exists($path)) {
 				include($path);
 				return self::factory($controller);
@@ -74,16 +76,22 @@ abstract class Controller {
     	}
     	if ($this->request->isAjax()) {
     		$this->assign("redirect", $url);
-            return $this->renderJson();
-    	}
-        return $this->request->doRedirect($url, 303);
+            $this->response->setBody($this->renderJson());
+            return true;
+    	} else {
+            $this->response->setRedirect($url, 303);
+            return true;
+        }
     }
 	
 	public function render($template) {
 		if ($this->request->isAjax()) {
-			return $this->renderJson();
-		}
-        return $this->renderTemplate($template);
+			$this->response->setBody($this->renderJson());
+            return true;
+		} else {
+            $this->response->setBody($this->renderTemplate($template));
+            return true;
+        }
 	}
 	
 	public function renderJson() {
@@ -145,5 +153,14 @@ abstract class Controller {
 
     public function getFlash($flash) {
        return $this->session->getFlash($flash);
+    }
+    
+    public function getResponse() {
+        $this->response->setPath($this->path);
+        return $this->response;
+    }
+    
+    public function setResponseCode($code) {
+        $this->response->setResponseCode($code);
     }
 }

@@ -3,7 +3,7 @@ class AppManager {
 	private static $installed_apps = array();
 	
 	public static function loadAppFromPath($folder) {
-		if (is_dir("apps/".$folder)) {			
+		if (is_dir(PROJECT_ROOT."apps/".$folder)) {			
 			$app = new App($folder);
 			$app->loadPaths();
 			self::$installed_apps[] = $app;			
