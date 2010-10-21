@@ -1,5 +1,12 @@
 <?php
 class Path {
+    protected $pattern;
+    protected $location;
+    protected $app;
+    protected $controller;
+    protected $action;
+    protected $matches;
+
 	public function run($request = NULL) {
 		$path = PROJECT_ROOT.$this->location."/controllers/".strtolower($this->controller).".php";
 		if (!file_exists($path)) {
@@ -40,4 +47,48 @@ class Path {
 			);
 		}
 	}
+
+    public function setPattern($pattern) {
+        $this->pattern = $pattern;
+    }
+
+    public function setLocation($location) { 
+        $this->location = $location;
+    }
+
+    public function setAction($action) {
+        $this->action = $action;
+    }
+
+    public function setController($controller) {
+        $this->controller = $controller;
+    }
+
+    public function setApp($app) {
+        $this->app = $app;
+    }
+
+    public function getPattern() {
+        return $this->pattern;
+    }
+
+    public function getLocation() {
+        return $this->location;
+    }
+
+    public function getAction() {
+        return $this->action;
+    }
+
+    public function getController() {
+        return $this->controller;
+    }
+
+    public function getApp() {
+        return $this->app;
+    }
+
+    public function setMatches($matches) {
+        $this->matches = $matches;
+    }
 }

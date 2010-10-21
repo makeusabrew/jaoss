@@ -55,4 +55,8 @@ class JaossResponse {
     public function setPath($path) {
         $this->path = $path;
     }
+
+    public function getPath() {
+        return $this->path;
+    }
 }

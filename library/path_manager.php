@@ -17,12 +17,13 @@ class PathManager {
 		}
 		
 		$path = new Path();
-		$path->pattern = $pattern;
-		$path->location = "apps/".$location;
-		$path->controller = $controller;
-		$path->action = $action;
+		$path->setPattern($pattern);
+		$path->setLocation("apps/".$location);
+        $path->setApp($location);
+		$path->setController($controller);
+		$path->setAction($action);
 		self::$paths[] = $path;
-		Log::verbose("Loading path: pattern [".$path->pattern."] location [".$path->location."] controller [".$path->controller."] action [".$path->action."]");
+		Log::verbose("Loading path: pattern [".$path->getPattern()."] location [".$path->getLocation()."] controller [".$path->getController()."] action [".$path->getAction()."]");
 	}
 	
 	public static function loadPaths() {
@@ -82,15 +83,17 @@ class PathManager {
 		Log::verbose("Looking for match against URL [".$url."]");
 		foreach (self::$paths as $path) {
 			// check for simple(r) routes
-			if (substr($path->pattern, 0, 1) != "^" && substr($path->pattern, -1) != "$") {
-				$path->pattern = "^{$path->pattern}$";
+            $pattern = $path->getPattern();
+			if (substr($pattern, 0, 1) != "^" && substr($pattern, -1) != "$") {
+				$path->setPattern("^{$pattern}$");
+                $pattern = $path->getPattern();
 			}
-			if (preg_match("@{$path->pattern}@", $url, $matches)) {
-				Log::debug("matched pattern [".$path->pattern."] against URL [".$url."]");
-				$path->matches = $matches;
+			if (preg_match("@{$pattern}@", $url, $matches)) {
+				Log::debug("matched pattern [".$pattern."] against URL [".$url."]");
+				$path->setMatches($matches);
 				return $path;
 			}
-			Log::verbose("Discarding path pattern [".$path->pattern."]");
+			Log::verbose("Discarding path pattern [".$pattern."]");
 		}
 		// no match :(
 		throw new CoreException(
