@@ -1,6 +1,7 @@
 <?php
 //require_once 'PHPUnit/Framework.php';
 
+define("PROJECT_ROOT", realpath(__DIR__."/../")."/");
 set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__."/../library/");
 
 ini_set("display_errors", 1);

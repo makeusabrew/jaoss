@@ -91,4 +91,12 @@ class Path {
     public function setMatches($matches) {
         $this->matches = $matches;
     }
+
+    public function hasMatch($match) {
+        return isset($this->matches[$match]);
+    }
+
+    public function getMatch($match) {
+        return $this->matches[$match];
+    }
 }

@@ -10,7 +10,7 @@ abstract class Controller {
     protected $var_stack = array();
 
     public function init() {
-		return TRUE;
+		return "OK";
     }
 
 	public function __construct($request = NULL) {
@@ -61,10 +61,10 @@ abstract class Controller {
 	}
 	
 	public function getMatch($match, $default=NULL) {
-		if (!isset($this->path->matches[$match])) {
+		if (!$this->path->hasMatch($match)) {
 			return $default;
 		}
-		return $this->path->matches[$match];
+		return $this->path->getMatch($match);
 	}
 
     public function redirect($url, $message = NULL) {
