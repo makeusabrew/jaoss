@@ -25,4 +25,8 @@ class AppManager {
 	public static function isAppInstalled($app) {
 		return in_array($app, self::$installed_apps);
 	}
+
+    public static function reset() {
+        self::$installed_apps = array();
+    }
 }

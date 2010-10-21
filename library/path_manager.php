@@ -69,7 +69,7 @@ class PathManager {
         throw new CoreException("Not Implemented");
     }
 
-	public static function resetPaths() {
+	public static function reset() {
 		self::$paths = array();
 	}
 	

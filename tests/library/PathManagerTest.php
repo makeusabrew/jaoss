@@ -1,6 +1,10 @@
 <?php
 class PathManagerTest extends PHPUnit_Framework_TestCase {
 
+    public function setUp() {
+        PathManager::reset();
+    }
+
 	public function testPathsStartsEmptyAndIsArray() {
 		$paths = PathManager::getPaths();
 		$this->assertType("array", $paths);
@@ -8,7 +12,6 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	public function testPathsCountIsZeroAfterPathReset() {
-		PathManager::resetPaths();
 		$paths = PathManager::getPaths();
 		$this->assertType("array", $paths);
 		$this->assertEquals(0, count($paths));
@@ -36,7 +39,6 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
 	
 	public function testPathsCountIsOneAfterPathAddedViaLoadPaths() {
 		$this->setExpectedException("CoreException");
-		PathManager::resetPaths();
 		$paths = PathManager::getPaths();
 		$this->assertEquals(0, count($paths));
 		

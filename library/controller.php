@@ -14,7 +14,6 @@ abstract class Controller {
     }
 
 	public function __construct($request = NULL) {
-		require_once("library/Smarty-3.0rc4/libs/Smarty.class.php");
 		
 		$this->smarty = new Smarty();
 		

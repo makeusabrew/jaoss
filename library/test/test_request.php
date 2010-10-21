@@ -1,5 +1,5 @@
 <?php
-class TestRequest extends Request {
+class TestRequest extends JaossRequest {
     //@todo we could extend this request class instead and define these (and other) methods there?
     public function setParams($params = array()) {
         if (!$this->sapi == "cli") {

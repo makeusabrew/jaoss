@@ -5,6 +5,7 @@ class Email {
     protected $subject;
     protected $from;
     protected $body;
+    protected $smarty;
 
     public function setTo($to) {
         $this->to = $to;
@@ -75,5 +76,39 @@ class Email {
             return $str;
         }
         return $this->to;
+    }
+
+    public function setBodyFromTemplate($template, $params = array()) {
+        if ($this->smarty === null) {
+            $this->smarty = new Smarty();
+            
+            $apps = AppManager::getAppPaths();
+            $tpl_dirs = array(PROJECT_ROOT."apps/");
+            foreach ($apps as $app) {
+                $tpl_dirs[] = PROJECT_ROOT."apps/{$app}/views/";
+            }
+            
+            $this->smarty->template_dir	= $tpl_dirs;
+            $this->smarty->compile_dir = Settings::getValue("smarty", "compile_dir");
+        }
+		if ($this->smarty->templateExists($template.".tpl")) {
+            $this->smarty->assign("base_href", JaossRequest::getInstance()->getBaseHref());
+            $this->smarty->assign("current_url", JaossRequest::getInstance()->getUrl());
+            foreach ($params as $var => $val) {
+                $this->smarty->assign($var, $val);
+            }
+			$this->setBody($this->smarty->fetch($template.".tpl"));
+            return true;
+		}
+
+        throw new CoreException(
+            "Template Not Found",
+            CoreException::TPL_NOT_FOUND,
+            array(
+                "paths" => $this->smarty->template_dir,
+                "tpl" => $template,
+            )
+        );
+        
     }
 }

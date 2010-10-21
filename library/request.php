@@ -1,13 +1,21 @@
 <?php
-class Request {
-	protected $folder_base = NULL;
-	protected $url = NULL;
-	protected $query_string = NULL;
+class JaossRequest {
+    protected $folder_base = NULL;
+    protected $url = NULL;
+    protected $query_string = NULL;
     protected $method = NULL;
     protected $base_href = NULL;
     protected $ajax = false;
-	protected $referer = NULL;
+    protected $referer = NULL;
     protected $sapi = NULL;
+    private static $instance = NULL;
+
+    public static function getInstance() {
+        if (self::$instance === NULL) {
+            self::$instance = new JaossRequest();
+        }
+        return self::$instance;
+    }
 	
 	public function __construct() {
         $this->sapi = php_sapi_name();

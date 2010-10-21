@@ -4,11 +4,11 @@
 set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__."/../library/");
 
 ini_set("display_errors", 1);
-ini_set("html_errors", "On");
 error_reporting(E_ALL ^ E_STRICT);
 
 date_default_timezone_set("Europe/London");
 
+include("Smarty-3.0rc4/libs/Smarty.class.php");
 include("core_exception.php");
 include("email.php");
 include("file.php");
@@ -50,5 +50,6 @@ try {
 
 $library_settings = "../../library.ini";
 if (file_exists($library_settings) && is_readable($library_settings)) {
+    Log::debug("loading in additional settings from library.ini");
     Settings::loadFromFile($library_settings);
 }
