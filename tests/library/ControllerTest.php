@@ -1,11 +1,7 @@
 <?php
 class ControllerTest extends PHPUnit_Framework_TestCase {
     public function setUp() {
-        // we have to mock here, 
-        // 1) because Controller is abstract
-        // 2) because we need to explicitly disable the controller's __construct (which throws exceptions etc)
-        // maybe look at controller and taking most of the initialisation outside __construct() so we can ,ock it properly
-        $this->stub = $this->getMock("Controller", array(), array(), "MockController", false);
+        $this->stub = new ConcreteController();
     }
 
     public function testGetMatch() {
@@ -16,4 +12,13 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
         $this->assertNull($this->stub->getMatch("fooBar"));
     }
 
+}
+
+// I'd much rather use a mock here but for some reason code coverage doesn't
+// seem to work properly. Look at fixing this later.
+class ConcreteController extends Controller {
+    public function __construct() {
+        // don't want abstract controller construct firing cos it throws an exception
+        // could look at moving stuff out of construct?
+    }
 }
