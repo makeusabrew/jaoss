@@ -1,5 +1,5 @@
 <?php
-Settings::loadFromFile(PROJECT_ROOT."settings/build.ini");
+Settings::loadStandardSettings();
 
 if (!is_writable(Settings::getValue("smarty", "compile_dir"))) {
 	throw new CoreException(

@@ -59,4 +59,8 @@ class JaossResponse {
     public function getPath() {
         return $this->path;
     }
+    
+    public function getRedirectUrl() {
+        return $this->redirectUrl;
+    }
 }
