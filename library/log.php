@@ -14,7 +14,10 @@ class Log {
 		if (!isset(self::$handle[$handler])) {
             $path = Settings::getValue("log", $handler);
             if (!file_exists($path)) {
-                throw new CoreException("Logfile does not exist", CoreException::LOG_FILE_ERROR, array("path" => $path));
+                //@todo obviously this is rancid. improve - move to utils maybe?
+                $file = fopen($path, "w");
+                fclose($file);
+                chmod($path, 0777);
             }
             if (!is_writable($path)) {
                 throw new CoreException("Logfile is not writable", CoreException::LOG_FILE_ERROR, array("path" => $path));

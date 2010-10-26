@@ -8,7 +8,14 @@ class Settings {
 		if (!is_readable($file)) {
 			throw new CoreException("File is not readable");
 		}
-		self::$settings = array_merge(self::$settings, parse_ini_file($file, TRUE));
+        $newSettings = parse_ini_file($file, true);
+        foreach($newSettings as $group => $settings) {
+            if (isset(self::$settings[$group])) {
+                self::$settings[$group] = array_merge(self::$settings[$group], $settings);
+            } else {
+                self::$settings[$group] = $settings;
+            }
+        }
 	}	
 
     public static function loadStandardSettings() {
@@ -18,9 +25,11 @@ class Settings {
             "test" => "settings/test.ini",
             "build" => "settings/build.ini",
         );
+        $loadStr = "Loaded ";
         foreach ($files as $mode => $file) {
             try {
                 self::loadFromFile(PROJECT_ROOT.$file);
+                $loadStr .= "{$mode},";
             } catch (CoreException $e) {
                 // don't worry about it, could log
             }
@@ -28,6 +37,9 @@ class Settings {
                 break;  // we're done
             }
         }
+
+        $loadStr = substr($loadStr, 0, -1)." settings";
+        Log::debug($loadStr);
     }
 	
 	public static function getValue($section, $key=NULL) {
