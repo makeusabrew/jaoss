@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>jaoss</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <!--[if IE]><script src="excanvas.compressed.js"></script><![endif]-->
+    <script src="RGraph.common.js" ></script>
+    <script src="RGraph.bar.js" ></script>
+    <script src="RGraph.scatter.js" ></script>
+  </head>
+
+  <body>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr><td class="title">jaoss</td></tr>
+      <tr><td><div align="center"><p><a href="jaoss.html">Back to Code Coverage report</a></p></div></td></tr>
+      <tr><td class="ruler"><img src="glass.png" width="3" height="3" alt=""></td></tr>
+    </table>
+
+    <br />
+
+    <center>
+      <table width="90%" cellpadding="2" cellspacing="1" border="0">
+        <tr>
+          <td valign="top">
+            <h2>Class Coverage Distribution</h2>
+            <canvas id="classCoverageDistribution" width="475" height="200"></canvas>
+            <script>
+            var ccd = new RGraph.Bar('classCoverageDistribution', [6,1,3,1,5,1,5,3,1,3,2,4]);
+            ccd.Set('chart.background.barcolor1', 'white');
+            ccd.Set('chart.background.barcolor2', 'white');
+            ccd.Set('chart.colors', ['blue']);
+            ccd.Set('chart.shadow', true);
+            ccd.Set('chart.shadow.offsetx', 3);
+            ccd.Set('chart.shadow.offsety', 3);
+            ccd.Set('chart.labels', ['0%','0-10%','10-20%','20-30%','30-40%','40-50%','50-60%','60-70%','70-80%','80-90%','90-100%','100%']);
+            ccd.Set('chart.text.size', 5);
+            ccd.Draw();
+            </script>
+          </td>
+
+          <td valign="top">
+            <h2>Class Complexity</h2>
+            <canvas id="classComplexity" width="475" height="200"></canvas>
+            <script>
+            var cc = new RGraph.Scatter('classComplexity', [[33.812949640288,56,"blue","Smarty"],[100,0,"blue","SmartyException"],[100,0,"blue","SmartyCompilerException"],[12.574850299401,77,"blue","Smarty_Internal_Data"],[0,5,"blue","Smarty_Data"],[80,2,"blue","Smarty_Variable"],[66.666666666667,2,"blue","Undefined_Smarty_Variable"],[58.139534883721,17,"blue","Smarty_Internal_Resource_File"],[86.363636363636,7,"blue","Smarty_Internal_Template"],[100,0,"blue","Smarty_Template"],[5,10,"blue","App"],[33.333333333333,7,"blue","AppManager"],[92.307692307692,3,"blue","Controller"],[63.636363636364,8,"blue","CoreException"],[100,2,"blue","Db"],[0,19,"blue","Email"],[0,2,"blue","ErrorHandler"],[0,13,"blue","File"],[30,3,"blue","FlashMessenger"],[47.058823529412,7,"blue","Log"],[30,4,"blue","Object"],[56.25,20,"blue","Path"],[20.89552238806,24,"blue","PathManager"],[37.5,30,"blue","JaossRequest"],[55.555555555556,12,"blue","JaossResponse"],[57.5,15,"blue","Session"],[80,14,"blue","SessionHandler"],[0,9,"blue","DefaultSessionHandler"],[92.307692307692,7,"blue","TestSessionHandler"],[17.857142857143,13,"blue","Settings"],[60,6,"blue","Table"],[54.166666666667,7,"blue","PHPUnitTestController"],[73.076923076923,12,"blue","TestRequest"],[10.344827586207,10,"blue","Utils"],[0,7,"blue","Validate"]]);
+            cc.Set('chart.xmax', 100);
+            cc.Set('chart.background.barcolor1', 'white');
+            cc.Set('chart.background.barcolor2', 'white');
+            cc.Set('chart.tickmarks', 'plus');
+            cc.Set('chart.ticksize', 5);
+            cc.Set('chart.text.size', 5);
+            cc.Set('chart.ylabels', false);
+            cc.Draw();
+            </script>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <h2>Top Project Risks</h2>
+            <ul>
+              <li><a href="jaoss_library_log.php.html#2">Log</a> (14)</li>
+              <li><a href="jaoss_library_test_phpunit_test_controller.php.html#3">PHPUnitTestController</a> (11)</li>
+              <li><a href="jaoss_library_core_exception.php.html#2">CoreException</a> (11)</li>
+              <li><a href="jaoss_library_object.php.html#3">Object</a> (9)</li>
+              <li><a href="jaoss_library_table.php.html#3">Table</a> (8)</li>
+              <li><a href="jaoss_library_Smarty-3.0rc4_libs_sysplugins_smarty_internal_template.php.html#16">Smarty_Internal_Template</a> (7)</li>
+              <li><a href="jaoss_library_session.php.html#131">TestSessionHandler</a> (7)</li>
+              <li><a href="jaoss_library_flash_messenger.php.html#2">FlashMessenger</a> (6)</li>
+              <li><a href="jaoss_library_controller.php.html#2">Controller</a> (3)</li>
+              <li><a href="jaoss_library_Smarty-3.0rc4_libs_sysplugins_smarty_internal_data.php.html#449">Undefined_Smarty_Variable</a> (2)</li>
+
+            </ul>
+          </td>
+
+          <td valign="top">
+            <h2>Least Tested Methods</h2>
+            <ul>
+              <li><a href="jaoss_library_request.php.html#62">JaossRequest::getMethod</a> (0%)</li>
+              <li><a href="jaoss_library_request.php.html#78">JaossRequest::getQueryString</a> (0%)</li>
+              <li><a href="jaoss_library_request.php.html#13">JaossRequest::getInstance</a> (0%)</li>
+              <li><a href="jaoss_library_path_manager.php.html#73">PathManager::reset</a> (0%)</li>
+              <li><a href="jaoss_library_path_manager.php.html#29">PathManager::loadPaths</a> (0%)</li>
+              <li><a href="jaoss_library_path_manager.php.html#55">PathManager::loadPathsFromController</a> (0%)</li>
+              <li><a href="jaoss_library_request.php.html#82">JaossRequest::isGet</a> (0%)</li>
+              <li><a href="jaoss_library_request.php.html#90">JaossRequest::getVar</a> (0%)</li>
+              <li><a href="jaoss_library_request.php.html#107">JaossRequest::getFile</a> (0%)</li>
+              <li><a href="jaoss_library_request.php.html#111">JaossRequest::processFile</a> (0%)</li>
+
+            </ul>
+          </td>
+        </tr>
+      </table>
+    </center>
+
+    <br />
+
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr><td class="ruler"><img src="glass.png" width="3" height="3" alt=""></td></tr>
+      <tr><td class="versionInfo">Generated by <a href="http://github.com/sebastianbergmann/php-code-coverage" target="_top">PHP_CodeCoverage 1.0.0</a> using <a href="http://www.php.net/" target="_top">PHP 5.3.2</a> and PHPUnit 3.5.0 at Sun Oct 24 20:02:49 BST 2010.</td></tr>
+    </table>
+
+    <br/>
+  </body>
+</html>
