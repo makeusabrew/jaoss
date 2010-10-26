@@ -13,8 +13,8 @@ class Db extends PDO {
 	public static function getInstance() {
 		if (self::$instance === NULL) {
 
-            Log::debug("Instantiating db");
             $dsn = "mysql:dbname=".Settings::getValue("db", "dbname").";host=".Settings::getValue("db", "host");
+            Log::debug("Instantiating db dsn [".$dsn."] user [".Settings::getValue("db", "user")."]");
 			self::$instance = new Db(
                 $dsn,
 				Settings::getValue("db", "user"),
