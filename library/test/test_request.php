@@ -4,7 +4,7 @@ class TestRequest extends JaossRequest {
     protected $getFields = array();
 
     public function setParams($params = array()) {
-        if (!$this->sapi == "cli") {
+        if ($this->sapi != "cli") {
             Log::debug("attempting to set request params via non CLI server API!");
             return false;
         }

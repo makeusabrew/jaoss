@@ -37,4 +37,18 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
         $body = $this->request->getResponse()->getBody();
         $this->assertTrue((strpos($body, $contents) !== false));
     }
+
+    public function assertRedirect($isRedirect) {
+        $this->assertEquals($isRedirect, $this->request->getResponse()->isRedirect());
+    }
+
+    public function assertRedirectUrl($url) {
+        $this->assertEquals($url, $this->request->getResponse()->getRedirectUrl());
+    }
+    
+    public function assertResponseHasJsonVar($var, $val) {
+        $data = json_decode($this->request->getResponse()->getBody());
+        $this->assertTrue(isset($data->$var));
+        $this->assertEquals($val, $data->$var);
+    }
 }
