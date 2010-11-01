@@ -1,6 +1,9 @@
 <?php
 class Settings {
-	private static $mode = "build";
+    private static $mode = null;
+    private static $modes = array(
+        "live", "demo", "test", "build",
+    );
 	
 	private static $settings = array();
 	
@@ -19,16 +22,10 @@ class Settings {
 	}	
 
     public static function loadStandardSettings() {
-        $files = array(
-            "live" => "settings/live.ini",
-            "demo" => "settings/demo.ini",
-            "test" => "settings/test.ini",
-            "build" => "settings/build.ini",
-        );
         $loadStr = "Loaded ";
-        foreach ($files as $mode => $file) {
+        foreach (self::$modes as $mode) {
             try {
-                self::loadFromFile(PROJECT_ROOT.$file);
+                self::loadFromFile(PROJECT_ROOT."settings/".$mode.".ini");
                 $loadStr .= "{$mode},";
             } catch (CoreException $e) {
                 // don't worry about it, could log
@@ -63,6 +60,24 @@ class Settings {
     }
 
     public static function setMode($mode) {
+        if (!in_array($mode, self::$modes)) {
+            throw new CoreException("Mode is not supported",
+                CoreException::INVALID_MODE,
+                array(
+                    "mode" => $mode,
+                    "modes" => self::$modes,
+                )
+            );
+        }
         self::$mode = $mode;
+    }
+
+    public static function getMode() {
+        return self::$mode;
+    }
+    
+    public static function reset() {
+        self::$settings = array();
+        self::$mode = null;
     }
 }
