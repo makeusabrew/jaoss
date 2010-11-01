@@ -78,6 +78,11 @@ class Email {
         return $this->to;
     }
 
+    public function setHtmlHeaders() {
+        $this->setHeader("MIME-Version", "1.0");
+        $this->setHeader("Content-type", "text/html; charset=UTF-8");
+    }
+
     public function setBodyFromTemplate($template, $params = array()) {
         if ($this->smarty === null) {
             $this->smarty = new Smarty();
