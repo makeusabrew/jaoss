@@ -2,7 +2,7 @@
 class Settings {
     private static $mode = null;
     private static $modes = array(
-        "live", "demo", "test", "build",
+        "live", "demo", "build", "test"
     );
 	
 	private static $settings = array();

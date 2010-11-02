@@ -84,6 +84,13 @@ abstract class SessionHandler {
     abstract public function _destroy();
 
     public static function factory($mode) {
+        if ($mode == "autodetect") {
+            if (php_sapi_name() == "cli") {
+                $mode = "test";
+            } else {
+                $mode = "default";
+            }
+        }
         $prefix = ucfirst(strtolower($mode));
         if (class_exists($prefix."SessionHandler")) {
             $class = $prefix."SessionHandler";
