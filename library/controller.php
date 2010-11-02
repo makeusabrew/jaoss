@@ -161,4 +161,12 @@ abstract class Controller {
     public function setResponseCode($code) {
         $this->response->setResponseCode($code);
     }
+    
+    public function templateForPattern() {
+        $pattern = $this->path->getPattern();
+        if (!preg_match("@(?P<tpl>\w+)@", $pattern, $matches)) {
+            throw new CoreException("pattern could not be auto converted to template");
+        }
+        return $this->render($matches["tpl"]);
+    }
 }

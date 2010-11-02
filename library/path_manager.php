@@ -7,7 +7,7 @@ class PathManager {
 			throw new CoreException("No pattern passed");
 		}
 		if (!isset($action)) {
-			throw new CoreException("No action passed");
+            $action = "templateForPattern";
 		}
 		if (!isset($location)) {
             $location = self::getLocationFromTrace();
