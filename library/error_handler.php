@@ -15,6 +15,25 @@ class ErrorHandler {
 		$code = $e->getCode();
         header($e->getHeaderString());
 		$this->smarty->assign("e", $e);
-		return $this->smarty->fetch("core/{$code}.tpl");
+        $displayErrors = Settings::getValue("errors.verbose", false);
+        $app = Settings::getValue("errors.app", false);
+        $controller = Settings::getValue("errors.controller", false);
+        $action = Settings::getValue("errors.action", false);
+        if ($displayErrors) {
+            return $this->smarty->fetch("core/{$code}.tpl");
+        } else if ($app && $controller && $action) {
+            $controller = Controller::factory($controller, $app);
+            $controller->setPath(new Path());
+            $controller->init();
+            $controller->$action($e);
+            return $controller->getResponse()->getBody();
+        }
+        // fallback on static HTML
+        $target = PROJECT_ROOT."public/errordocs/".$e->getResponseCode().".html";
+        if (file_exists($target)) {
+            return file_get_contents($target);
+        } else {
+            return $e->getHeaderString();   // better than nothing...
+        }
 	}
 }

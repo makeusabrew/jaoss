@@ -39,7 +39,7 @@ abstract class Controller {
 	public static function factory($controller, $app_path = NULL) {
 		$c_class = $controller."Controller";
 		if (class_exists($c_class)) {
-			return new $c_class;
+			return new $c_class(JaossRequest::getInstance());
 		}
 		// can force a path if required
 		if ($app_path !== NULL) {

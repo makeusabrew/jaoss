@@ -39,14 +39,21 @@ class Settings {
         Log::debug($loadStr);
     }
 	
-	public static function getValue($section, $key=NULL) {
-		if ($key === NULL) {
+	public static function getValue($section, $key=NULL, $defaultValue=NULL) {
+        if (strpos($section, ".") !== false) {
+            // using dot notation, ignore third param and assume second replaces third
+            $defaultValue = $key;
 			// okay, key hasn't been passed, so assume we've gone shorthand
 			list($section, $key) = explode(".", $section);
 		}
 		if (!isset(self::$settings[$section][$key])) {
             Log::debug("setting [$section] [$key] does not exist");
-			throw new CoreException("Setting not found");
+            if ($defaultValue !== NULL) {
+                Log::debug("returning default value [".$defaultValue."]");
+                return $defaultValue;
+            } else {
+                throw new CoreException("Setting not found");
+            }
 		}
 		return self::$settings[$section][$key];
 	}

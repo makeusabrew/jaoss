@@ -38,10 +38,11 @@ class Utils {
     /* borrowed with thanks from http://wiki.jumba.com.au/wiki/PHP_Generate_random_password */
     public static function generatePassword($length) {
         $chars = "234567890abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        $maxLength = strlen($chars) - 1;
         $i = 0;
         $password = "";
         while ($i <= $length) {
-            $password .= $chars{mt_rand(0,strlen($chars))};
+            $password .= $chars{mt_rand(0, $maxLength)};
             $i++;
         }
         return $password;
