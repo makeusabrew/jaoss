@@ -135,7 +135,11 @@ class PathManager {
     public static function getUrlForOptions($options) {
         $path = self::getPathForOptions($options);
         $pattern = $path->getPattern();
-        $url = substr($pattern, 1, -1);
+        if (substr($pattern, 0, 1) == "^" && substr($pattern, -1) == "$") {
+            $url = substr($pattern, 1, -1);
+        } else {
+            $url = $pattern;
+        }
         return $url;
     }
 
