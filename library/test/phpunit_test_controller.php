@@ -51,4 +51,8 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
         $this->assertTrue(isset($data->$var));
         $this->assertEquals($val, $data->$var);
     }
+    
+    public function assertResponseCode($code) {
+        $this->assertEquals($code, $this->request->getResponse()->getResponseCode());
+    }
 }
