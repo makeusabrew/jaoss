@@ -28,13 +28,23 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	public function testAddPathsThrowsExceptionWithStringArgument() {
-		$this->setExpectedException("CoreException");
-		PathManager::loadPaths("foo", "bar", "baz", "test");	// loadPaths expects arrays
+        try {
+            PathManager::loadPaths("foo", "bar", "baz", "test");	// loadPaths expects arrays
+        } catch (CoreException $e) {
+            $this->assertEquals(0, $e->getCode());  //@todo change when this exception gets a code!
+            return;
+        }
+        $this->fail("Expected exception not raised");
 	}
 	
 	public function testAddPathsThrowsExceptionWithEmptyArrayArgument() {
-		$this->setExpectedException("CoreException");
-		PathManager::loadPaths(array());
+        try {
+            PathManager::loadPaths(array());
+        } catch (CoreException $e) {
+            $this->assertEquals(0, $e->getCode());  //@todo change when this exception gets a code!
+            return;
+        }
+        $this->fail("Expected exception not raised");
 	}
 	
 	public function testPathsCountIsOneAfterPathAddedViaLoadPaths() {
@@ -70,5 +80,41 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("bar", $path->getAction());
         $this->assertEquals("baz", $path->getController());
         $this->assertEquals("apps/test", $path->getLocation());
+    }
+
+    public function testMatchUrlWithSimplePathsLoadedAndWithMatch() {
+		PathManager::loadPath("/foo", "bar", "baz", "test");
+        $path = PathManager::matchUrl("/foo");
+        $this->assertEquals("^/foo$", $path->getPattern());
+        $this->assertEquals("bar", $path->getAction());
+        $this->assertEquals("baz", $path->getController());
+        $this->assertEquals("apps/test", $path->getLocation());
+    }
+
+    public function testsetPrefix() {
+        PathManager::setPrefix("/someprefix");
+        PathManager::loadPath("/foo", "bar", "baz", "test");
+        $path = PathManager::matchUrl("/someprefix/foo");
+        $this->assertEquals("^/someprefix/foo$", $path->getPattern());
+
+        try {
+            PathManager::matchUrl("/foo");
+        } catch (CoreException $e) {
+            $this->assertEquals(CoreException::URL_NOT_FOUND, $e->getCode());
+            return;
+        }
+        $this->fail("expected exception not raised");
+    }
+
+    public function testClearPrefix() {
+        PathManager::setPrefix("/someprefix");
+        PathManager::loadPath("/foo", "bar", "baz", "test");
+        $path = PathManager::matchUrl("/someprefix/foo");
+        $this->assertEquals("^/someprefix/foo$", $path->getPattern());
+        
+        PathManager::clearPrefix();
+        PathManager::loadPath("/foo", "bar", "baz", "test");
+        $path = PathManager::matchUrl("/foo");
+        $this->assertEquals("^/foo$", $path->getPattern());
     }
 }

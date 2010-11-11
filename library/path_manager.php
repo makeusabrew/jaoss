@@ -1,6 +1,7 @@
 <?php
 class PathManager {
 	private static $paths = array();
+    private static $prefix = "";
 	
 	public static function loadPath($pattern = NULL, $action = NULL, $controller = NULL, $location = NULL) {
 		if (!isset($pattern)) {
@@ -15,6 +16,8 @@ class PathManager {
 		if (!isset($controller)) {
 			$controller = ucwords($location);
 		}
+
+        $pattern = self::$prefix.$pattern;
 		
 		$path = new Path();
 		$path->setPattern($pattern);
@@ -72,6 +75,7 @@ class PathManager {
 
 	public static function reset() {
 		self::$paths = array();
+        self::$prefix = "";
 	}
 	
 	public static function matchUrl($url) {
@@ -89,7 +93,7 @@ class PathManager {
                 $pattern = $path->getPattern();
 			}
 			if (preg_match("@{$pattern}@", $url, $matches)) {
-				Log::debug("matched pattern [".$pattern."] against URL [".$url."]");
+				Log::debug("matched pattern [".$pattern."] against URL [".$url."] (location [".$path->getLocation()."] controller [".$path->getController()."]");
 				$path->setMatches($matches);
 				return $path;
 			}
@@ -117,5 +121,13 @@ class PathManager {
         }
         $dir = dirname($trace[1]["file"]);
         return substr($dir, strrpos($dir, "/")+1);
+    }
+    
+    public static function setPrefix($prefix) {
+        self::$prefix = $prefix;
+    }
+
+    public static function clearPrefix() {
+        self::$prefix = "";
     }
 }

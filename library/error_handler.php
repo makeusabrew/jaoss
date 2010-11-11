@@ -6,7 +6,7 @@ class ErrorHandler {
 		require_once("library/Smarty-3.0rc4/libs/Smarty.class.php");
 		
 		$this->smarty = new Smarty();		
-		$this->smarty->template_dir	= array(PROJECT_ROOT."library/errors");
+		$this->smarty->template_dir	= array(JAOSS_ROOT."library/errors");
 		//$this->smarty->compile_dir = Settings::getValue("smarty", "compile_dir");
         $this->smarty->compile_dir = "/tmp";
 	}
@@ -26,7 +26,8 @@ class ErrorHandler {
             $controller->setPath(new Path());
             $controller->init();
             $controller->$action($e);
-            return $controller->getResponse()->getBody();
+            $body = $controller->getResponse()->getBody();
+            return str_pad($body, 512);
         }
         // fallback on static HTML
         $target = PROJECT_ROOT."public/errordocs/".$e->getResponseCode().".html";

@@ -19,9 +19,6 @@ abstract class Controller {
 		
 		$apps = AppManager::getAppPaths();
 		$tpl_dirs = array(PROJECT_ROOT."apps/");
-		foreach ($apps as $app) {
-			$tpl_dirs[] = PROJECT_ROOT."apps/{$app}/views/";
-		}
 		
 		$this->smarty->template_dir	= $tpl_dirs;
 		$this->smarty->compile_dir = Settings::getValue("smarty", "compile_dir");
@@ -34,30 +31,47 @@ abstract class Controller {
 	
 	public function setPath($path) {
 		$this->path = $path;
+        $this->smarty->template_dir = array_merge(
+            array(PROJECT_ROOT."apps/".$this->path->getApp()."/views/"),
+            $this->smarty->template_dir
+        );
 	}
 	
-	public static function factory($controller, $app_path = NULL) {
+	public static function factory($controller, $app_path = NULL, $request = NULL) {
 		$c_class = $controller."Controller";
-		if (class_exists($c_class)) {
-			return new $c_class(JaossRequest::getInstance());
-		}
-		// can force a path if required
-		if ($app_path !== NULL) {
-			$path = PROJECT_ROOT."apps/{$app_path}/controllers/".strtolower($controller).".php";
-			if (file_exists($path)) {
-				include($path);
-				return self::factory($controller);
-			}
-		}
-		$apps = AppManager::getAppPaths();
-		foreach ($apps as $app) {
-			$path = PROJECT_ROOT."apps/{$app}/controllers/".strtolower($controller).".php";
-			if (file_exists($path)) {
-				include($path);
-				return self::factory($controller);
-			}
-		}
-		throw new CoreException("Could not find controller in any path: {$controller}");
+		if (!class_exists($c_class)) {
+            // can force a path if required
+            if ($app_path !== NULL) {
+                $path = PROJECT_ROOT."apps/{$app_path}/controllers/".strtolower($controller).".php";
+                if (file_exists($path)) {
+                    include($path);
+                }
+            } else {
+                $apps = AppManager::getAppPaths();
+                foreach ($apps as $app) {
+                    $path = PROJECT_ROOT."apps/{$app}/controllers/".strtolower($controller).".php";
+                    if (file_exists($path)) {
+                        include($path);
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (class_exists($c_class)) {
+            $request = $request ? $request : JaossRequest::getInstance();
+            return new $c_class($request);
+        }
+		throw new CoreException(
+            "Could not find controller in any path",
+            CoreException::CONTROLLER_CLASS_NOT_FOUND,
+            array(
+                "controller" => $controller,
+                "class" => $c_class,
+                "app_path" => $app_path,
+                "apps" => isset($apps) ? $apps : null,
+            )
+        );
 	}
 	
 	public function getMatch($match, $default=NULL) {

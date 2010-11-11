@@ -7,6 +7,7 @@ class CoreException extends Exception {
 	const TPL_DIR_NOT_WRITABLE = 4;
     const LOG_FILE_ERROR = 5;
     const INVALID_MODE = 6;
+    const CONTROLLER_CLASS_NOT_FOUND = 7;
 	
 	private $args = array();
 	
