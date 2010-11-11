@@ -31,10 +31,12 @@ abstract class Controller {
 	
 	public function setPath($path) {
 		$this->path = $path;
-        $this->smarty->template_dir = array_merge(
-            array(PROJECT_ROOT."apps/".$this->path->getApp()."/views/"),
-            $this->smarty->template_dir
-        );
+        if (isset($this->smarty)) {
+            $this->smarty->template_dir = array_merge(
+                array(PROJECT_ROOT."apps/".$this->path->getApp()."/views/"),
+                $this->smarty->template_dir
+            );
+        }
 	}
 	
 	public static function factory($controller, $app_path = NULL, $request = NULL) {
@@ -82,6 +84,15 @@ abstract class Controller {
 	}
 
     public function redirect($url, $message = NULL) {
+        if (is_array($url)) {
+            if (!isset($url["controller"])) {
+                $url["controller"] = $this->path->getController();
+            }
+            if (!isset($url["app"])) {
+                $url["app"] = $this->path->getApp();
+            }
+            $url = PathManager::getUrlForOptions($url);
+        }
         // always add the flash message - if the ajax handler obeys the 
         // redirect we will pick it up next render
     	if ($message) {

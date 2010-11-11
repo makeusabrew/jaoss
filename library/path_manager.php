@@ -130,4 +130,24 @@ class PathManager {
     public static function clearPrefix() {
         self::$prefix = "";
     }
+    
+    //@todo make this work with dynamic URLs!
+    public static function getUrlForOptions($options) {
+        $path = self::getPathForOptions($options);
+        $pattern = $path->getPattern();
+        $url = substr($pattern, 1, -1);
+        return $url;
+    }
+
+    public static function getPathForOptions($options) {
+        foreach (self::$paths as $path) {
+            if ($path->getApp() == $options["app"] &&
+                $path->getController() == $options["controller"] &&
+                $path->getAction() == $options["action"]) {
+
+                return $path;
+            }
+        }
+        throw new CoreException("No Path found for options");
+    }
 }
