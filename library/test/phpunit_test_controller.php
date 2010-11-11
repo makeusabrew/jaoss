@@ -33,6 +33,10 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
         $this->assertEquals($action, $this->request->getResponse()->getPath()->getAction());
     }
 
+    public function assertApp($app) {
+        $this->assertEquals($app, $this->request->getResponse()->getPath()->getApp());
+    }
+
     public function assertBodyHasContents($contents) {
         $body = $this->request->getResponse()->getBody();
         $this->assertTrue((strpos($body, $contents) !== false));
