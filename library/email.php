@@ -6,10 +6,18 @@ class Email {
     protected $from;
     protected $body;
     protected $smarty;
+    protected $handler;
 
     public static function factory() {
         // pretty pointless for now. @todo improve to take note of mode etc
-        return new Email();
+        $email = new Email();
+        try {
+            $handler = Settings::getValue("email.handler");
+        } catch (CoreException $e) {
+            $handler = "default";
+        }
+        $email->handler = EmailHandler::factory($handler);
+        return $email;
     }
 
     public function setTo($to) {
@@ -53,7 +61,7 @@ class Email {
         if ($canSend) {
             $this->setHeader("From", $this->from);
             Log::debug("sending mail to [".$this->getToAsString()."], from [".$this->from."], subject [".$this->subject."], body length [".strlen($this->body)."]");
-            return mail($this->getToAsString(), $this->subject, $this->body, $this->getHeadersAsString());
+            return $this->handler->send($this->getToAsString(), $this->subject, $this->body, $this->getHeadersAsString());
         }
         return false;
     }
@@ -120,5 +128,45 @@ class Email {
             )
         );
         
+    }
+}
+
+interface IEmailHandler {
+    public function send($to, $subject, $body, $headers);
+}
+
+abstract class EmailHandler {
+
+    public static function factory($mode) {
+        $prefix = ucfirst(strtolower($mode));
+        if (class_exists($prefix."EmailHandler")) {
+            $class = $prefix."EmailHandler";
+            return new $class;
+        }
+        return null;
+    }
+}
+
+class DefaultEmailHandler implements IEmailHandler {
+    public function send($to, $subject, $body, $headers) {
+        return mail($to, $subject, $body, $headers);
+    }
+}
+
+class TestEmailHandler implements IEmailHandler {
+    public function send($to, $subject, $body, $headers) {
+        $outputDir = Settings::getValue("email.output_dir");
+
+        $data = "To: ".$to."\n";
+        $data .= "Subject: ".$subject."\n";
+        $data .= "Headers: ".$headers."\n";
+        $data .= "\n\n\n";
+        $data .= $body;
+
+        $outputFile = sha1($to.$subject.$body.$headers);
+        $handle = fopen($outputDir."/".$outputFile.".txt", "w");
+        fwrite($handle, $data);
+        fclose($handle);
+        return true;
     }
 }
