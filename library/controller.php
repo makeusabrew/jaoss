@@ -106,6 +106,10 @@ abstract class Controller {
             return true;
         }
     }
+
+    public function redirectAction($action, $message = NULL) {
+        return $this->redirect(array("action" => $action), $message);
+    }
 	
 	public function render($template) {
 		if ($this->request->isAjax()) {

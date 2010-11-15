@@ -7,6 +7,11 @@ class Email {
     protected $body;
     protected $smarty;
 
+    public static function factory() {
+        // pretty pointless for now. @todo improve to take note of mode etc
+        return new Email();
+    }
+
     public function setTo($to) {
         $this->to = $to;
     }
