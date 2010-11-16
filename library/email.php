@@ -159,7 +159,7 @@ class TestEmailHandler implements IEmailHandler {
 
         $data = "To: ".$to."\n";
         $data .= "Subject: ".$subject."\n";
-        $data .= "Headers: ".$headers."\n";
+        $data .= $headers."\n";
         $data .= "\n\n\n";
         $data .= $body;
 
