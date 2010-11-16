@@ -163,4 +163,37 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("FooApp", $path->getApp());
     }
 
+    public function testGetUrlForOptionsWithArgumentAndMatch() {
+        $options = array(
+            "controller" => "Foo",
+            "app" => "FooApp",
+            "action" => "index",
+            "id" => "42",
+        );
+
+        PathManager::loadPath("/foo/(?P<id>\d+)", "index", "Foo", "FooApp");
+
+        $url = PathManager::getUrlForOptions($options);
+        
+        $this->assertEquals("/foo/42", $url);
+    }
+
+    public function testGetUrlForOptionsWithArgumentAndNoMatch() {
+        $options = array(
+            "controller" => "Foo",
+            "app" => "FooApp",
+            "action" => "index",
+            "notFound" => "1234",
+        );
+
+        PathManager::loadPath("/foo/(?P<id>\d+)", "index", "Foo", "FooApp");
+
+        try {
+            $url = PathManager::getUrlForOptions($options);
+        } catch (CoreException $e) {
+            $this->assertEquals(0, $e->getCode());
+            return;
+        }
+        $this->fail("Expected exception not raised");
+    }
 }

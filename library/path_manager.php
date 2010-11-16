@@ -135,6 +135,18 @@ class PathManager {
     public static function getUrlForOptions($options) {
         $path = self::getPathForOptions($options);
         $pattern = $path->getPattern();
+        $args = array_diff_key($options, array("app" => "", "controller" => "", "action" => ""));
+        if (count($args)) {
+            // got dynamic args. try and sort them out
+            foreach ($args as $key => $val) {
+                $result = preg_replace("@(.*)\(\?P\<".$key."\>.*?\)(.*)@", "$1__VAL__$2", $pattern);
+                if ($result === null || $result === $pattern) {
+                    throw new CoreException("No matching argument found");
+                }
+                $result = preg_replace("@__VAL__@", $val, $result);
+                $pattern = $result;
+            }
+        }
         if (substr($pattern, 0, 1) == "^" && substr($pattern, -1) == "$") {
             $url = substr($pattern, 1, -1);
         } else {
