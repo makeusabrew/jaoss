@@ -14,4 +14,11 @@ class SeleniumTestController extends PHPUnit_Extensions_SeleniumTestCase {
             exec($cmd);
         }
     }
+
+    public function open($url, $maximize = true) {
+        parent::open($url);
+        if ($maximize) {
+            $this->windowMaximize();
+        }
+    }
 }
