@@ -8,6 +8,7 @@ class JaossRequest {
     protected $ajax = false;
     protected $referer = NULL;
     protected $sapi = NULL;
+    protected $ip = NULL;
     private static $instance = NULL;
 
     public static function getInstance() {
@@ -36,6 +37,7 @@ class JaossRequest {
         $this->method = isset($_SERVER["REQUEST_METHOD"]) ? $_SERVER["REQUEST_METHOD"] : NULL;
         $this->ajax = isset($_SERVER["HTTP_X_REQUESTED_WITH"]) ? true : false;
         $this->referer = isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : NULL;
+        $this->ip = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : NULL;
 	}
 
 	public function setUrl($url) {
@@ -120,4 +122,8 @@ class JaossRequest {
 	public function disableAjax() {
 		$this->ajax = false;
 	}
+    
+    public function getIp() {
+       return $this->ip;
+    }
 }
