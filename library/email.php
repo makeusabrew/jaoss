@@ -60,8 +60,8 @@ class Email {
 
         if ($canSend) {
             $this->setHeader("From", $this->from);
-            Log::debug("sending mail to [".$this->getToAsString()."], from [".$this->from."], subject [".$this->subject."], body length [".strlen($this->body)."]");
-            return $this->handler->send($this->getToAsString(), $this->subject, $this->body, $this->getHeadersAsString());
+            Log::debug("sending mail to [".$this->getToAsString()."], from [".$this->getFrom()."], subject [".$this->getSubject()."], body length [".strlen($this->getBody())."]");
+            return $this->handler->send($this->getToAsString(), $this->getSubject(), $this->getBody(), $this->getHeadersAsString());
         }
         return false;
     }
@@ -88,7 +88,22 @@ class Email {
             $str = substr($str, 0, -1);
             return $str;
         }
+        if ($this->to === null) {
+            return "";
+        }
         return $this->to;
+    }
+
+    public function getFrom() {
+        return $this->from;
+    }
+
+    public function getBody() {
+        return $this->body;
+    }
+
+    public function getSubject() {
+        return $this->subject;
     }
 
     public function setHtmlHeaders() {
@@ -167,6 +182,7 @@ class TestEmailHandler implements IEmailHandler {
         $handle = fopen($outputDir."/".$outputFile.".txt", "w");
         fwrite($handle, $data);
         fclose($handle);
+        Log::debug("Written test email to file [".$outputDir."/".$outputFile.".txt");
         return true;
     }
 }
