@@ -123,5 +123,14 @@ class Table {
 		}
 		return implode($cols, ",");
 	}
+
+    public function queryAll($sql, $params = array(), $objectName = NULL) {
+        $objectName = $objectName ? $objectName : $this->getObjectName();
+		$dbh = Db::getInstance();
+		$sth = $dbh->prepare($sql);
+		$sth->setFetchMode(PDO::FETCH_CLASS, $objectName);
+		$sth->execute($params);
+		return $sth->fetchAll();
+    }
 		
 }
