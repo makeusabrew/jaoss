@@ -19,7 +19,7 @@ class PathManager {
 
         $pattern = self::$prefix.$pattern;
 		
-		$path = new Path();
+		$path = new JaossPath();
 		$path->setPattern($pattern);
 		$path->setLocation("apps/".$location);
         $path->setApp($location);

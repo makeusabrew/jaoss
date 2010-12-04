@@ -2,7 +2,7 @@
 
 class PathTest extends PHPUnit_Framework_TestCase {
     public function setUp() {
-        $this->path = new Path();
+        $this->path = new JaossPath();
     }
 
     public function testSetAndGetAction() {

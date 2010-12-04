@@ -1,5 +1,5 @@
 <?php
-class Path {
+class JaossPath {
     protected $pattern;
     protected $location;
     protected $app;

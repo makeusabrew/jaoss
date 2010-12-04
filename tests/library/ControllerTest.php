@@ -5,7 +5,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testGetMatch() {
-        $path = new Path();
+        $path = new JaossPath();
         $path->setMatches(array());
         $this->stub->setPath($path);
 
