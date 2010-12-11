@@ -15,6 +15,17 @@ class AppTest extends PHPUnit_Framework_TestCase {
 	public function testNewAppFolderIsNull() {
 		$this->assertNull($this->app->getFolder());
 	}
+
+    public function testNewAppTitleIsEmptyString() {
+        $this->assertEquals("", $this->app->getTitle());
+    }
+
+    public function testNewAppWithFolderPassedToConstructor() {
+        $this->app = new App("myapp");
+        $this->assertFalse($this->app->getLoaded());
+        $this->assertEquals("myapp", $this->app->getFolder());
+        $this->assertEquals("Myapp", $this->app->getTitle());
+    }
 	
 	public function testGetAndSetFolder() {
 		$this->assertEquals(NULL, $this->app->getFolder());
