@@ -4,7 +4,7 @@ class ErrorHandler {
 	private $smarty;
     private $response;
 	public function __construct() {
-		require_once(JAOSS_ROOT."library/Smarty-3.0rc4/libs/Smarty.class.php");
+		require_once(JAOSS_ROOT."library/Smarty/libs/Smarty.class.php");
 		
 		$this->smarty = new Smarty();		
 		$this->smarty->template_dir	= array(JAOSS_ROOT."library/errors");

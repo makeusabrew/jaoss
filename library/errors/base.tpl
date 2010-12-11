@@ -31,9 +31,9 @@
 					<tbody>
 						{foreach $e->getTrace() as $trace}
 							<tr>
-								<td>{$trace.file}</td>
-								<td>{$trace.line}</td>
-								<td>{$trace.function}</td>
+								<td>{if isset($trace.file)}{$trace.file}{else}-{/if}</td>
+								<td>{if isset($trace.line)}{$trace.line}{else}-{/if}</td>
+								<td>{if isset($trace.function)}{$trace.function}{else}-{/if}</td>
 						{/foreach}
 					</tbody>
 				</table>

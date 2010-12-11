@@ -9,7 +9,7 @@ error_reporting(E_ALL ^ E_STRICT);
 
 date_default_timezone_set("Europe/London");
 
-include("Smarty-3.0rc4/libs/Smarty.class.php");
+include("Smarty/libs/Smarty.class.php");
 include("core_exception.php");
 include("email.php");
 include("file.php");
