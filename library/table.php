@@ -41,6 +41,9 @@ class Table {
 			$name = get_class($this);
 			$this->object_name = substr($name, 0, -1);
 		}
+        if (!class_exists($this->object_name)) {
+            throw new CoreException("Object class does not exist: ".$this->object_name);
+        }
 		return $this->object_name;
 	}
 	
