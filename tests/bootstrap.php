@@ -1,34 +1,36 @@
 <?php
-//require_once 'PHPUnit/Framework.php';
-
 define("PROJECT_ROOT", realpath(dirname(__FILE__)."/../")."/");
-set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__."/../library/");
-
+if (!defined("JAOSS_ROOT")) {
+    define("JAOSS_ROOT", PROJECT_ROOT);
+}
+set_include_path(get_include_path() . PATH_SEPARATOR . PROJECT_ROOT);
+set_include_path(get_include_path() . PATH_SEPARATOR . JAOSS_ROOT);
 ini_set("display_errors", 1);
 error_reporting(E_ALL ^ E_STRICT);
 
 date_default_timezone_set("Europe/London");
 
-include("Smarty/libs/Smarty.class.php");
-include("core_exception.php");
-include("email.php");
-include("file.php");
-include("validate.php");
-include("error_handler.php");
-include("flash_messenger.php");
-include("log.php");
-include("path.php");
-include("path_manager.php");
-include("request.php");
-include("controller.php");
-include("settings.php");
-include("database.php");
-include("table.php");
-include("object.php");
-include("app.php");
-include("app_manager.php");
-include("session.php");
-include("utils.php");
+include("library/Smarty/libs/Smarty.class.php");
+include("library/core_exception.php");
+include("library/email.php");
+include("library/file.php");
+include("library/validate.php");
+include("library/error_handler.php");
+include("library/flash_messenger.php");
+include("library/log.php");
+include("library/path.php");
+include("library/path_manager.php");
+include("library/request.php");
+include("library/response.php");
+include("library/controller.php");
+include("library/settings.php");
+include("library/database.php");
+include("library/table.php");
+include("library/object.php");
+include("library/app.php");
+include("library/app_manager.php");
+include("library/session.php");
+include("library/utils.php");
 
 // set some settings manually
 Settings::setFromArray(array(
@@ -36,9 +38,13 @@ Settings::setFromArray(array(
         "handler" => "test",
     ),
     "log" => array(
-        "debug_handle" => "../../library.log",
-        "debug" => "debug_handle",
-        "verbose" => "debug_handle",
+        "warn" => JAOSS_ROOT."tests/log/test_log.log",
+        "debug" => JAOSS_ROOT."tests/log/test_log.log",
+        "verbose" => JAOSS_ROOT."tests/log/test_log.log",
+        "level" => "verbose",
+    ),
+    "errors" => array(
+        "verbose" => true,
     ),
 ));
 
@@ -46,11 +52,5 @@ Settings::setFromArray(array(
 try {
     Log::debug("Bootstrapping test process");
 } catch (CoreException $e) {
-    die("Could not initialise library test logfile [../../library.log]. Please ensure it exists.\n");
-}
-
-$library_settings = "../../library.ini";
-if (file_exists($library_settings) && is_readable($library_settings)) {
-    Log::debug("loading in additional settings from library.ini");
-    Settings::loadFromFile($library_settings);
+    die("Could not initialise library test logfile. Please ensure it exists.\n");
 }
