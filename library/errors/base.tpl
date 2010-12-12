@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>Error: {$e->getMessage()}</title>
+		<title>Error: {if isset($title)}{$title}{else}{$e->getMessage()}{/if}</title>
 		<style>
 			#error_container {
 				padding:1em;
@@ -15,7 +15,7 @@
 	<body>
 		<div id="error_container">
 			<div id="error_inner">				
-				<h1>{$e->getMessage()}</h1>
+				<h1>{if isset($title)}{$title}{else}{$e->getMessage()}{/if}</h1>
 				{if $smarty.capture.body}
 					{$smarty.capture.body}
 				{/if}
