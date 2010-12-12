@@ -49,7 +49,7 @@ class ErrorHandler {
             $controller = Controller::factory($controller, $app);
             $controller->setPath(new JaossPath());
             $controller->init();
-            $controller->$action($e);
+            $controller->$action($e, $this->response->getResponseCode());
             $this->response->setBody(
                 str_pad($controller->getResponse()->getBody(), 512)
             );
