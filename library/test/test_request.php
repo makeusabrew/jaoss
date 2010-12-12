@@ -48,5 +48,6 @@ class TestRequest extends JaossRequest {
         $this->getFields = array();
         $this->response = null;
         $this->method = null;
+        PathManager::reloadPaths();
     }
 }

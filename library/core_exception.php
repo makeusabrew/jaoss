@@ -8,6 +8,7 @@ class CoreException extends Exception {
     const LOG_FILE_ERROR = 5;
     const INVALID_MODE = 6;
     const CONTROLLER_CLASS_NOT_FOUND = 7;
+    const PATH_REJECTED = 8;
 	
 	private $args = array();
 	

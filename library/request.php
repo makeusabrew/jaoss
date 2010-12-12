@@ -53,7 +53,17 @@ class JaossRequest {
 		}
 		$path = PathManager::matchUrl($this->url);
         
-        $this->response = $path->run($this);
+        try {
+            $this->response = $path->run($this);
+        } catch (CoreException $e) {
+            if ($e->getCode() == CoreException::PATH_REJECTED) {
+                // right then, mark as discarded and try again...
+                $path->setDiscarded(true);
+                return $this->dispatch($this->url);
+            } else {
+                throw $e;
+            }
+        }
         return $this->response;
 	}
 

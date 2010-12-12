@@ -6,6 +6,7 @@ class JaossPath {
     protected $controller;
     protected $action;
     protected $matches;
+    protected $discarded;
 
 	public function run($request = NULL) {
 		$controller = Controller::factory($this->controller, $this->app, $request);
@@ -17,8 +18,8 @@ class JaossPath {
 					Log::debug($this->controller."Controller->init() did not return status [OK]!", "-v");
                     return $controller->getResponse();
 				}
-				Log::debug("running [".$this->controller."Controller->".$this->action."]");
-				$result = call_user_func(array($controller, $this->action));
+                Log::debug("running [".$this->controller."Controller->".$this->action."]");
+                $result = call_user_func(array($controller, $this->action));
                 if ($result === NULL) {
                     $controller->render($this->action);
                 }
@@ -89,5 +90,13 @@ class JaossPath {
 
     public function getMatch($match) {
         return $this->matches[$match];
+    }
+    
+    public function setDiscarded($discarded) {
+        $this->discarded = $discarded;
+    }
+    
+    public function isDiscarded() {
+        return $this->discarded;
     }
 }

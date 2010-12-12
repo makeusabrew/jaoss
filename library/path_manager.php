@@ -86,6 +86,10 @@ class PathManager {
 		}
 		Log::verbose("Looking for match against URL [".$url."]");
 		foreach (self::$paths as $path) {
+            if ($path->isDiscarded()) {
+                Log::verbose("Path already discarded, ignoring pattern [".$path->getPattern()."]");
+                continue;
+            }
 			// check for simple(r) routes
             $pattern = $path->getPattern();
 			if (substr($pattern, 0, 1) != "^" && substr($pattern, -1) != "$") {
@@ -97,6 +101,7 @@ class PathManager {
 				$path->setMatches($matches);
 				return $path;
 			}
+            $path->setDiscarded(true);
 			Log::verbose("Discarding path pattern [".$pattern."]");
 		}
 		// no match :(
@@ -165,5 +170,11 @@ class PathManager {
             }
         }
         throw new CoreException("No Path found for options");
+    }
+
+    public static function reloadPaths() {
+        foreach (self::$paths as $path) {
+            $path->setDiscarded(false);
+        }
     }
 }

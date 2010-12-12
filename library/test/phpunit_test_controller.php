@@ -23,6 +23,7 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
 
     public function tearDown() {
         $this->request = null;
+        PathManager::reloadPaths();
     }
 
     public function assertController($controller) {
