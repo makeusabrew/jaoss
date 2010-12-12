@@ -20,14 +20,30 @@ class ErrorHandler {
 		
 	public function handleError($e) {
 		$code = $e->getCode();
-        $this->response->setResponseCode($e->getResponseCode());
-		$this->smarty->assign("e", $e);
         $displayErrors = Settings::getValue("errors.verbose", false);
         $app = Settings::getValue("errors.app", false);
         $controller = Settings::getValue("errors.controller", false);
         $action = Settings::getValue("errors.action", false);
+
+        if ($e instanceof CoreException) {
+            $path = "core/{$code}.tpl";
+            $this->response->setResponseCode($e->getResponseCode());
+        } else if ($e instanceof PDOException) {
+            $path = "db/{$code}.tpl";
+            $this->response->setResponseCode(500);
+        } else {
+            $path = "unknown_exception.tpl";
+            $this->response->setResponseCode(500);
+        }
         if ($displayErrors) {
-            $this->response->setBody($this->smarty->fetch("core/{$code}.tpl"));
+            $this->smarty->assign("e", $e);
+            if ($this->smarty->templateExists($path)) {
+                $this->response->setBody($this->smarty->fetch("core/{$code}.tpl"));
+            } else {
+                $this->smarty->assign("code", $code);
+                $this->smarty->assign("path", $path);
+                $this->response->setBody($this->smarty->fetch("unknown_code.tpl"));
+            }
             return;
         } else if ($app && $controller && $action) {
             $controller = Controller::factory($controller, $app);
