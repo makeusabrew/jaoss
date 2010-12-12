@@ -47,7 +47,7 @@ class ErrorHandler {
             return;
         } else if ($app && $controller && $action) {
             $controller = Controller::factory($controller, $app);
-            $controller->setPath(new Path());
+            $controller->setPath(new JaossPath());
             $controller->init();
             $controller->$action($e);
             $this->response->setBody(
