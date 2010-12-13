@@ -2,9 +2,4 @@
 	<testsuite name="Library Tests">
         <directory>library</directory>
 	</testsuite>
-    <filter>
-        <blacklist>
-            <directory suffix=".php">/tmp</directory>
-        </blacklist>
-    </filter>
 </phpunit>
