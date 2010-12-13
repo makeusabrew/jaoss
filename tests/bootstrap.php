@@ -1,5 +1,5 @@
 <?php
-define("PROJECT_ROOT", realpath(dirname(__FILE__))."/");
+define("PROJECT_ROOT", realpath(dirname(__FILE__)."/../")."/");
 if (!defined("JAOSS_ROOT")) {
     define("JAOSS_ROOT", PROJECT_ROOT);
 }
