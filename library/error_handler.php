@@ -31,6 +31,9 @@ class ErrorHandler {
         } else if ($e instanceof PDOException) {
             $path = "db/{$code}.tpl";
             $this->response->setResponseCode(500);
+        } else if ($e instanceof SmartyCompilerException) {
+            $path = "smarty/{$code}.tpl";
+            $this->response->setResponseCode(500);
         } else {
             $path = "unknown_exception.tpl";
             $this->response->setResponseCode(500);
@@ -38,7 +41,7 @@ class ErrorHandler {
         if ($displayErrors) {
             $this->smarty->assign("e", $e);
             if ($this->smarty->templateExists($path)) {
-                $this->response->setBody($this->smarty->fetch("core/{$code}.tpl"));
+                $this->response->setBody($this->smarty->fetch($path));
             } else {
                 $this->smarty->assign("code", $code);
                 $this->smarty->assign("path", $path);
