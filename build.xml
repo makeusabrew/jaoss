@@ -1,16 +1,12 @@
 <?xml version="1.0" ?>
 <project name="Jaoss Library" default="build">
     <property name="tests.dir" value="tests" />
-    <property name="reports.dir" value="${tests.dir}/reports" />
-    <mkdir dir="${reports.dir}" />
+    <property name="reports.dir" value="reports" />
 
     <target name="build" description="Build">
-        <exec checkreturn="true" passthru="true" command="phpunit --log-junit ${reports.dir}/test-results.xml 
+        <exec dir="${tests.dir}" checkreturn="true" passthru="true" command="phpunit --log-junit ${reports.dir}/test-results.xml 
         --coverage-html ${reports.dir}/coverage
         --coverage-clover ${reports.dir}/phpunit.coverage.xml" />
     </target>
 
-    <target name="cleanReports">
-        <delete dir="${reports.dir}" includeemptydirs="true" />
-    </target>
 </project>
