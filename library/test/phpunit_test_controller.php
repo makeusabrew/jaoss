@@ -27,11 +27,11 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
     }
 
     public function assertController($controller) {
-        $this->assertEquals($controller, $this->request->getResponse()->getPath()->getController());
+        $this->assertEquals($controller, $this->request->getResponse()->getPath()->getController(), "Conroller is not '{$controller}'");
     }
 
     public function assertAction($action) {
-        $this->assertEquals($action, $this->request->getResponse()->getPath()->getAction());
+        $this->assertEquals($action, $this->request->getResponse()->getPath()->getAction(), "Action is not '{$action}'");
     }
 
     public function assertApp($app) {
@@ -40,15 +40,15 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
 
     public function assertBodyHasContents($contents) {
         $body = $this->request->getResponse()->getBody();
-        $this->assertTrue((strpos($body, $contents) !== false));
+        $this->assertTrue((strpos($body, $contents) !== false), "Response missing body contents: '{$contents}'");
     }
 
     public function assertRedirect($isRedirect) {
-        $this->assertEquals($isRedirect, $this->request->getResponse()->isRedirect());
+        $this->assertEquals($isRedirect, $this->request->getResponse()->isRedirect(), "Response is not redirect");
     }
 
     public function assertRedirectUrl($url) {
-        $this->assertEquals($url, $this->request->getResponse()->getRedirectUrl());
+        $this->assertEquals($url, $this->request->getResponse()->getRedirectUrl(), "Redirect URL is not '{$url}'");
     }
     
     public function assertResponseHasJsonVar($var, $val) {
@@ -58,6 +58,6 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
     }
     
     public function assertResponseCode($code) {
-        $this->assertEquals($code, $this->request->getResponse()->getResponseCode());
+        $this->assertEquals($code, $this->request->getResponse()->getResponseCode(), "Response Code is not '{$code}'");
     }
 }
