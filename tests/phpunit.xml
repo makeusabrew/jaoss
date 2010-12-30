@@ -4,7 +4,7 @@
 	</testsuite>
     <filter>
         <blacklist>
-            <directory suffix=".php">library/Smarty</directory>
+            <directory suffix=".php">../library/Smarty</directory>
         </blacklist>
     </filter>
 </phpunit>
