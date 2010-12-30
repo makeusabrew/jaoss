@@ -2,4 +2,9 @@
 	<testsuite name="Library Tests">
         <directory>library</directory>
 	</testsuite>
+    <filter>
+        <blacklist>
+            <directory suffix=".php">library/Smarty</directory>
+        </blacklist>
+    </filter>
 </phpunit>
