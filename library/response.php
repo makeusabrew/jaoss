@@ -34,7 +34,7 @@ class JaossResponse {
         return $this->responseCode;
     }
 
-    public function echoHeaders() {
+    public function sendHeaders() {
         if ($this->isRedirect()) {
             header("Location: ".$this->redirectUrl, true, $this->getResponseCode());
             exit;
@@ -46,10 +46,6 @@ class JaossResponse {
         );
         $headerString = $headers[$this->getResponseCode()];
         header("HTTP/1.0 ".$this->getResponseCode()." ".$headerString);
-    }
-
-    public function echoBody() {
-        echo $this->getBody();
     }
 
     public function setPath($path) {
