@@ -14,21 +14,31 @@ class AppManagerTest extends PHPUnit_Framework_TestCase {
 	}
 
     public function testLoadAppFromPath() {
-        $this->createDir(PROJECT_ROOT."apps");
+        if (!is_dir(PROJECT_ROOT."apps")) {
+            mkdir(PROJECT_ROOT."apps");
+            $appDirCreated = true;
+        }
         $this->createDir(PROJECT_ROOT."apps/testapp");
         AppManager::loadAppFromPath("testapp");
         $this->removeDir(PROJECT_ROOT."apps/testapp");
-        $this->removeDir(PROJECT_ROOT."apps/");
+        if (isset($appDirCreated)) {
+            $this->removeDir(PROJECT_ROOT."apps/");
+        }
 
         $this->assertEquals(1, count(AppManager::getInstalledApps()));
     }
 
     public function testGetInstalledAppPaths() {
-        $this->createDir(PROJECT_ROOT."apps");
+        if (!is_dir(PROJECT_ROOT."apps")) {
+            mkdir(PROJECT_ROOT."apps");
+            $appDirCreated = true;
+        }
         $this->createDir(PROJECT_ROOT."apps/testapp");
         AppManager::loadAppFromPath("testapp");
         $this->removeDir(PROJECT_ROOT."apps/testapp");
-        $this->removeDir(PROJECT_ROOT."apps/");
+        if (isset($appDirCreated)) {
+            $this->removeDir(PROJECT_ROOT."apps/");
+        }
         
         $this->assertEquals(array("testapp"), AppManager::getAppPaths());
     }
