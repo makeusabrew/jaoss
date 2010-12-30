@@ -41,7 +41,7 @@ class Utils {
         $maxLength = strlen($chars) - 1;
         $i = 0;
         $password = "";
-        while ($i <= $length) {
+        while ($i < $length) {
             $password .= $chars{mt_rand(0, $maxLength)};
             $i++;
         }

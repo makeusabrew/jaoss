@@ -29,4 +29,10 @@ class UtilsTest extends PHPUnit_Framework_TestCase {
     public function testFromCamelCase() {
         $this->assertEquals("camel_case", Utils::fromCamelCase("CamelCase"));
     }
+
+    public function testGenerateRandomPasswordLength() {
+        $this->assertEquals(8, strlen(Utils::generatePassword(8)));
+        $this->assertEquals(1, strlen(Utils::generatePassword(1)));
+        $this->assertEquals(100, strlen(Utils::generatePassword(100)));
+    }
 }

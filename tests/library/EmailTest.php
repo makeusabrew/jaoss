@@ -46,6 +46,35 @@ class EmailTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("My Test Body", $email->getBody());
     }
 
+    public function testGetHeadersAsString() {
+        $email = Email::factory();
+        $email->setHeader("A-Header", "Some-Value");
+
+        $this->assertEquals("A-Header: Some-Value", $email->getHeadersAsString());
+
+        $email->setHeader("From", "foo@bar.com");
+
+        $this->assertEquals("A-Header: Some-Value\r\nFrom: foo@bar.com", $email->getHeadersAsString());
+    }
+
+    public function testSetHtmlHeaders() {
+        $email = Email::factory();
+        $email->setHtmlHeaders();
+
+        $this->assertEquals("MIME-Version: 1.0\r\nContent-type: text/html; charset=UTF-8", $email->getHeadersAsString());
+    }
+
+    public function testTemplateNotFoundExceptionThrownWithInvalidBodyTemplate() {
+        $email = Email::factory();
+        try {
+            $email->setBodyFromTemplate("invalidTplPath");
+        } catch (CoreException $e) {
+            $this->assertEquals(CoreException::TPL_NOT_FOUND, $e->getCode());
+            return;
+        }
+        $this->fail("Expected exception not raised");
+    }
+
     public function testSendReturnValue() {
         $email = Email::factory();
         $this->assertFalse($email->send());

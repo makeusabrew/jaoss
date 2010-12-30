@@ -46,6 +46,9 @@ Settings::setFromArray(array(
     "errors" => array(
         "verbose" => true,
     ),
+    "smarty" => array(
+        "compile_dir" => "/tmp",
+    ),
 ));
 
 // log some debug straight away to check the file is there
