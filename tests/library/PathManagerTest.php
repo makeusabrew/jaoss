@@ -7,13 +7,13 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
 
 	public function testPathsStartsEmptyAndIsArray() {
 		$paths = PathManager::getPaths();
-		$this->assertType("array", $paths);
+		$this->assertInternalType("array", $paths);
 		$this->assertEquals(0, count($paths));
 	}
 	
 	public function testPathsCountIsZeroAfterPathReset() {
 		$paths = PathManager::getPaths();
-		$this->assertType("array", $paths);
+		$this->assertInternalType("array", $paths);
 		$this->assertEquals(0, count($paths));
 	}
 	

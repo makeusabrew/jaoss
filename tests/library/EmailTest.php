@@ -3,7 +3,7 @@ class EmailTest extends PHPUnit_Framework_TestCase {
 
     public function testGetToAsStringStartsEmpty() {
         $email = Email::factory();
-        $this->assertType("string", $email->getToAsString());
+        $this->assertInternalType("string", $email->getToAsString());
         $this->assertEquals("", $email->getToAsString());
     }
 
