@@ -167,6 +167,17 @@ abstract class Controller {
 	}
 	
 	public function assign($var, $value) {
+        if (isset($this->var_stack[$var])) {
+            throw new CoreException(
+                "Variable already assigned",
+                CoreException::VARIABLE_ALREADY_ASSIGNED,
+                array(
+                    "var" => $var,
+                    "oldValue" => $this->var_stack[$var],
+                    "newValue" => $value,
+                )
+            );
+        }
 		$this->var_stack[$var] = $value;
 	}
 
