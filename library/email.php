@@ -123,6 +123,10 @@ class Email {
             
             $this->smarty->template_dir	= $tpl_dirs;
             $this->smarty->compile_dir = Settings::getValue("smarty", "compile_dir");
+            $this->smarty->plugins_dir = array(
+                JAOSS_ROOT."library/Smarty/libs/plugins",  // default smarty dir
+                JAOSS_ROOT."library/Smarty/custom_plugins",
+            );
         }
 		if ($this->smarty->templateExists($template.".tpl")) {
             $this->smarty->assign("base_href", JaossRequest::getInstance()->getBaseHref());
