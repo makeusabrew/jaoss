@@ -108,13 +108,12 @@ class DefaultSessionHandler extends SessionHandler {
         }
     }
     public function _set($var, $val) {
-        $_SESSION[$this->namespace][$var] = $val;
+        $_SESSION[$this->namespace][$var] = serialize($val);
     }
 
     public function _get($var) {
         if (isset($_SESSION[$this->namespace][$var])) {
-            // any array stuff or whatever need unserializing?
-            return $_SESSION[$this->namespace][$var];
+            return unserialize($_SESSION[$this->namespace][$var]);
         }
         return NULL;
     }
