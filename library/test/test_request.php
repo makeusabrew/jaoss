@@ -25,6 +25,10 @@ class TestRequest extends JaossRequest {
         $this->postFields = $fields;
     }
 
+    public function setGet($fields) {
+        $this->getFields = $fields;
+    }
+
     public function getVar($var) {
         if (isset($this->postFields[$var])) {
             return $this->postFields[$var];
