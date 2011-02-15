@@ -9,7 +9,8 @@ class SeleniumTestController extends PHPUnit_Extensions_SeleniumTestCase {
             $host = Settings::getValue("db.host");
             $pass = Settings::getValue("db.pass");
             $db = Settings::getValue("db.dbname");
-            $cmd = "mysql -u ".($user)." -h ".($host)." -p".($pass)." --database=".($db)." < ".PROJECT_ROOT."tests/fixtures/".$class::$fixture_file.".sql";
+            $path = escapeshellarg(PROJECT_ROOT."tests/fixtures/".$class::$fixture_file.".sql");
+            $cmd = "mysql -u ".($user)." -h ".($host)." -p".($pass)." --database=".($db)." < ".$path;
             Log::debug("Loading fixture command [".$cmd."]");
             exec($cmd);
         }
