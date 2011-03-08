@@ -1,11 +1,10 @@
 <?php
 $apps = array();
 
-// first try and load apps from the relevant .ini file
-if (file_exists(PROJECT_ROOT."settings/apps.ini")) {
-	Settings::loadFromFile(PROJECT_ROOT."settings/apps.ini");
+// first try and load apps based on config
+try {
 	$apps = Settings::getValue("apps", "app");
-} else {
+} catch (CoreException $e) {
 	// fallback on simply loading every available directory within apps
 	$d = dir(PROJECT_ROOT."apps/");
 	while (false !== ($entry = $d->read())) {
