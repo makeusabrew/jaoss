@@ -25,6 +25,7 @@ class ErrorHandler {
         $controller = Settings::getValue("errors.controller", false);
         $action = Settings::getValue("errors.action", false);
 
+        Log::warn("Handling error of type [".get_class($e)."] with message [".$e->getMessage()."]");
         if ($e instanceof CoreException) {
             $path = "core/{$code}.tpl";
             $this->response->setResponseCode(404);
