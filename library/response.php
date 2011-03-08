@@ -8,6 +8,8 @@ class JaossResponse {
     protected $responseCode = 200;
     protected $path = NULL;
 
+    const HTTP_VERSION = "HTTP/1.0";
+
     public function getBody() {
         return $this->body;
     }
@@ -39,13 +41,7 @@ class JaossResponse {
             header("Location: ".$this->redirectUrl, true, $this->getResponseCode());
             exit;
         } 
-        $headers = array(
-            200 => "OK",
-            404 => "Not Found",
-            500 => "Internal Server Error",
-        );
-        $headerString = $headers[$this->getResponseCode()];
-        header("HTTP/1.0 ".$this->getResponseCode()." ".$headerString);
+        header($this->getHeaderString());
     }
 
     public function setPath($path) {
@@ -58,5 +54,15 @@ class JaossResponse {
     
     public function getRedirectUrl() {
         return $this->redirectUrl;
+    }
+
+    public function getHeaderString() {
+        $headers = array(
+            200 => "OK",
+            404 => "Not Found",
+            500 => "Internal Server Error",
+        );
+        $headerString = $headers[$this->getResponseCode()];
+        return self::HTTP_VERSION." ".$this->getResponseCode(). " ".$headerString;
     }
 }

@@ -28,18 +28,4 @@ class CoreException extends Exception {
 	public function ga($a) {
 		return "<strong>".$this->getArg($a)."</strong>";
 	}	
-
-    public function getHeaderString() {
-        return "HTTP/1.0 ".$this->getResponseCode()." ".$this->getResponseString();
-    }
-
-    public function getResponseCode() {
-        //@todo implement
-        return 404;
-    }
-
-    public function getResponseString() {
-        //@todo implement
-        return "Not Found";
-    }
 }

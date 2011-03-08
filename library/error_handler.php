@@ -27,7 +27,7 @@ class ErrorHandler {
 
         if ($e instanceof CoreException) {
             $path = "core/{$code}.tpl";
-            $this->response->setResponseCode($e->getResponseCode());
+            $this->response->setResponseCode(404);
         } else if ($e instanceof PDOException) {
             $path = "db/{$code}.tpl";
             $this->response->setResponseCode(500);
@@ -61,11 +61,11 @@ class ErrorHandler {
             return;
         }
         // fallback on static HTML
-        $target = PROJECT_ROOT."public/errordocs/".$e->getResponseCode().".html";
+        $target = PROJECT_ROOT."public/errordocs/".$this->response->getResponseCode().".html";
         if (file_exists($target)) {
             $this->response->setBody(file_get_contents($target));
         } else {
-            $this->response->setBody($e->getHeaderString());   // better than nothing...
+            $this->response->setBody($this->response->getHeaderString());   // better than nothing...
         }
 	}
 
