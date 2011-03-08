@@ -10,6 +10,7 @@ class CoreException extends Exception {
     const CONTROLLER_CLASS_NOT_FOUND = 7;
     const PATH_REJECTED = 8;
     const VARIABLE_ALREADY_ASSIGNED = 9;
+    const NO_PATHS_LOADED = 10;
 	
 	private $args = array();
 	

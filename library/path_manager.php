@@ -81,7 +81,11 @@ class PathManager {
 	public static function matchUrl($url) {
 		if (empty(self::$paths)) {
 			throw new CoreException(
-				"No paths loaded"
+				"No paths loaded",
+                CoreException::NO_PATHS_LOADED,
+                array(
+                    "apps" => AppManager::getInstalledApps(),
+                )
 			);
 		}
 		Log::verbose("Looking for match against URL [".$url."]");
