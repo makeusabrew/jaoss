@@ -1,11 +1,13 @@
 #!/usr/bin/php
 <?php
-set_include_path(get_include_path() . __FILE__.'/../');
+set_include_path(get_include_path() . PATH_SEPARATOR . realpath(dirname( __FILE__).'/../').'/');
 if (php_sapi_name() !== 'cli') {
     echo "Please use the jaoss tool in CLI mode only\n";
     exit(1);
 }
 require_once("library/cli/cli.php");
+require_once("library/cli/exception.php");
+require_once("library/cli/create.php");
 
 try {
     $class = Cli::factory($argc, $argv);
