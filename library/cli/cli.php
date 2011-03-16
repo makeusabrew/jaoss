@@ -76,6 +76,6 @@ abstract class Cli {
                 $retVal
             );
         }
-        return $output;
+        return $this;
     }
 }

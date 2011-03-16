@@ -25,6 +25,12 @@ class Cli_Create extends Cli {
         $this->exec(
             'git clone --recursive git://github.com/makeusabrew/jaoss-web-template.git '.escapeshellarg($dir),
             'Cloning jaoss web template github repo into folder ['.$dir.']'
+        )->exec(
+            'rm -rf '.escapeshellarg($dir).'/.git/',
+            'Removing web template git folder'
+        )->exec(
+            'cd '.escapeshellarg($dir).'; git init',
+            'Creating new git project'
         );
     }
 }
