@@ -58,7 +58,18 @@ class Table {
 	public function findAll($where = NULL, $params = NULL, $order_by = NULL, $limit = NULL) {
 		$q = "SELECT * FROM `".$this->getTable()."`";
 		if ($where !== NULL) {
-			$q .= " WHERE {$where}";
+            if (is_array($where) && count($where) > 0) {
+                // add support for simple AND where clauses
+                $params = array();  // blat params
+                $q.= " WHERE ";
+                foreach ($where as $field => $value) {
+                    $q .= "`".$field."` = ? AND ";
+                    $params[] = $value;
+                }
+                $q = substr($q, 0, -5);
+            } else {
+                $q .= " WHERE {$where}";
+            }
 		}
 		if ($order_by !== NULL) {
 			$q .= " ORDER BY {$order_by}";
@@ -79,7 +90,18 @@ class Table {
     public function find($where = NULL, $params = NULL, $order_by = NULL) {
 		$q = "SELECT * FROM `".$this->getTable()."`";
 		if ($where !== NULL) {
-			$q .= " WHERE {$where}";
+            if (is_array($where) && count($where) > 0) {
+                // add support for simple AND where clauses
+                $params = array();  // blat params
+                $q.= " WHERE ";
+                foreach ($where as $field => $value) {
+                    $q .= "`".$field."` = ? AND ";
+                    $params[] = $value;
+                }
+                $q = substr($q, 0, -5);
+            } else {
+                $q .= " WHERE {$where}";
+            }
 		}
 		if ($order_by !== NULL) {
 			$q .= " ORDER BY {$order_by}";
