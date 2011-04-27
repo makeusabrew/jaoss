@@ -1,4 +1,4 @@
 {capture name="body"}
-	URL {$e->getArg("url")} not found
+	<p>URL {$e->ga("url")} not found</p>
 {/capture}
 {include file="base.tpl"}

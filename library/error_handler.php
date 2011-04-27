@@ -29,6 +29,9 @@ class ErrorHandler {
         if ($e instanceof CoreException) {
             $path = "core/{$code}.tpl";
             $this->response->setResponseCode(404);
+        } else if ($e instanceof ErrorException) {
+            $path = "core/phperror.tpl";
+            $this->response->setResponseCode(500);
         } else if ($e instanceof PDOException) {
             $path = "db/{$code}.tpl";
             $this->response->setResponseCode(500);

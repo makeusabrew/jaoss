@@ -2,6 +2,16 @@
 	<head>
 		<title>Error: {if isset($title)}{$title}{else}{$e->getMessage()}{/if}</title>
 		<style>
+            html, body {
+                font-size:11px;
+                font-family:Arial;
+            }
+
+            tbody {
+                font-family:courier;
+                font-size:11px;
+            }
+
 			#error_container {
 				padding:1em;
 				background:#a00;
