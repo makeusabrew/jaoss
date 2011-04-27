@@ -54,6 +54,10 @@ class Table {
 		}
 		return $this->table;
 	}
+
+    public function countAll($where = null, $params = null, $order_by = null) {
+        return count($this->findAll($where, $params, $order_by));
+    }
 	
 	public function findAll($where = NULL, $params = NULL, $order_by = NULL, $limit = NULL) {
 		$q = "SELECT * FROM `".$this->getTable()."`";

@@ -106,6 +106,10 @@ abstract class Object {
         $pk = $this->pk;
         return $this->$pk;
     }
+
+    public function getUrl() {
+        return $this->getId();
+    }
     
     public function getFkName() {
     	return strtolower(get_class($this))."_id";
