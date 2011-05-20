@@ -18,6 +18,10 @@ class Log {
     public static function warn($str) {
         self::_log($str, "warn");
     }
+
+    public static function json($data) {
+        self::_log(json_encode($data), "debug");
+    }
 	
 	private static function _log($str, $logLevel) {
         $allowed = Settings::getValue("log.level", "warn");
