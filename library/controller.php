@@ -6,6 +6,7 @@ abstract class Controller {
     protected $session = NULL;
     protected $request = NULL;
     protected $response = NULL;
+    protected $errors = array();
     
     protected $var_stack = array();
 
@@ -114,6 +115,9 @@ abstract class Controller {
     }
 	
     public function render($template) {
+        if (count($this->errors)) {
+            $this->assign("_errors", $this->errors);
+        }
         if ($this->request->isAjax()) {
             return $this->renderJson();
         } else {
@@ -210,5 +214,15 @@ abstract class Controller {
             throw new CoreException("pattern could not be auto converted to template");
         }
         return $this->render($matches["tpl"]);
+    }
+
+    public function addError() {
+		$n_args = func_num_args();
+		$args = func_get_args();
+        if ($n_args == 2) {
+            $this->errors[$args[0]] = $args[1];
+        } else {
+            $this->errors[] = $args[0];
+        }
     }
 }
