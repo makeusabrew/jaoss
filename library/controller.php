@@ -225,4 +225,10 @@ abstract class Controller {
             $this->errors[] = $args[0];
         }
     }
+
+    public function setErrors(array $data = array()) {
+        // not quite a wrapper for addError - we overwrite
+        // whatever was in the array instead
+        $this->errors = $data;
+    }
 }
