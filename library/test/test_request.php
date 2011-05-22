@@ -14,19 +14,22 @@ class TestRequest extends JaossRequest {
                 $this->$param = $params[$param];
             }
         }
-        return true;
+        return $this;
     }
 
     public function setMethod($method) {
         $this->method = $method;
+        return $this;
     }
 
     public function setPost($fields) {
         $this->postFields = $fields;
+        return $this;
     }
 
     public function setGet($fields) {
         $this->getFields = $fields;
+        return $this;
     }
 
     public function getVar($var) {
