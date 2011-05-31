@@ -162,6 +162,9 @@ abstract class Object {
     }
 
     public function delete() {
+        foreach ($this->getChildren() as $child) {
+            $child->delete();
+        }
         if (!$this->getId()) {
             Log::debug("trying to delete unsaved object");
             return false;
@@ -262,5 +265,10 @@ abstract class Object {
     // override this if you want to change how a field of type "password" is hashed
     protected function encode($value) {
         return sha1($value);
+    }
+
+    // child classes can override this, useful for deletes etc
+    public function getChildren() {
+        return array();
     }
 }

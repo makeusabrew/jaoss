@@ -6,6 +6,7 @@ class File {
     protected $tmp_name;
     protected $error;
     protected $size;
+    protected $comittedName;
 
     const ERR_NO_FILE = 99;
 
@@ -37,10 +38,10 @@ class File {
         }
     }
 
-    public function commitFile($path, $name = null) {
+    public function commitFile($path, $name = null, $addExtension = true) {
         if ($name === null) {
             $name = $this->getFilename();
-        } else {
+        } else if ($addExtension === true) {
             $name .= ".".$this->getFileExt();
         }
 
@@ -54,6 +55,7 @@ class File {
 
         Log::debug("moving uploaded file [".$this->tmp_name."] to destination [".$path.$name."]");
         move_uploaded_file($this->tmp_name, $path.$name);
+        $this->commitedName = $path.$name;
     }
 
     public function getFilename() {
@@ -66,5 +68,9 @@ class File {
             return "";
         }
         return substr($this->getFilename(), $pos+1);
+    }
+
+    public function getCommittedName() {
+        return $this->comittedName;
     }
 }
