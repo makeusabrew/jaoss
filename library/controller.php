@@ -113,6 +113,10 @@ abstract class Controller {
     public function redirectAction($action, $message = NULL) {
         return $this->redirect(array("action" => $action), $message);
     }
+
+    public function redirectReferer($message = NULL) {
+        return $this->redirect($this->request->getReferer(), $message);
+    }
 	
     public function render($template) {
         if (count($this->errors)) {
