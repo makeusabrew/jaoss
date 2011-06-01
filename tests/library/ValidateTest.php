@@ -51,4 +51,51 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse(Validate::numbersSpaces("1234 ", array()));
         $this->assertFalse(Validate::numbersSpaces("123f65", array()));
     }
+
+    public function testGetMessage() {
+        $this->assertEquals(
+            'foo is not a valid email address',
+            Validate::getMessage('email', array('title' => 'foo'), null)
+        );
+
+        $this->assertEquals(
+            'foo is required',
+            Validate::getMessage('required', array('title' => 'foo'), null)
+        );
+
+        $this->assertEquals(
+            'foo must be at least 8 characters long',
+            Validate::getMessage('minLength', array('title' => 'foo', 'length' => 8), null)
+        );
+
+        $this->assertEquals(
+            'the two foos do not match',
+            Validate::getMessage('match', array('title' => 'foo'), null)
+        );
+
+        $this->assertEquals(
+            'this foo is already in use',
+            Validate::getMessage('unique', array('title' => 'foo'), null)
+        );
+
+        $this->assertEquals(
+            'foo must contain only numbers and spaces',
+            Validate::getMessage('numbersSpaces', array('title' => 'foo'), null)
+        );
+
+        $this->assertEquals(
+            'foo must contain only numbers',
+            Validate::getMessage('numbers', array('title' => 'foo'), null)
+        );
+
+        $this->assertEquals(
+            'foo must be in the format dd/mm/yyyy',
+            Validate::getMessage('date', array('title' => 'foo'), null)
+        );
+
+        $this->assertEquals(
+            'foo is not valid',
+            Validate::getMessage('unknown', array('title' => 'foo'), null)
+        );
+    }
 }
