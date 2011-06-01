@@ -115,7 +115,12 @@ abstract class Controller {
     }
 
     public function redirectReferer($message = NULL) {
-        return $this->redirect($this->request->getReferer(), $message);
+        $url = $this->request->getReferer();
+        if ($url === null) {
+            Log::debug("No referer URL found, redirecting to [/]");
+            $url = "/";
+        }
+        return $this->redirect($url, $message);
     }
 	
     public function render($template) {

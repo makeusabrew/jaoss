@@ -32,6 +32,11 @@ class TestRequest extends JaossRequest {
         return $this;
     }
 
+    public function setReferer($referer) {
+        $this->referer = $referer;
+        return $this;
+    }
+
     public function getVar($var) {
         if (isset($this->postFields[$var])) {
             return $this->postFields[$var];
@@ -55,6 +60,8 @@ class TestRequest extends JaossRequest {
         $this->getFields = array();
         $this->response = null;
         $this->method = null;
+        $this->referer = null;
         PathManager::reloadPaths();
+        return $this;
     }
 }
