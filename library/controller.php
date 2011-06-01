@@ -149,6 +149,7 @@ abstract class Controller {
         if ($this->smarty->templateExists($template.".tpl")) {
             $this->assign("base_href", $this->request->getBaseHref());
             $this->assign("current_url", $this->request->getUrl());
+            $this->assign("full_url", substr($this->request->getBaseHref(), 0, -1).$this->request->getUrl());
             $this->assign("messages", FlashMessenger::getMessages());
 
             foreach ($this->var_stack as $var => $val) {
