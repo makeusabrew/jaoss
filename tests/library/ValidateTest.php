@@ -112,5 +112,10 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
             'foo is not valid',
             Validate::getMessage('unknown', array('title' => 'foo'), null)
         );
+
+        $this->assertEquals(
+            'foo does not meet the minimum age requirement of 18',
+            Validate::getMessage('minAge', array('title' => 'foo', 'age' => 18), null)
+        );
     }
 }

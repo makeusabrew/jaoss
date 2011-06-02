@@ -71,6 +71,8 @@ class Validate {
                 return "{$title} must contain only numbers";
             case "date":
                 return "{$title} must be in the format dd/mm/yyyy"; 
+            case "minAge":
+                return "{$title} does not meet the minimum age requirement of {$settings["age"]}";
             default:
                 return "{$title} is not valid";
         }
