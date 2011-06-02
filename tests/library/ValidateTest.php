@@ -41,6 +41,21 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse(Validate::date("10/04/100"));
     }
 
+    public function testMinAge() {
+        $this->assertTrue(Validate::minAge('02/06/1993', array(
+            'age'       => '18',
+            'timestamp' => '02/06/2011',
+        )));
+        $this->assertTrue(Validate::minAge('01/06/1993', array(
+            'age'       => '18',
+            'timestamp' => '02/06/2011',
+        )));
+        $this->assertFalse(Validate::minAge('03/06/1993', array(
+            'age'       => '18',
+            'timestamp' => '02/06/2011',
+        )));
+    }
+
     public function testNumbersSpacesWithValidInput() {
         $this->assertTrue(Validate::numbersSpaces("1235", array()));
         $this->assertTrue(Validate::numbersSpaces("12 3 5", array()));

@@ -37,6 +37,20 @@ class Validate {
     public static function date($value, $settings = null) {
         return preg_match("#^\d{2}/\d{2}/(\d{2}|\d{4})$#", $value) > 0;
     }
+
+    public static function minAge($value, $settings = array()) {
+        // we assume input dates are in the format dd/mm/yyyy
+        $date = DateTime::createFromFormat('d/m/Y', $value);
+        $target = null;
+        if (isset($settings['target'])) {
+            $target = DateTime::createFromFormat('d/m/Y', $settings['target']);
+        } else {
+            // without a target we assume validation against today
+            $target = new DateTime();
+        }
+        $diff = $target->diff($date);
+        return ($diff->y >= $settings['age']);
+    }
     
     public static function getMessage($function, $settings, $value = null) {
         $title = $settings["title"];
