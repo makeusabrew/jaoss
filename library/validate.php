@@ -14,8 +14,25 @@ class Validate {
     }
 
     public static function minLength($value, $settings = null) {
-        $length = isset($settings["length"]) ? $settings["length"] : 0;
+        $length = 0;
+        if (isset($settings['minLength'])) {
+            $length = $settings['minLength'];
+        } else if (isset($settings['length'])) {
+            // ['length'] is legacy - doesn't work if you need min and max
+            $length = $settings['length'];
+        }
         return (strlen($value) >= $length);
+    }
+
+    public static function maxLength($value, $settings = null) {
+        $length = 0;
+        if (isset($settings['maxLength'])) {
+            $length = $settings['maxLength'];
+        } else if (isset($settings['length'])) {
+            // ['length'] is legacy - doesn't work if you need min and max
+            $length = $settings['length'];
+        }
+        return (strlen($value) <= $length);
     }
 
     public static function match($value, $settings) {
