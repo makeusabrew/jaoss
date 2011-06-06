@@ -5,6 +5,7 @@ class JaossRequest {
     protected $query_string = NULL;
     protected $method = NULL;
     protected $base_href = NULL;
+    protected $full_url = NULL;
     protected $ajax = false;
     protected $referer = NULL;
     protected $sapi = NULL;
@@ -35,7 +36,6 @@ class JaossRequest {
 		} else {
 			$this->query_string = "";
 		}
-        $this->full_url = substr($this->getBaseHref(), 0, -1).$this->getUrl();
         $this->method = isset($_SERVER["REQUEST_METHOD"]) ? $_SERVER["REQUEST_METHOD"] : NULL;
         $this->ajax = isset($_SERVER["HTTP_X_REQUESTED_WITH"]) ? true : false;
         $this->referer = isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : NULL;
@@ -45,6 +45,7 @@ class JaossRequest {
 
 	public function setUrl($url) {
 		$this->url = $url;
+        $this->full_url = substr($this->getBaseHref(), 0, -1).$url;
 	}
 	
 	public function dispatch($url = null) {
