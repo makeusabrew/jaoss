@@ -241,4 +241,8 @@ abstract class Controller {
         // whatever was in the array instead
         $this->errors = $data;
     }
+
+    public function getErrors() {
+        return $this->errors;
+    }
 }
