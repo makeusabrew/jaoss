@@ -35,6 +35,7 @@ class JaossRequest {
 		} else {
 			$this->query_string = "";
 		}
+        $this->full_url = substr($this->getBaseHref(), 0, -1).$this->getUrl();
         $this->method = isset($_SERVER["REQUEST_METHOD"]) ? $_SERVER["REQUEST_METHOD"] : NULL;
         $this->ajax = isset($_SERVER["HTTP_X_REQUESTED_WITH"]) ? true : false;
         $this->referer = isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : NULL;
@@ -79,6 +80,10 @@ class JaossRequest {
 
     public function getBaseHref() {
         return $this->base_href;
+    }
+
+    public function getFullUrl() {
+        return $this->full_url;
     }
 
     public function getUrl() {

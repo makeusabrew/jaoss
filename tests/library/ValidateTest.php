@@ -22,8 +22,19 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue(Validate::minLength("somestring"));
         $this->assertTrue(Validate::minLength("somestring", array("length" => "4")));
         $this->assertTrue(Validate::minLength("somestring", array("length" => "10")));
+        $this->assertTrue(Validate::minLength("somestring", array("minLength" => "10")));
 
         $this->assertFalse(Validate::minLength("somestring", array("length" => "11")));
+        $this->assertFalse(Validate::minLength("somestring", array("minLength" => "11")));
+    }
+
+    public function testMaxLength() {
+        $this->assertFalse(Validate::maxLength("anotherstring"));
+        $this->assertFalse(Validate::maxLength("anotherstring", array("length" => "12")));
+        $this->assertFalse(Validate::maxLength("anotherstring", array("maxLength" => "12")));
+
+        $this->assertTrue(Validate::maxLength("anotherstring", array("length" => "13")));
+        $this->assertTrue(Validate::maxLength("anotherstring", array("maxLength" => "13")));
     }
 
     public function testMatch() {
@@ -44,16 +55,16 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
     public function testMinAge() {
         $this->assertTrue(Validate::minAge('02/06/1993', array(
             'age'       => '18',
-            'timestamp' => '02/06/2011',
-        )));
+            'target' => '02/06/2011',
+        )), 'Age is at least 18');
         $this->assertTrue(Validate::minAge('01/06/1993', array(
             'age'       => '18',
-            'timestamp' => '02/06/2011',
-        )));
+            'target' => '02/06/2011',
+        )), 'Age is at least 18');
         $this->assertFalse(Validate::minAge('03/06/1993', array(
             'age'       => '18',
-            'timestamp' => '02/06/2011',
-        )));
+            'target' => '02/06/2011',
+        )), 'Age is not 18');
     }
 
     public function testNumbersSpacesWithValidInput() {
