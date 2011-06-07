@@ -201,8 +201,8 @@ abstract class Controller {
         unset($this->var_stack[$var]);
     }
     
-    public function setFlash($flash) {
-        $this->session->setFlash($flash);
+    public function setFlash($flash, $value = true) {
+        $this->session->setFlash($flash, $value);
     }
 
     public function getFlash($flash) {
