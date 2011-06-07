@@ -40,7 +40,7 @@ class App {
 		}
 		
         $path = PROJECT_ROOT."apps/".$this->folder."/paths.php";
-        Log::debug("Looking for [".$path."]");
+        Log::verbose("Looking for [".$path."]");
 		if (file_exists($path)) {
 			include($path);
 			$this->setLoaded(TRUE);

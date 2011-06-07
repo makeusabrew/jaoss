@@ -36,7 +36,7 @@ class Settings {
         }
 
         $loadStr = substr($loadStr, 0, -1)." settings";
-        Log::debug($loadStr);
+        Log::verbose($loadStr);
 
         if (function_exists("getenv") && ($path = getenv("PROJECT_INI")) !== false) {
             Log::debug("loading extra project ini from [".$path."]");

@@ -58,7 +58,7 @@ class PathManager {
     public static function loadPathsFromController($controller) {
         $location = self::getLocationFromTrace();
         $path = "apps/".$location."/controllers/".strtolower($controller).".php";
-        Log::debug("looking for controller [".$path."]");
+        Log::verbose("looking for controller [".$path."]");
         if (!file_exists($path)) {
             throw new CoreException("file does not exist");
         }
@@ -110,7 +110,7 @@ class PathManager {
 		}
 		// no match :(
 		throw new CoreException(
-			"No matching path for URL",
+			"No matching path for URL ".$url,
 			CoreException::URL_NOT_FOUND,
 			array(
 				"paths" => self::$paths,

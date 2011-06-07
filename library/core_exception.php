@@ -18,7 +18,7 @@ class CoreException extends Exception {
 		parent::__construct($msg, $code);
 		$this->args = $args;
         if ($code != CoreException::LOG_FILE_ERROR) {
-            Log::debug("CoreException thrown [".$this->getMessage()."]", "-v");
+            Log::verbose("CoreException thrown [".$this->getMessage()."]", "-v");
         }
 	}
 	

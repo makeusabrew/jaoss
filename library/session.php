@@ -7,7 +7,7 @@ class Session {
 
     public static function getInstance($namespace = NULL) {
         if (self::$instance === NULL) {
-            Log::debug("Instantiating session");
+            Log::verbose("Instantiating session");
             self::$instance = new Session($namespace);
         }
         return self::$instance;
@@ -24,7 +24,7 @@ class Session {
             // no mode
             $mode = "default";
         }
-        Log::debug("Initialising session handler [".$mode."]");
+        Log::verbose("Initialising session handler [".$mode."]");
         $this->handler = SessionHandler::factory($mode);
         if ($this->handler == null) {
             throw new CoreException("Could not attach session handler");
