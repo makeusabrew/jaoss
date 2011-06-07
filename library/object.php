@@ -53,11 +53,14 @@ abstract class Object {
 		return array_merge(array($this->pk => $this->getId()), $this->values);
 	}
 	
-	public function setValues($values) {
+	public function setValues($values, $subset = null) {
         $this->errors = array();
 
         $columns = $this->getColumns();
         foreach($columns as $field => $settings) {
+            if ($subset !== null && !in_array($field, $subset)) {
+                continue;
+            }
             $value = isset($values[$field]) ? $values[$field] : null;
             if (!isset($settings["title"])) {
                 $settings["title"] = $field;
@@ -81,8 +84,12 @@ abstract class Object {
         return (count($this->errors) == 0) ? true : false;
 	}
 	
-	public function updateValues($values) {
-		return $this->setValues(array_merge($this->getValues(), $values));
+	public function updateValues($values, $partial = false) {
+        if ($partial === true) {
+            return $this->setValues($values, array_keys($values));
+        } else {
+            return $this->setValues(array_merge($this->getValues(), $values));
+        }
 	}
 	
 	public function getTableName() {
