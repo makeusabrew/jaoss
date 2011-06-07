@@ -171,7 +171,7 @@ abstract class Controller {
 	
     public function renderStatic($template) {
         if ($this->smarty->templateExists("static/".$template.".tpl")) {
-            return $this->fetch("static/".$template.".tpl");
+            return $this->render("static/".$template);
         }
         // manual for HTML files
         foreach ($this->smarty->template_dir as $dir) {
