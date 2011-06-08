@@ -29,6 +29,7 @@ include("library/table.php");
 include("library/object.php");
 include("library/app.php");
 include("library/app_manager.php");
+include("library/cookie_jar.php");
 include("library/session.php");
 include("library/utils.php");
 
