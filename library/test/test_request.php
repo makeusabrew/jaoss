@@ -3,9 +3,14 @@ class TestRequest extends JaossRequest {
     protected $postFields = array();
     protected $getFields = array();
 
-    public function setParams($params = array()) {
+    public function __construct() {
+        parent::__construct();
+        $this->method = 'GET';  // assume get by default
+    }
+
+    public function setProperties($params = array()) {
         if ($this->sapi != "cli") {
-            Log::debug("attempting to set request params via non CLI server API!");
+            Log::debug("attempting to set request properties via non CLI server API!");
             return false;
         }
         $allowed_params = array("folder_base", "base_href", "url", "query_string", "method", "ajax", "referer");
@@ -30,6 +35,17 @@ class TestRequest extends JaossRequest {
     public function setGet($fields) {
         $this->getFields = $fields;
         return $this;
+    }
+
+    public function setParams($fields) {
+        switch ($this->method) {
+            case 'GET':
+                return $this->setGet($fields);
+            case 'POST':
+                return $this->setPost($fields);
+            default:
+                throw new CoreException('Unknown request method ['.$this->method.']');
+        }
     }
 
     public function setReferer($referer) {
