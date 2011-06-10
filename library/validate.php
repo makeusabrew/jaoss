@@ -77,7 +77,14 @@ class Validate {
             case "required":
                 return "{$title} is required";
             case "minLength":
-                return "{$title} must be at least {$settings["length"]} characters long";
+                $length = 0;
+                if (isset($settings['minLength'])) {
+                    $length = $settings['minLength'];
+                } else if (isset($settings['length'])) {
+                    // ['length'] is legacy - doesn't work if you need min and max
+                    $length = $settings['length'];
+                }
+                return "{$title} must be at least {$length} characters long";
             case "match":
                 return "the two {$title}s do not match";
             case "unique":
