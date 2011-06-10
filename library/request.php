@@ -107,8 +107,8 @@ class JaossRequest {
         return $this->method == "POST";
     }
 
-    public function getVar($var) {
-        return (isset($_REQUEST[$var])) ? $_REQUEST[$var] : null;
+    public function getVar($var, $default = null) {
+        return (isset($_REQUEST[$var])) ? $_REQUEST[$var] : $default;
     }
     
     public function getPost() {

@@ -53,14 +53,14 @@ class TestRequest extends JaossRequest {
         return $this;
     }
 
-    public function getVar($var) {
+    public function getVar($var, $default = null) {
         if (isset($this->postFields[$var])) {
             return $this->postFields[$var];
         }
         if (isset($this->getFields[$var])) {
             return $this->getFields[$var];
         }
-        return null;
+        return $default;
     }
 
     public function getPost() {
