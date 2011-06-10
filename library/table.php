@@ -56,7 +56,32 @@ class Table {
 	}
 
     public function countAll($where = null, $params = null, $order_by = null) {
-        return count($this->findAll($where, $params, $order_by));
+		$q = "SELECT COUNT(*) as count FROM `".$this->getTable()."`";
+		if ($where !== NULL) {
+            if (is_array($where) && count($where) > 0) {
+                // add support for simple AND where clauses
+                $params = array();  // blat params
+                $q.= " WHERE ";
+                foreach ($where as $field => $value) {
+                    $q .= "`".$field."` = ? AND ";
+                    $params[] = $value;
+                }
+                $q = substr($q, 0, -5);
+            } else {
+                $q .= " WHERE {$where}";
+            }
+		}
+		if ($order_by !== NULL) {
+			$q .= " ORDER BY {$order_by}";
+		} else if ($this->order_by !== NULL) {
+			$q .= " ORDER BY {$this->order_by}";
+		}
+		$dbh = Db::getInstance();
+		$sth = $dbh->prepare($q);
+		
+		$sth->execute($params);
+        $result = $sth->fetch();
+        return $result['count'];
     }
 	
 	public function findAll($where = NULL, $params = NULL, $order_by = NULL, $limit = NULL) {
