@@ -12,18 +12,18 @@ class CoreException extends Exception {
     const VARIABLE_ALREADY_ASSIGNED = 9;
     const NO_PATHS_LOADED = 10;
 	
-	private $args = array();
+	protected $args = array();
 	
 	public function __construct($msg = "", $code = 0, $args = array()) {
 		parent::__construct($msg, $code);
 		$this->args = $args;
-        if ($code != CoreException::LOG_FILE_ERROR) {
-            Log::verbose("CoreException thrown [".$this->getMessage()."]", "-v");
+        if ($code !== CoreException::LOG_FILE_ERROR) {
+            Log::verbose("CoreException thrown [".$this->getMessage()."]");
         }
 	}
 	
 	public function getArg($a) {
-		return (isset($this->args[$a])) ? $this->args[$a] : NULL;
+		return isset($this->args[$a]) ? $this->args[$a] : null;
 	}
 	
 	public function ga($a) {
