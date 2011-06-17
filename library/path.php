@@ -5,7 +5,7 @@ class JaossPath {
     protected $app;
     protected $controller;
     protected $action;
-    protected $matches;
+    protected $matches = array();
     protected $discarded;
 
     public function run($request = NULL) {
@@ -92,7 +92,7 @@ class JaossPath {
     }
 
     public function getMatch($match) {
-        return $this->matches[$match];
+        return isset($this->matches[$match]) ? $this->matches[$match] : null;
     }
     
     public function setDiscarded($discarded) {
