@@ -50,6 +50,9 @@ Settings::setFromArray(array(
     "smarty" => array(
         "compile_dir" => "/tmp",
     ),
+    "site" => array(
+        "namespace" => "test_namespace",
+    ),
 ));
 
 // log some debug straight away to check the file is there
