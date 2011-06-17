@@ -112,4 +112,44 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
     // need to write a proper test for it when I do!
     //public function testUpdateValuesWithPartialFlag() {}
 
+    public function testGetErrorsReturnsEmptyArray() {
+        $this->assertEquals(array(), $this->object->getErrors());
+    }
+
+    public function testGetErrors() {
+        $this->object->setValues(array(
+            'myVariable' => 'foo',
+        ));
+
+        $this->assertEquals(array(
+            'anotherVariable' => 'anotherVariable is required',
+        ), $this->object->getErrors());
+    }
+
+    public function testGetTable() {
+        $this->assertEquals('test_objects', $this->object->getTable());
+    }
+
+    public function testGetColumnInfo() {
+        $this->assertEquals(array(
+            'type' => 'text',
+        ), $this->object->getColumnInfo('myVariable'));
+    }
+
+    public function testGetHasManyInfo() {
+        $this->assertNull($this->object->getHasManyInfo('myVariable'));
+    }
+
+    public function testGetUrl() {
+        // getUrl by default returns ID which won't be set on a new object...
+        $this->assertNull($this->object->getUrl());
+    }
+
+    public function testGetFkName() {
+        $this->assertEquals('testobject_id', $this->object->getFkName());
+    }
+
+    public function testOwnsWithNonObjectArgument() {
+        $this->assertFalse($this->object->owns('foo'));
+    }
 }
