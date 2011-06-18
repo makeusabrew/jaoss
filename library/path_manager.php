@@ -140,7 +140,6 @@ class PathManager {
         self::$prefix = "";
     }
     
-    //@todo make this work with dynamic URLs!
     public static function getUrlForOptions($options) {
         $path = self::getPathForOptions($options);
         $pattern = $path->getPattern();
