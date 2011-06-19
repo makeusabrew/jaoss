@@ -100,6 +100,16 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
         );
 
         $this->assertEquals(
+            'foo must be no more than 8 characters long',
+            Validate::getMessage('maxLength', array('title' => 'foo', 'length' => 8), null)
+        );
+
+        $this->assertEquals(
+            'foo must be no more than 8 characters long',
+            Validate::getMessage('maxLength', array('title' => 'foo', 'maxLength' => 8), null)
+        );
+
+        $this->assertEquals(
             'the two foos do not match',
             Validate::getMessage('match', array('title' => 'foo'), null)
         );
