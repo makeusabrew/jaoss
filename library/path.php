@@ -18,6 +18,9 @@ class JaossPath {
                     $controller->init();
                 } catch (CoreException $e) {
                     Log::debug($this->controller."Controller->init() failed with message [".$e->getMessage()."]");
+                    if ($e->getCode() == CoreException::PATH_REJECTED) {
+                        throw $e;
+                    }
                     return $controller->getResponse();
                 }
 
