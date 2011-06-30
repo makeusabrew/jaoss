@@ -26,7 +26,12 @@ class JaossRequest {
             // abadon all hope... for now @todo improve
             return;
         }
-		$this->folder_base = substr($_SERVER["PHP_SELF"], 0, strpos($_SERVER["PHP_SELF"], "index.php"));
+        $basePath = "index.php";
+        // we now support subfolders, conditionally anyway
+        if (Settings::getValue("site.subfolder", false) == true) {
+            $basePath = "public/".$basePath;
+        }
+		$this->folder_base = substr($_SERVER["PHP_SELF"], 0, strpos($_SERVER["PHP_SELF"], $basePath));
         $this->base_href = "http://".$_SERVER["SERVER_NAME"].$this->folder_base;
 		$this->setUrl(substr($_SERVER["REQUEST_URI"], strlen($this->folder_base)-1));
 		$queryString = strrpos($this->url, "?");
