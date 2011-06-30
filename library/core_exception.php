@@ -11,6 +11,7 @@ class CoreException extends Exception {
     const PATH_REJECTED = 8;
     const VARIABLE_ALREADY_ASSIGNED = 9;
     const NO_PATHS_LOADED = 10;
+    const NO_PATH_FOUND_FOR_OPTIONS = 11;
 	
 	protected $args = array();
 	

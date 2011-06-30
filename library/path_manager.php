@@ -172,7 +172,14 @@ class PathManager {
                 return $path;
             }
         }
-        throw new CoreException("No Path found for options");
+        throw new CoreException(
+            "No Path found for options",
+            CoreException::NO_PATH_FOUND_FOR_OPTIONS,
+            array(
+                'options' => $options,
+                'paths' => self::$paths,
+            )
+        );
     }
 
     public static function reloadPaths() {
