@@ -124,7 +124,7 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
         try {
             $path = PathManager::getPathForOptions($options);
         } catch (CoreException $e) {
-            $this->assertEquals(0, $e->getCode());
+            $this->assertEquals(11, $e->getCode());
             return;
         }
         $this->fail("Expected Exception Not Raised");
@@ -140,7 +140,7 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
         try {
             $path = PathManager::getPathForOptions($options);
         } catch (CoreException $e) {
-            $this->assertEquals(0, $e->getCode());
+            $this->assertEquals(11, $e->getCode());
             return;
         }
         $this->fail("Expected Exception Not Raised");
