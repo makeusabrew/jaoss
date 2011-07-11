@@ -26,9 +26,10 @@ class JaossRequest {
             // abadon all hope... for now @todo improve
             return;
         }
-        $basePath = "index.php";
+        $basePath = basename($_SERVER["PHP_SELF"]);  // should be index.php or xhprof.php
         // we now support subfolders, conditionally anyway
-        if (Settings::getValue("site.subfolder", false) == true) {
+        if (substr_compare($_SERVER["PHP_SELF"], "public/".$basePath, -strlen("public/".$basePath), strlen("public/".$basePath)) === 0) {
+            // we're probably running off http://localhost/foo/bar, so adjust base path
             $basePath = "public/".$basePath;
         }
 		$this->folder_base = substr($_SERVER["PHP_SELF"], 0, strpos($_SERVER["PHP_SELF"], $basePath));
@@ -152,5 +153,9 @@ class JaossRequest {
 
     public function getHostname() {
         return $this->hostname;
+    }
+
+    public function getFolderBase() {
+        return $this->folder_base;
     }
 }

@@ -105,7 +105,7 @@ abstract class Controller {
     		$this->assign("redirect", $url);
             return $this->renderJson();
     	} else {
-            if (Settings::getValue("site.subfolder", false) == true) {
+            if ($this->request->getFolderBase() !== '/') {
                 $url = substr($this->request->getBaseHref(), 0, -1).$url;
             }
             $this->response->setRedirect($url, 303);
