@@ -25,7 +25,27 @@ class ErrorHandler {
         $controller = Settings::getValue("errors.controller", false);
         $action = Settings::getValue("errors.action", false);
 
-        Log::warn("Handling error of type [".get_class($e)."] with message [".$e->getMessage()."]");
+        try {
+            Log::warn("Handling error of type [".get_class($e)."] with message [".$e->getMessage()."]");
+        } catch (CoreException $ex) {
+            if ($ex->getCode() == CoreException::LOG_FILE_ERROR) {
+                // this isn't great, but it's not the end of the world - swallow this exception as we don't care about
+                // it at *this* particular level
+                // @todo do *something*, hence why we have an if... else
+            } else {
+                // unexpected, so better throw it
+                throw $ex;
+            }
+        }
+
+        /**
+         * special edge cases here
+         */
+        if ($e instanceof CoreException && $e->getCode() == CoreException::TPL_DIR_NOT_WRITABLE) {
+            // we assume if we've got this error that the user's chosen dir isn't writable, so
+            // we need to switch to one we know (hope!) is to render the error
+            $this->smarty->compile_dir = '/tmp';
+        }
         if ($e instanceof CoreException) {
             $path = "core/{$code}.tpl";
             $this->response->setResponseCode(404);

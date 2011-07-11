@@ -39,8 +39,17 @@ class Log {
             $path = Settings::getValue("log.".$level);
             if (!isset(self::$handle[$path])) {
                 if (!file_exists($path)) {
-                    //@todo obviously this is rancid. improve - move to utils maybe?
-                    $file = fopen($path, "w");
+                    // file doesn't exist, so a call to is_writable will always fail. so, we have to be a bit dirty i'm afraid :(
+                    // have to surpress the E_WARNING, check the result, and then throw an error if it's failed
+                    // we also need a try catch in case we're in exception throwing mode, in which case @ does naff all
+                    try {
+                        $file = @fopen($path, "w");
+                    } catch (ErrorException $e) {
+                        $file = false;
+                    }
+                    if ($file === false) {
+                        throw new CoreException("Logfile does not exist and could not be created", CoreException::LOG_FILE_ERROR, array("path" => $path));
+                    }
                     fclose($file);
                     chmod($path, 0777);
                 }
