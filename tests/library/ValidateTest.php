@@ -13,6 +13,7 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue(Validate::email("foo@bar.com"));
         $this->assertTrue(Validate::email("some.address@anotherdomain.com"));
         $this->assertTrue(Validate::email("address@somedomain.co.uk"));
+        $this->assertTrue(Validate::email("foo@bar.name"));
 
         $this->assertFalse(Validate::email("address"));
         $this->assertFalse(Validate::email("address@"));
