@@ -2,6 +2,7 @@
 class TestRequest extends JaossRequest {
     protected $postFields = array();
     protected $getFields = array();
+    protected $folder_base = '/';
 
     public function __construct() {
         parent::__construct();
