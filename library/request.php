@@ -11,6 +11,8 @@ class JaossRequest {
     protected $sapi = NULL;
     protected $ip = NULL;
     protected $hostname = NULL;
+    protected $userAgent = NULL;
+
     private static $instance = NULL;
 
     public static function getInstance() {
@@ -47,6 +49,7 @@ class JaossRequest {
         $this->referer = isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : NULL;
         $this->ip = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : NULL;
         $this->hostname = isset($_SERVER["SERVER_NAME"]) ? $_SERVER["SERVER_NAME"] : NULL;
+        $this->userAgent = isset($_SERVER["HTTP_USER_AGENT"]) ? $_SERVER["HTTP_USER_AGENT"] : NULL;
 	}
 
 	public function setUrl($url) {
@@ -157,5 +160,9 @@ class JaossRequest {
 
     public function getFolderBase() {
         return $this->folder_base;
+    }
+
+    public function getUserAgent() {
+        return $this->userAgent;
     }
 }
