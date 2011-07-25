@@ -144,6 +144,7 @@ abstract class Controller {
         foreach ($this->var_stack as $var => $val) {
             $data[$var] = $val;
         }
+        $this->response->addHeader('Content-Type', 'application/json')
         $this->response->setBody(json_encode($data));
         return true;
     }
