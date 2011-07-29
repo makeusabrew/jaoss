@@ -32,6 +32,7 @@ include("library/app_manager.php");
 include("library/cookie_jar.php");
 include("library/session.php");
 include("library/utils.php");
+include("library/image.php");
 
 // set some settings manually
 Settings::setFromArray(array(
