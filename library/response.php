@@ -7,6 +7,7 @@ class JaossResponse {
     protected $redirectUrl = "";
     protected $responseCode = 200;
     protected $path = NULL;
+    protected $headers = array();
 
     const HTTP_VERSION = "HTTP/1.0";
 
@@ -42,6 +43,9 @@ class JaossResponse {
             exit;
         } 
         header($this->getHeaderString());
+        foreach ($this->headers as $key => $value) {
+            header($key.": ".$value);
+        }
     }
 
     public function setPath($path) {
@@ -64,5 +68,9 @@ class JaossResponse {
         );
         $headerString = $headers[$this->getResponseCode()];
         return self::HTTP_VERSION." ".$this->getResponseCode(). " ".$headerString;
+    }
+
+    public function addHeader($key, $value) {
+        $this->headers[$key] = $value;
     }
 }
