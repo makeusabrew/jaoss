@@ -137,13 +137,19 @@ abstract class Controller {
         }
     }
 	
-    public function renderJson() {
+    public function renderJson($extra = array()) {
+        foreach ($extra as $var => $val) {
+            $this->assign($var, $val);
+        }
+
         if (!isset($this->var_stack["msg"])) {
             $this->var_stack["msg"] = "OK";
         }
+
         foreach ($this->var_stack as $var => $val) {
             $data[$var] = $val;
         }
+
         $this->response->addHeader('Content-Type', 'application/json');
         $this->response->setBody(json_encode($data));
         return true;
