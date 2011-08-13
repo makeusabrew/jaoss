@@ -79,6 +79,13 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse(Validate::numbersSpaces("123f65", array()));
     }
 
+    public function testPostcode() {
+        $this->assertTrue(Validate::postcode("LS1 3BR"));
+        $this->assertTrue(Validate::postcode("GIR 0AA"));
+
+        $this->assertFalse(Validate::postcode("LS1"));
+    }
+
     public function testGetMessage() {
         $this->assertEquals(
             'foo is not a valid email address',
@@ -143,6 +150,11 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(
             'foo does not meet the minimum age requirement of 18',
             Validate::getMessage('minAge', array('title' => 'foo', 'age' => 18), null)
+        );
+
+        $this->assertEquals(
+            'foo is not a valid postcode',
+            Validate::getMessage('postcode', array('title' => 'foo'), null)
         );
     }
 }
