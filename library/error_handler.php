@@ -28,14 +28,8 @@ class ErrorHandler {
         try {
             Log::warn("Handling error of type [".get_class($e)."] with message [".$e->getMessage()."]");
         } catch (CoreException $ex) {
-            if ($ex->getCode() == CoreException::LOG_FILE_ERROR) {
-                // this isn't great, but it's not the end of the world - swallow this exception as we don't care about
-                // it at *this* particular level
-                // @todo do *something*, hence why we have an if... else
-            } else {
-                // unexpected, so better throw it
-                throw $ex;
-            }
+            // if something goes wrong logging the error then we're probably in all sorts of trouble, so
+            // just swallow the exception so the original error can be shown.
         }
 
         /**

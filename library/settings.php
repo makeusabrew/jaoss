@@ -2,7 +2,7 @@
 class Settings {
     private static $mode = null;
     private static $modes = array(
-        "live", "demo", "build", "test"
+        "live", "demo", "build", "test", "ci"
     );
 	
 	private static $settings = array();
@@ -55,7 +55,7 @@ class Settings {
             if ($defaultValue !== NULL) {
                 return $defaultValue;
             } else {
-                throw new CoreException("Setting not found");
+                throw new CoreException("Setting '".$section.".".$key."' not found");
             }
 		}
 		return self::$settings[$section][$key];
