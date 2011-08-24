@@ -11,8 +11,9 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
             $db = Settings::getValue("db.dbname");
             $path = escapeshellarg(PROJECT_ROOT."tests/fixtures/".$class::$fixture_file.".sql");
             $cmd = "mysql -u ".($user)." -h ".($host)." -p".($pass)." --database=".($db)." < ".$path;
-            Log::debug("Loading fixture command [".$cmd."]");
             exec($cmd);
+            $cmd = str_replace($pass, str_repeat("*", strlen($pass)), $cmd);
+            Log::debug("Loading fixture command [".$cmd."]");
         }
     }
 
