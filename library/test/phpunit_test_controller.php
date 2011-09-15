@@ -45,6 +45,11 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
         $this->assertTrue((strpos($body, $contents) !== false), "Response missing body contents: '{$contents}'");
     }
 
+    public function assertBodyDoesNotHaveContents($contents) {
+        $body = $this->request->getResponse()->getBody();
+        $this->assertFalse((strpos($body, $contents) !== false), "Response should NOT have body contents: '{$contents}'");
+    }
+
     public function assertRedirect($isRedirect) {
         $this->assertEquals($isRedirect, $this->request->getResponse()->isRedirect(), "Response is not redirect");
     }
