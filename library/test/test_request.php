@@ -72,6 +72,11 @@ class TestRequest extends JaossRequest {
         return $this->getFields;
     }
 
+    public function getIp() {
+        // override as this will be empty otherwise
+        return "127.0.0.2";
+    }
+
     public function reset() {
         $this->postFields = array();
         $this->getFields = array();
