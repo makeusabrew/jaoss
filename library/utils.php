@@ -1,6 +1,8 @@
 <?php
 
 class Utils {
+    protected static $currentTimestamp = null;
+
 	public static function fuzzyTime($from, $to = NULL) {
 		if (!is_numeric($from)) {
 			// handle dates graciously
@@ -47,7 +49,7 @@ class Utils {
         }
         return $password;
     }
-    
+
     public static function disableMagicQuotesGPC() {
         if (get_magic_quotes_gpc()) {
             $process = array(&$_GET, &$_POST, &$_COOKIE, &$_REQUEST);
@@ -64,5 +66,26 @@ class Utils {
             }
             unset($process);
         }
+    }
+
+    public static function getDate($str) {
+        if (self::$currentTimestamp === null) {
+            return date($str);
+        }
+
+        // otherwise we've manipulated the current timestamp, so serve that instead
+        return date($str, self::$currentTimestamp);
+    }
+
+    public static function setCurrentDate($dateStr) {
+        if (Settings::getValue("date.allow_override", false)) {
+            self::$currentTimestamp = strtotime($dateStr);
+        } else {
+            Log::info("Attempted to set the current timestamp to [".$dateStr."] when not allowed");
+        }
+    }
+
+    public static function reset() {
+        self::$currentTimestamp = null;
     }
 }
