@@ -4,11 +4,16 @@ class Log {
     private static $levels = array(
         "verbose" => 10,
         "debug" => 20,
-        "warn" => 30,
+        "info" => 30,
+        "warn" => 40,
     );
 
 	public static function debug($str) {
 		self::_log($str, "debug");
+	}
+
+	public static function info($str) {
+		self::_log($str, "info");
 	}
 
     public static function verbose($str) {
