@@ -13,6 +13,8 @@ class JaossRequest {
     protected $hostname = NULL;
     protected $userAgent = NULL;
 
+    protected $cacheKey = NULL;
+
     private static $instance = NULL;
 
     public static function getInstance() {
@@ -69,6 +71,19 @@ class JaossRequest {
 		if ($this->url === NULL) {
 			throw new CoreException("No URL to dispatch");
 		}
+        if ($this->isGet() && $this->query_string === "" && Settings::getValue("site", "cache_enabled", false) == true) {
+            // @todo load some cache rules for URLs... TTLs etc.
+            Log::info("Attempting to retrieve URL contents [".$this->url."] from cache...");
+            $this->cacheKey = Settings::getValue("site", "namespace").sha1($this->url);
+            $success = false;
+            $response = apc_fetch($this->cacheKey, $success);
+            if ($success === true) {
+                Log::info("cache hit");
+                $this->response = $response;
+                return $this->response;
+            }
+            Log::info("cache miss");
+        }
 		$path = PathManager::matchUrl($this->url);
         
         try {
@@ -80,6 +95,15 @@ class JaossRequest {
                 return $this->dispatch($this->url);
             } else {
                 throw $e;
+            }
+        }
+        if ($this->cacheKey !== null) {
+            Log::info("Caching response for URL [".$this->url."]");
+            $cached = apc_store($this->cacheKey, $this->response, 60);
+            if ($cached) {
+                Log::info("Cache stored successfully");
+            } else {
+                Log::warn("URL [".$this->url."] could not be cached!");
             }
         }
         return $this->response;
