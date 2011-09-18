@@ -76,6 +76,9 @@ class EmailTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSendReturnValue() {
+        if (Settings::getValue("email.handler", false) === false) {
+            $this->markTestSkipped("No email configuration settings, skipping test");
+        }
         $email = Email::factory();
         $this->assertFalse($email->send());
         $email->setTo("foo@bar.com");

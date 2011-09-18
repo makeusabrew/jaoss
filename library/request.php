@@ -36,7 +36,12 @@ class JaossRequest {
         }
 		$this->folder_base = substr($_SERVER["PHP_SELF"], 0, strpos($_SERVER["PHP_SELF"], $basePath));
         $this->base_href = "http://".$_SERVER["SERVER_NAME"].$this->folder_base;
-		$this->setUrl(substr($_SERVER["REQUEST_URI"], strlen($this->folder_base)-1));
+		$this->setUrl(
+            // we're not interested in %20 instead of spaces, so get rid
+            urldecode(
+                substr($_SERVER["REQUEST_URI"], strlen($this->folder_base)-1)
+            )
+        );
 		$queryString = strrpos($this->url, "?");
 		if ($queryString !== FALSE) {
 			$this->query_string = substr($this->url, $queryString+1);
