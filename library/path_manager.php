@@ -3,7 +3,7 @@ class PathManager {
 	private static $paths = array();
     private static $prefix = "";
 	
-	public static function loadPath($pattern = NULL, $action = NULL, $controller = NULL, $location = NULL) {
+	public static function loadPath($pattern = NULL, $action = NULL, $controller = NULL, $location = NULL, $cacheTtl = NULL) {
 		if (!isset($pattern)) {
 			throw new CoreException("No pattern passed");
 		}
@@ -25,6 +25,10 @@ class PathManager {
         $path->setApp($location);
 		$path->setController($controller);
 		$path->setAction($action);
+        if ($cacheTtl !== NULL) {
+            $path->setCacheable(true);
+            $path->setCacheTtl($cacheTtl);
+        }
 		self::$paths[] = $path;
 		Log::verbose("Loading path: pattern [".$path->getPattern()."] location [".$path->getLocation()."] controller [".$path->getController()."] action [".$path->getAction()."]");
 	}
@@ -51,7 +55,8 @@ class PathManager {
 			} else {
 				$location = $path[3];
 			}
-			self::loadPath($pattern, $action, $controller, $location);
+			$cacheTtl = isset($path[4]) ? $path[4] : NULL;
+			self::loadPath($pattern, $action, $controller, $location, $cacheTtl);
 		}
 	}
 	

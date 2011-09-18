@@ -7,6 +7,8 @@ class JaossPath {
     protected $action;
     protected $matches = array();
     protected $discarded;
+    protected $cacheable = false;
+    protected $cacheTtl = 60;
 
     public function run($request = NULL) {
         $controller = Controller::factory($this->controller, $this->app, $request);
@@ -100,6 +102,22 @@ class JaossPath {
     
     public function setDiscarded($discarded) {
         $this->discarded = $discarded;
+    }
+
+    public function setCacheable($cacheable) {
+        $this->cacheable = $cacheable;
+    }
+
+    public function setCacheTtl($ttl) {
+        $this->cacheTtl = $ttl;
+    }
+
+    public function isCacheable() {
+        return $this->cacheable;
+    }
+
+    public function getCacheTtl() {
+        return $this->cacheTtl;
     }
     
     public function isDiscarded() {

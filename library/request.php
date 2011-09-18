@@ -63,6 +63,10 @@ class JaossRequest {
 		$this->url = $url;
         $this->full_url = substr($this->getBaseHref(), 0, -1).$url;
 	}
+
+    protected function isCacheable() {
+        return ($this->isGet() && $this->query_string == "");
+    }
 	
 	public function dispatch($url = null) {
         if ($url !== null) {
@@ -71,8 +75,13 @@ class JaossRequest {
 		if ($this->url === NULL) {
 			throw new CoreException("No URL to dispatch");
 		}
-        if ($this->isGet() && $this->query_string === "" && Settings::getValue("site", "cache_enabled", false) == true) {
-            // @todo load some cache rules for URLs... TTLs etc.
+
+		$path = PathManager::matchUrl($this->url);
+
+        if ($path->isCacheable() &&
+            $this->isCacheable() &&
+            Settings::getValue("site", "cache_enabled", false) == true) {
+
             Log::info("Attempting to retrieve URL contents [".$this->url."] from cache...");
             $this->cacheKey = Settings::getValue("site", "namespace").sha1($this->url);
             $success = false;
@@ -84,22 +93,25 @@ class JaossRequest {
             }
             Log::info("cache miss");
         }
-		$path = PathManager::matchUrl($this->url);
-        
+
         try {
             $this->response = $path->run($this);
         } catch (CoreException $e) {
             if ($e->getCode() == CoreException::PATH_REJECTED) {
                 // right then, mark as discarded and try again...
                 $path->setDiscarded(true);
+                if ($this->cacheKey !== null) {
+                    Log::info("Path discarded - discarding cache key");
+                    $this->cacheKey = null;
+                }
                 return $this->dispatch($this->url);
             } else {
                 throw $e;
             }
         }
         if ($this->cacheKey !== null) {
-            Log::info("Caching response for URL [".$this->url."]");
-            $cached = apc_store($this->cacheKey, $this->response, 60);
+            Log::info("Caching response for URL [".$this->url."] with ttl [".$path->getCacheTtl()."]");
+            $cached = apc_store($this->cacheKey, $this->response, $path->getCacheTtl());
             if ($cached) {
                 Log::info("Cache stored successfully");
             } else {
