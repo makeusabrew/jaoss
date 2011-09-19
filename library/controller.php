@@ -19,8 +19,9 @@ abstract class Controller {
         $apps = AppManager::getAppPaths();
         $tpl_dirs = array(PROJECT_ROOT."apps/");
 		
-        $this->smarty->template_dir = $tpl_dirs;
-        $this->smarty->compile_dir  = Settings::getValue("smarty", "compile_dir");
+        $this->smarty->template_dir  = $tpl_dirs;
+        $this->smarty->compile_dir   = Settings::getValue("smarty", "compile_dir");
+        $this->smarty->compile_check = Settings::getBool("smarty", "compile_check");
         $this->smarty->plugins_dir   = array(
             JAOSS_ROOT."library/Smarty/libs/plugins",  // default smarty dir
             JAOSS_ROOT."library/Smarty/custom_plugins",

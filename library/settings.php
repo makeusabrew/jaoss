@@ -60,6 +60,13 @@ class Settings {
 		}
 		return self::$settings[$section][$key];
 	}
+
+    // @todo unit tests!
+    public static function getBool($section, $key=NULL, $defaultValue=NULL) {
+        $value = self::getValue($section, $key, $defaultValue);
+        // perform a loose comparison and convert to a proper boolean
+        return ($value == true) ? true : false;
+    }
 	
 	public static function getSettings($section=NULL) {
 		return $section ? self::$settings[$section] : self::$settings;
