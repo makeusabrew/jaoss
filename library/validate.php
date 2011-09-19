@@ -11,7 +11,7 @@ class Validate {
 
     public static function email($value, $settings = null) {
         // @todo replace this old school preg match with something better!
-        return preg_match("#^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,6})$#", $value) > 0;
+        return preg_match("#^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,6})$#i", $value) > 0;
     }
 
     public static function postcode($value, $settings = null) {
