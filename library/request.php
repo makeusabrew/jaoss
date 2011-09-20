@@ -85,7 +85,7 @@ class JaossRequest {
             Log::info("Attempting to retrieve URL contents [".$this->url."] from cache...");
             $this->cacheKey = Settings::getValue("site", "namespace").sha1($this->url);
             $success = false;
-            $response = apc_fetch($this->cacheKey, $success);
+            $response = Cache::fetch($this->cacheKey, $success);
             if ($success === true) {
                 Log::info("cache hit");
                 $this->response = $response;
@@ -111,7 +111,7 @@ class JaossRequest {
         }
         if ($this->cacheKey !== null) {
             Log::info("Caching response for URL [".$this->url."] with ttl [".$path->getCacheTtl()."]");
-            $cached = apc_store($this->cacheKey, $this->response, $path->getCacheTtl());
+            $cached = Cache::store($this->cacheKey, $this->response, $path->getCacheTtl());
             if ($cached) {
                 Log::info("Cache stored successfully");
             } else {
