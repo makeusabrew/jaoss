@@ -45,6 +45,12 @@ class Validate {
         return ($value == $settings["confirm"]);
     }
 
+    public static function matchOption($value, $settings) {
+        // for now, we expect options to be an associative array like so:
+        // array("actual_value" => "Display Value")
+        return isset($settings['options'][$value]);
+    }
+
     public static function unique($value, $settings) {
         $model = $settings["model"];
         $method = $settings["method"];
@@ -114,6 +120,8 @@ class Validate {
                 return "{$title} does not meet the minimum age requirement of {$settings["age"]}";
             case "postcode":
                 return "{$title} is not a valid postcode";
+            case "matchOption":
+                return "{$title} does not match one of the available options";
             default:
                 return "{$title} is not valid";
         }

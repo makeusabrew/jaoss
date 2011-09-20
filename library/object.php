@@ -210,6 +210,10 @@ abstract class Object {
             $validation[] = "date";
         }
 
+        if ($settings["type"] == "select" && isset($settings["options"]) && is_array($settings["options"])) {
+            $validation[] = "matchOption";
+        }
+
         if (isset($settings["validation"])) {
             if (!is_array($settings["validation"])) {
                 $settings["validation"] = array($settings["validation"]);
