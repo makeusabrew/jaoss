@@ -1,7 +1,11 @@
 <?php
 class PathManager {
-	private static $paths = array();
-    private static $prefix = "";
+    protected static $paths = array();
+    // @deprecated - $prefix should not be used, use $defaultPrefix
+    protected static $prefix = "";
+
+    protected static $defaultCacheTtl = array();
+    protected static $defaultPrefix = array();
 	
 	public static function loadPath($pattern = NULL, $action = NULL, $controller = NULL, $location = NULL, $cacheTtl = NULL) {
 		if (!isset($pattern)) {
@@ -17,7 +21,14 @@ class PathManager {
 			$controller = ucwords($location);
 		}
 
-        $pattern = self::$prefix.$pattern;
+        if (isset(self::$defaultPrefix[$location])) {
+            $prefix = self::$defaultPrefix[$location];
+        } else {
+            // @deprecated
+            $prefix = self::$prefix;
+        }
+
+        $pattern = $prefix.$pattern;
 		
 		$path = new JaossPath();
 		$path->setPattern($pattern);
@@ -25,12 +36,17 @@ class PathManager {
         $path->setApp($location);
 		$path->setController($controller);
 		$path->setAction($action);
-        if ($cacheTtl !== NULL) {
+
+        if ($cacheTtl === NULL && isset(self::$defaultCacheTtl[$location])) {
+            $cacheTtl = self::$defaultCacheTtl[$location];
+            Log::verbose("using defaultCacheTtl value for path [".$cacheTtl."]");
+        }
+        if ($cacheTtl > 0) {
             $path->setCacheable(true);
             $path->setCacheTtl($cacheTtl);
         }
 		self::$paths[] = $path;
-		Log::verbose("Loading path: pattern [".$path->getPattern()."] location [".$path->getLocation()."] controller [".$path->getController()."] action [".$path->getAction()."]");
+		Log::verbose("Loading path: pattern [".$path->getPattern()."] location [".$path->getLocation()."] controller [".$path->getController()."] action [".$path->getAction()."] cacheTtl [".$cacheTtl."]");
 	}
 	
 	public static function loadPaths() {
@@ -138,6 +154,7 @@ class PathManager {
     }
     
     public static function setPrefix($prefix) {
+        Log::warn("PathManager::setPrefix() is deprecated. Use setAppPrefix instead");
         self::$prefix = $prefix;
     }
 
@@ -191,5 +208,13 @@ class PathManager {
         foreach (self::$paths as $path) {
             $path->setDiscarded(false);
         }
+    }
+
+    public static function setAppCacheTtl($ttl) {
+        self::$defaultCacheTtl[self::getLocationFromTrace()] = $ttl;
+    }
+
+    public static function setAppPrefix($prefix) {
+        self::$defaultPrefix[self::getLocationFromTrace()] = $prefix;
     }
 }
