@@ -52,6 +52,13 @@ abstract class Object {
 	public function getValues() {
 		return array_merge(array($this->pk => $this->getId()), $this->values);
 	}
+
+    /**
+     * override this if you want more specific JSON behaviour
+     */
+    public function toJson() {
+        return $this->getValues();
+    }
 	
 	public function setValues($values, $subset = null) {
         $this->errors = array();

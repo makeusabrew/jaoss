@@ -148,7 +148,26 @@ abstract class Controller {
         }
 
         foreach ($this->var_stack as $var => $val) {
-            $data[$var] = $val;
+            // explicitly catch two very common use cases
+            // 1. when we've assigned a single instance of an object
+            // 2. when we've assigned an array of objects
+            //
+            // @todo change to instance of SomeInterface instead?
+            if ($val instanceof Object) {
+                $data[$var] = $val->toJson();
+            } else if (is_array($val)) {
+                $arrayData = array();
+                foreach ($val as $k => $v) {
+                    if ($v instanceof Object) {
+                        $arrayData[$k] = $v->toJson();
+                    } else {
+                        $arrayData[$k] = $v;
+                    }
+                }
+                $data[$var] = $arrayData;
+            } else {
+                $data[$var] = $val;
+            }
         }
 
         $this->response->addHeader('Content-Type', 'application/json');
