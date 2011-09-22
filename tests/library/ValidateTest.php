@@ -87,6 +87,24 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse(Validate::postcode("LS1"));
     }
 
+    public function testMatchOption() {
+        $options = array(
+            'options' => array(
+                'foo' => 'Foo',
+                'bar' => 'Bar',
+                'baz' => 'Baz',
+            ),
+        );
+
+        // match keys, not values
+        $this->assertFalse(Validate::matchOption('Foo', $options));
+        $this->assertFalse(Validate::matchOption('invalid', $options));
+
+        $this->assertTrue(Validate::matchOption('foo', $options));
+        $this->assertTrue(Validate::matchOption('bar', $options));
+        $this->assertTrue(Validate::matchOption('baz', $options));
+    }
+
     public function testGetMessage() {
         $this->assertEquals(
             'foo is not a valid email address',
@@ -156,6 +174,11 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(
             'foo is not a valid postcode',
             Validate::getMessage('postcode', array('title' => 'foo'), null)
+        );
+
+        $this->assertEquals(
+            'foo does not match one of the available options',
+            Validate::getMessage('matchOption', array('title' => 'foo'), null)
         );
     }
 }

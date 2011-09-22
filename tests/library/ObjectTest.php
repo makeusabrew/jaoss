@@ -221,6 +221,36 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
         ), $this->object->getErrors());
     }
 
+    public function testSetValuesValidatesSelectOptionsAccordingToArrayKeys() {
+        $this->object = $this->getMockForAbstractClass('Object', array(), '', true, true, true, array('getColumns'));
+        $this->object->expects($this->any())
+             ->method('getColumns')
+             ->will($this->returnValue(array(
+                'status' => array(
+                    'type' => 'select',
+                    'options' => array(
+                        'active' => 'Active',
+                        'inactive' => 'Inactive',
+                        'disabled' => 'Disabled',
+                    ),
+                ),
+            )));
+
+        $this->object->setValues(array(
+            'status' => 'invalid',
+        ));
+
+        $this->assertEquals(array(
+            'status' => 'status does not match one of the available options',
+        ), $this->object->getErrors());
+
+        $this->object->setValues(array(
+            'status' => 'active',
+        ));
+
+        $this->assertEquals(array(), $this->object->getErrors());
+    }
+
     public function testValidateArrayIsMergedCorrectlyWithOtherValidation() {
         $this->object = $this->getMockForAbstractClass('Object', array(), '', true, true, true, array('getColumns'));
         $this->object->expects($this->any())
