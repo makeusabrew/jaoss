@@ -42,6 +42,7 @@ Settings::setFromArray(array(
     ),
     "log" => array(
         "warn" => JAOSS_ROOT."tests/log/test_log.log",
+        "info" => JAOSS_ROOT."tests/log/test_log.log",
         "debug" => JAOSS_ROOT."tests/log/test_log.log",
         "verbose" => JAOSS_ROOT."tests/log/test_log.log",
         "level" => "verbose",
