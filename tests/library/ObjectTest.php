@@ -251,6 +251,31 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(array(), $this->object->getErrors());
     }
 
+    public function testSetValuesValidatesDateTimeFieldType() {
+        $this->object = $this->getMockForAbstractClass('Object', array(), '', true, true, true, array('getColumns'));
+        $this->object->expects($this->any())
+             ->method('getColumns')
+             ->will($this->returnValue(array(
+                'start' => array(
+                    'type' => 'datetime',
+                ),
+            )));
+
+        $this->object->setValues(array(
+            'start' => '01/01/2001',
+        ));
+
+        $this->assertEquals(array(
+            'start' => 'start must be in the format dd/mm/yyyy hh:mm:ss',
+        ), $this->object->getErrors());
+
+        $this->object->setValues(array(
+            'start' => '01/01/2001 00:12:34'
+        ));
+
+        $this->assertEquals(array(), $this->object->getErrors());
+    }
+
     public function testValidateArrayIsMergedCorrectlyWithOtherValidation() {
         $this->object = $this->getMockForAbstractClass('Object', array(), '', true, true, true, array('getColumns'));
         $this->object->expects($this->any())

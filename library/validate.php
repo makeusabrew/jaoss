@@ -67,6 +67,10 @@ class Validate {
         return preg_match("#^\d{2}/\d{2}/(\d{2}|\d{4})$#", $value) > 0;
     }
 
+    public static function dateTime($value, $settings = null) {
+        return preg_match("#^\d{2}/\d{2}/\d{2,4}\s\d{2}:\d{2}(:\d{2}|)$#", $value) > 0;
+    }
+
     public static function minAge($value, $settings = array()) {
         // we assume input dates are in the format dd/mm/yyyy
         $date = DateTime::createFromFormat('d/m/Y', $value);
@@ -116,6 +120,8 @@ class Validate {
                 return "{$title} must contain only numbers";
             case "date":
                 return "{$title} must be in the format dd/mm/yyyy"; 
+            case "dateTime":
+                return "{$title} must be in the format dd/mm/yyyy hh:mm:ss";
             case "minAge":
                 return "{$title} does not meet the minimum age requirement of {$settings["age"]}";
             case "postcode":

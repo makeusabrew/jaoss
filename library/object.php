@@ -217,6 +217,10 @@ abstract class Object {
             $validation[] = "date";
         }
 
+        if ($settings["type"] == "datetime") {
+            $validation[] = "dateTime";
+        }
+
         if ($settings["type"] == "select" && isset($settings["options"]) && is_array($settings["options"])) {
             $validation[] = "matchOption";
         }
@@ -272,6 +276,20 @@ abstract class Object {
                         $matches[3] = "20".$matches[3];
                     }
                     return $matches[3]."-".$matches[2]."-".$matches[1];
+                } else {
+                    return $value;
+                }
+            case "datetime":
+                if (preg_match("#(\d{2})/(\d{2})/(\d{2,4})\s(\d{2}):(\d{2})(:(\d{2}))?#", $value, $matches)) {
+                    if (strlen($matches[3]) == 2) {
+                        $matches[3] = "20".$matches[3];
+                    }
+
+                    // got seconds accuracy? if not, assume on the minute
+                    if (!isset($matches[7])) {
+                        $matches[7] = "00";
+                    }
+                    return $matches[3]."-".$matches[2]."-".$matches[1]." ".$matches[4].":".$matches[5].":".$matches[7];
                 } else {
                     return $value;
                 }
