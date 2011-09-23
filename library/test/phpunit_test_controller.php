@@ -29,7 +29,7 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
     }
 
     public function assertController($controller) {
-        $this->assertEquals($controller, $this->request->getResponse()->getPath()->getController(), "Conroller is not '{$controller}'");
+        $this->assertEquals($controller, $this->request->getResponse()->getPath()->getController(), "Controller is not '{$controller}'");
     }
 
     public function assertAction($action) {
