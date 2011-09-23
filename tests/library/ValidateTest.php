@@ -94,6 +94,7 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
 
     public function testPostcode() {
         $this->assertTrue(Validate::postcode("LS1 3BR"));
+        $this->assertTrue(Validate::postcode("ls1 4ap"));
         $this->assertTrue(Validate::postcode("GIR 0AA"));
 
         $this->assertFalse(Validate::postcode("LS1"));
