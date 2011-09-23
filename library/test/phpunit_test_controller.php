@@ -12,7 +12,7 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
             $path = escapeshellarg(PROJECT_ROOT."tests/fixtures/".$class::$fixture_file.".sql");
             $cmd = "mysql -u ".($user)." -h ".($host)." -p".($pass)." --database=".($db)." < ".$path;
             $cmdMasked = str_replace($pass, str_repeat("*", strlen($pass)), $cmd);
-            Log::debug("Loading fixture command [".$cmd."]");
+            Log::debug("Loading fixture command [".$cmdMasked."]");
             $start = microtime(true);
             exec($cmd);
             $end = round(microtime(true) - $start, 2);
