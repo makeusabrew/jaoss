@@ -174,7 +174,12 @@ class DefaultEmailHandler implements IEmailHandler {
 
 class TestEmailHandler implements IEmailHandler {
     public function send($to, $subject, $body, $headers) {
-        $outputDir = Settings::getValue("email.output_dir");
+        try {
+            $outputDir = Settings::getValue("email.output_dir");
+        } catch (CoreException $e) {
+            Log::debug("No email.output_dir setting found, not writing email but returning success");
+            return true;
+        }
 
         $data = "To: ".$to."\n";
         $data .= "Subject: ".$subject."\n";

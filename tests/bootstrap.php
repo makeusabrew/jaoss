@@ -6,7 +6,7 @@ if (!defined("JAOSS_ROOT")) {
 set_include_path(get_include_path() . PATH_SEPARATOR . PROJECT_ROOT);
 set_include_path(get_include_path() . PATH_SEPARATOR . JAOSS_ROOT);
 ini_set("display_errors", 1);
-error_reporting(E_ALL ^ E_STRICT);
+error_reporting(-1);
 
 date_default_timezone_set("Europe/London");
 
@@ -40,6 +40,9 @@ Settings::setFromArray(array(
     "session" => array(
         "handler" => "test",
     ),
+    "email" => array(
+        "handler" => "test",
+    ),
     "log" => array(
         "warn" => JAOSS_ROOT."tests/log/test_log.log",
         "info" => JAOSS_ROOT."tests/log/test_log.log",
@@ -51,7 +54,7 @@ Settings::setFromArray(array(
         "verbose" => true,
     ),
     "smarty" => array(
-        "compile_dir" => "/tmp",
+        "compile_dir" => sys_get_temp_dir(),
     ),
     "site" => array(
         "namespace" => "test_namespace",

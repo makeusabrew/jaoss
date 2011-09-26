@@ -9,9 +9,9 @@ class ErrorHandler {
 		$this->smarty = new Smarty();		
 		$this->smarty->template_dir	= array(JAOSS_ROOT."library/errors");
         $compile_dir = Settings::getValue("smarty.compile_dir", false);
-        // we might be running tests stand-alone, in which case just go for tmp and hope for the best
+        // we might be running tests stand-alone, in which case just go for the system's tmp dir and hope for the best
         if ($compile_dir === false) {
-            $compile_dir = "/tmp";
+            $compile_dir = sys_get_temp_dir();
         }
         $this->smarty->compile_dir = $compile_dir;
         
