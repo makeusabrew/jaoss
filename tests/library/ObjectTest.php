@@ -1,4 +1,7 @@
 <?php
+/**
+ * @group unstable-phpunit
+ */
 class ObjectTest extends PHPUnit_Framework_TestCase {
 
     protected $object;
