@@ -154,12 +154,12 @@ abstract class Controller {
             //
             // @todo change to instance of SomeInterface instead?
             if ($val instanceof Object) {
-                $data[$var] = $val->toJson();
+                $data[$var] = $val->toArray();
             } else if (is_array($val)) {
                 $arrayData = array();
                 foreach ($val as $k => $v) {
                     if ($v instanceof Object) {
-                        $arrayData[$k] = $v->toJson();
+                        $arrayData[$k] = $v->toArray();
                     } else {
                         $arrayData[$k] = $v;
                     }

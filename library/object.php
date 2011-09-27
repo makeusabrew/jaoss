@@ -57,6 +57,10 @@ abstract class Object {
      * override this if you want more specific JSON behaviour
      */
     public function toJson() {
+        return json_encode($this->toArray());
+    }
+
+    public function toArray() {
         return $this->getValues();
     }
 	
