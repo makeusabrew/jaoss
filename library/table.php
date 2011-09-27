@@ -26,14 +26,24 @@ class Table {
 			return new $m_class;
 		}
 		$apps = AppManager::getAppPaths();
+        $modelFile = Utils::fromCamelCase($model).".php";
+        $paths = array();
 		foreach ($apps as $app) {
-			$path = PROJECT_ROOT."apps/{$app}/models/".Utils::fromCamelCase($model).".php";
+			$path = PROJECT_ROOT."apps/{$app}/models/".$modelFile;
 			if (file_exists($path)) {
 				include($path);
 				return self::factory($model);
 			}
 		}
-		throw new CoreException("Could not find model in any path: {$model}");
+		throw new CoreException(
+            "Could not find model in any path: ".$model,
+            CoreException::MODEL_CLASS_NOT_FOUND,
+            array(
+                "model" => $model,
+                "apps" => $apps,
+                "file" => $modelFile,
+            )
+        );
 	}
 	
 	public function getObjectName() {

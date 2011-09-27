@@ -19,4 +19,3 @@
     </ul>
 {/capture}
 {include file="base.tpl"}
-
