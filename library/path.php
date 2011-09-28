@@ -26,11 +26,12 @@ class JaossPath {
                     return $controller->getResponse();
                 }
 
-                Log::debug("running [".$this->controller."Controller->".$this->action."]");
+                Log::debug("Running [".$this->controller."Controller->".$this->action."]");
                 $result = call_user_func(array($controller, $this->action));
                 if ($result === NULL) {
                     $controller->render($this->action);
                 }
+                Log::debug("Done [".$this->controller."Controller->".$this->action."] - status code [".$controller->getResponse()->getResponseCode()."]");
                 return $controller->getResponse();
             } else {
                 throw new CoreException("Controller action is not callable");
