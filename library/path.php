@@ -26,24 +26,24 @@ class JaossPath {
                     return $controller->getResponse();
                 }
 
-                Log::debug("Running [".$this->controller."Controller->".$this->action."]");
+                Log::debug("Start [".$this->controller."Controller->".$this->action."]");
                 $result = call_user_func(array($controller, $this->action));
                 if ($result === NULL) {
                     $controller->render($this->action);
                 }
-                Log::debug("Done [".$this->controller."Controller->".$this->action."] - status code [".$controller->getResponse()->getResponseCode()."]");
+                Log::debug("End   [".$this->controller."Controller->".$this->action."] - status code [".$controller->getResponse()->getResponseCode()."]");
                 return $controller->getResponse();
             } else {
                 throw new CoreException("Controller action is not callable");
             }
         } else {
             throw new CoreException(
-                "Controller action does not exist",
+                "Controller action '".$this->action."' does not exist",
                 CoreException::ACTION_NOT_FOUND,
                 array(
                     "controller" => get_class($controller),
                     "action" => $this->action,
-                    "path" => $this->location,
+                    "path" => $this->location."/controllers",
                 )
             );
         }
