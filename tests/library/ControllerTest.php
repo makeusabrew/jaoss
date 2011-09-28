@@ -188,6 +188,40 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
         $this->stub->setFlash("foo", "bar");
         $this->assertEquals("bar", $this->stub->getFlash("foo"));
     }
+
+    public function testSetResponseCodeUpdatesResponseObject() {
+        $this->stub->setResponseCode(403);
+        $this->assertEquals(403, $this->stub->getResponse()->getResponseCode());
+    }
+
+    public function testAddErrorWithSingleArgumentAppendsToEndOfArray() {
+        $this->assertEquals(array(), $this->stub->getErrors());
+        $this->stub->addError("foo");
+        $this->stub->addError("bar");
+        $this->assertEquals(array(
+            0 => "foo",
+            1 => "bar",
+        ), $this->stub->getErrors());
+    }
+
+    public function testAddErrorWithTwoArgumentsSetsAssociativeArray() {
+        $this->stub->addError("foo");
+        $this->stub->addError("bar", "baz");
+        $this->assertEquals(array(
+            0 => "foo",
+            "bar" => "baz",
+        ), $this->stub->getErrors());
+    }
+
+    public function testSetErrorsUpdatesEntireArray() {
+        $this->stub->addError("foo");
+
+        $this->stub->setErrors(array("test" => "value"));
+
+        $this->assertEquals(array(
+            "test" => "value",
+        ), $this->stub->getErrors());
+    }
 }
 
 // I'd much rather use a mock here but for some reason code coverage doesn't
