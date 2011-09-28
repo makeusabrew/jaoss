@@ -177,10 +177,23 @@ abstract class Controller {
 
     public function renderTemplate($template) {
         if ($this->smarty->templateExists($template.".tpl")) {
-            $this->assign("base_href", $this->request->getBaseHref());
-            $this->assign("current_url", $this->request->getUrl());
-            $this->assign("full_url", $this->request->getFullUrl());
-            $this->assign("messages", FlashMessenger::getMessages());
+
+            // we have to delay assigning these template vars as we only want them
+            // *if* we're rendering a template - but this means we get issues calling
+            // render twice. NB we can't just blindly overwrite the vars as things
+            // like the flash messages only exist once!
+            if (!$this->isAssigned("base_href")) {
+                $this->assign("base_href", $this->request->getBaseHref());
+            }
+            if (!$this->isAssigned("current_url")) {
+                $this->assign("current_url", $this->request->getUrl());
+            }
+            if (!$this->isAssigned("full_url")) {
+                $this->assign("full_url", $this->request->getFullUrl());
+            }
+            if (!$this->isAssigned("messages")) {
+                $this->assign("messages", FlashMessenger::getMessages());
+            }
 
             foreach ($this->var_stack as $var => $val) {
                 $this->smarty->assign($var, $val);
@@ -213,7 +226,7 @@ abstract class Controller {
     }
 	
     public function assign($var, $value) {
-        if (isset($this->var_stack[$var])) {
+        if ($this->isAssigned($var)) {
             throw new CoreException(
                 "Variable already assigned",
                 CoreException::VARIABLE_ALREADY_ASSIGNED,
@@ -225,6 +238,10 @@ abstract class Controller {
             );
         }
 		$this->var_stack[$var] = $value;
+    }
+
+    public function isAssigned($var) {
+        return isset($this->var_stack[$var]);
     }
 
     public function unassign($var) {

@@ -36,6 +36,14 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
             $this->fail("Exception should not be thrown");
         }
     }
+
+    public function testIsAssignedMethod() {
+        $this->assertFalse($this->stub->isAssigned("foo"));
+        $this->stub->assign("foo", "bar");
+        $this->assertTrue($this->stub->isAssigned("foo"));
+        $this->stub->unassign("foo");
+        $this->assertFalse($this->stub->isAssigned("foo"));
+    }
 }
 
 // I'd much rather use a mock here but for some reason code coverage doesn't
