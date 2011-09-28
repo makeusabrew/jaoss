@@ -42,7 +42,7 @@ class ErrorHandler {
         }
         if ($e instanceof CoreException) {
             $path = "core/{$code}.tpl";
-            $this->response->setResponseCode(404);
+            $this->response->setResponseCode($e->getDefaultResponseCode());
         } else if ($e instanceof ErrorException) {
             $path = "core/phperror.tpl";
             $this->response->setResponseCode(500);

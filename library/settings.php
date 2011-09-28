@@ -55,7 +55,14 @@ class Settings {
             if ($defaultValue !== NULL) {
                 return $defaultValue;
             } else {
-                throw new CoreException("Setting '".$section.".".$key."' not found");
+                throw new CoreException(
+                    "Setting '".$section.".".$key."' not found",
+                    CoreException::SETTING_NOT_FOUND,
+                    array(
+                        "mode" => self::getMode(),
+                        "setting_key" => $section.".".$key,
+                    )
+                );
             }
 		}
 		return self::$settings[$section][$key];

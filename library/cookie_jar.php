@@ -16,7 +16,13 @@ class CookieJar {
         // not implementing custom settings yet, don't need to
         $this->storage = CookieJarStorage::factory('autodetect');
         if ($this->storage == null) {
-            throw new CoreException("Could not attach cookie jar storage");
+            throw new CoreException(
+                "Could not attach cookie jar storage",
+                CoreException::COULD_NOT_ATTACH_COOKIE_JAR,
+                array(
+                    "class" => "DefaultCookieJarStorage",
+                )
+            );
         }
         $this->storage->init();
     }

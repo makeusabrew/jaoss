@@ -21,4 +21,15 @@ class SettingsTest extends PHPUnit_Framework_TestCase {
         Settings::setMode("build");
         $this->assertEquals("build", Settings::getMode());
     }
+
+    public function testGetInvalidSettingThrowsExpectedException() {
+        try {
+            Settings::getValue("foo.bar");
+        } catch (CoreException $e) {
+            $this->assertEquals("Setting 'foo.bar' not found", $e->getMessage());
+            $this->assertEquals(CoreException::SETTING_NOT_FOUND, $e->getCode());
+            return;
+        }
+        $this->fail("Expected exception not raised");
+    }
 }
