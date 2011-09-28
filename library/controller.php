@@ -143,22 +143,22 @@ abstract class Controller {
      */
     public function renderJson($extra = array()) {
         $this->response->addHeader('Content-Type', 'application/json');
-        $this->response->setBody($this->getJson($extra));
+        $this->response->setBody($this->fetchJson($extra));
         return true;
     }
 
     public function renderTemplate($template) {
         $this->response->setBody(
-            $this->getTemplate($template)
+            $this->fetchTemplate($template)
         );
         return true;
     }
 
     /**
-     * get functions just return the data - this allows you to fetch any
+     * fetch functions just return the data - this allows you to fetch any
      * template or JSON data without appending it to the response body
      */
-    public function getJson($extra = array()) {
+    public function fetchJson($extra = array()) {
         foreach ($extra as $var => $val) {
             $this->assign($var, $val);
         }
@@ -190,7 +190,7 @@ abstract class Controller {
         return json_encode($data);
     }
 
-    public function getTemplate($template) {
+    public function fetchTemplate($template) {
         if ($this->smarty->templateExists($template.".tpl")) {
 
             // we have to delay assigning these template vars as we only want them
