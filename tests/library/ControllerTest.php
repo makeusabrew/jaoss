@@ -146,6 +146,48 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
         }
         $this->fail("Expected exception not raised");
     }
+
+    public function testRedirectActionWithValidValue() {
+        PathManager::reset();
+        PathManager::loadPath("/test", "test", "Test", "test");
+        list($path) = PathManager::getPaths();
+        $this->stub->setPath($path);
+
+        $this->assertTrue($this->stub->redirectAction("test"));
+
+        $this->assertEquals(303, $this->stub->getResponse()->getResponseCode());
+        $this->assertEquals("/test", $this->stub->getResponse()->getRedirectUrl());
+    }
+
+    public function testRedirectWithFlashMessage() {
+        FlashMessenger::reset();
+        $this->assertTrue($this->stub->redirect("/", "A Test Message"));
+        $this->assertEquals(array(
+            "A Test Message",
+        ), FlashMessenger::getMessages());
+    }
+
+    public function testRedirectRefererRedirectsToHomeWithNoReferer() {
+        $this->assertTrue($this->stub->redirectReferer());
+        $this->assertEquals("/", $this->stub->getResponse()->getRedirectUrl());
+    }
+
+    public function testGetFlashReturnsNullByDefault() {
+        FlashMessenger::reset();
+        $this->assertNull($this->stub->getFlash("foo"));
+    }
+        
+    public function testSetFlashDefaultsValueToTrue() {
+        FlashMessenger::reset();
+        $this->stub->setFlash("foo");
+        $this->assertTrue($this->stub->getFlash("foo"));
+    }
+
+    public function testSetFlashSupportsCustomValue() {
+        FlashMessenger::reset();
+        $this->stub->setFlash("foo", "bar");
+        $this->assertEquals("bar", $this->stub->getFlash("foo"));
+    }
 }
 
 // I'd much rather use a mock here but for some reason code coverage doesn't
@@ -156,5 +198,6 @@ class ConcreteController extends Controller {
         // could look at moving stuff out of construct?
         $this->request = new TestRequest();
         $this->response = new JaossResponse();
+        $this->session = Session::getInstance();
     }
 }
