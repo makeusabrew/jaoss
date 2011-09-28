@@ -230,6 +230,10 @@ abstract class Controller {
     public function unassign($var) {
         unset($this->var_stack[$var]);
     }
+
+    public function unassignAll() {
+        $this->var_stack = array();
+    }
     
     public function setFlash($flash, $value = true) {
         $this->session->setFlash($flash, $value);
