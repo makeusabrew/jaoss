@@ -1,16 +1,18 @@
 <?php
 class App {
 	private $folder = NULL;
-	private $loaded = FALSE;
-	private $paths_loaded = FALSE;
+	private $loaded = false;
+	private $paths_loaded = false;
+    private $paths_file = null;
 	
-	private $has_controllers = FALSE;
-	private $has_models = FALSE;
-	private $has_views = FALSE;
+	private $has_controllers = false;
+	private $has_models = false;
+	private $has_views = false;
 	
 	public function __construct($folder = NULL) {
 		if ($folder !== NULL) {
 			$this->setFolder($folder);
+            $this->setPathsFile(PROJECT_ROOT."apps/".$this->getFolder()."/paths.php");
 		}
 	}
 	
@@ -33,20 +35,25 @@ class App {
 	public function getFolder() {
 		return $this->folder;
 	}
+
+    public function setPathsFile($file) {
+        $this->paths_file = $file;
+    }
 	
 	public function loadPaths() {
 		if ($this->paths_loaded) {
-			return FALSE;
+			return false;
 		}
 		
-        $path = PROJECT_ROOT."apps/".$this->folder."/paths.php";
+        $path = $this->paths_file;
         Log::verbose("Looking for [".$path."]");
 		if (file_exists($path)) {
 			include($path);
-			$this->setLoaded(TRUE);
-			return TRUE;
+			$this->setLoaded(true);
+			return true;
 		}
+        Log::verbose("No paths.php found for app [".$this->getTitle()."]");
 		
-		return FALSE;		
+		return false;		
 	}
 }

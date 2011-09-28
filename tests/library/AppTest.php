@@ -11,7 +11,7 @@ class AppTest extends PHPUnit_Framework_TestCase {
 	public function testNewAppIsNotLoaded() {
 		$this->assertFalse($this->app->getLoaded());
 	}
-	
+
 	public function testNewAppFolderIsNull() {
 		$this->assertNull($this->app->getFolder());
 	}
@@ -34,4 +34,18 @@ class AppTest extends PHPUnit_Framework_TestCase {
 		$this->app->setFolder("bar");
 		$this->assertEquals("bar", $this->app->getFolder());
 	}
+
+    public function testSetLoaded() {
+        $this->app->setLoaded(true);
+        $this->assertTrue($this->app->getLoaded());
+    }
+
+    public function testLoadPathsFailsWhenNoPathsFileFound() {
+        $this->assertFalse($this->app->loadPaths());
+    }
+
+    public function testLoadPathsSucceedsWithValidPathsFileFound() {
+        $this->app->setPathsFile(JAOSS_ROOT."tests/fixtures/apps/test/paths.php");
+        $this->assertTrue($this->app->loadPaths());
+    }
 }
