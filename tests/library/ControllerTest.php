@@ -44,6 +44,25 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
         $this->stub->unassign("foo");
         $this->assertFalse($this->stub->isAssigned("foo"));
     }
+
+    public function testRenderJsonAssignsMsgVariableToOkIfNotSet() {
+        $this->stub->renderJson();
+
+        $data = json_decode(
+            $this->stub->getResponse()->getBody()
+        );
+        $this->assertEquals('OK', $data->msg);
+    }
+
+    public function testRenderJsonDoesNotAssignMsgVariableIfSet() {
+        $this->stub->assign('msg', 'ERROR');
+        $this->stub->renderJson();
+
+        $data = json_decode(
+            $this->stub->getResponse()->getBody()
+        );
+        $this->assertEquals('ERROR', $data->msg);
+    }
 }
 
 // I'd much rather use a mock here but for some reason code coverage doesn't
@@ -52,5 +71,6 @@ class ConcreteController extends Controller {
     public function __construct() {
         // don't want abstract controller construct firing cos it throws an exception
         // could look at moving stuff out of construct?
+        $this->response = new JaossResponse();
     }
 }

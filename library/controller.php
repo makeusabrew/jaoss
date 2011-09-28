@@ -138,14 +138,32 @@ abstract class Controller {
         }
     }
 	
+    /**
+     * render functions always render to the response body
+     */
     public function renderJson($extra = array()) {
+        $this->response->addHeader('Content-Type', 'application/json');
+        $this->response->setBody($this->getJson($extra));
+        return true;
+    }
+
+    public function renderTemplate($template) {
+        $this->response->setBody(
+            $this->getTemplate($template)
+        );
+        return true;
+    }
+
+    /**
+     * get functions just return the data - this allows you to fetch any
+     * template or JSON data without appending it to the response body
+     */
+    public function getJson($extra = array()) {
         foreach ($extra as $var => $val) {
             $this->assign($var, $val);
         }
 
-        if (!isset($this->var_stack["msg"])) {
-            $this->var_stack["msg"] = "OK";
-        }
+        $this->assignIfNotSet("msg", "OK");
 
         foreach ($this->var_stack as $var => $val) {
             // explicitly catch two very common use cases
@@ -169,37 +187,25 @@ abstract class Controller {
                 $data[$var] = $val;
             }
         }
-
-        $this->response->addHeader('Content-Type', 'application/json');
-        $this->response->setBody(json_encode($data));
-        return true;
+        return json_encode($data);
     }
 
-    public function renderTemplate($template) {
+    public function getTemplate($template) {
         if ($this->smarty->templateExists($template.".tpl")) {
 
             // we have to delay assigning these template vars as we only want them
             // *if* we're rendering a template - but this means we get issues calling
             // render twice. NB we can't just blindly overwrite the vars as things
             // like the flash messages only exist once!
-            if (!$this->isAssigned("base_href")) {
-                $this->assign("base_href", $this->request->getBaseHref());
-            }
-            if (!$this->isAssigned("current_url")) {
-                $this->assign("current_url", $this->request->getUrl());
-            }
-            if (!$this->isAssigned("full_url")) {
-                $this->assign("full_url", $this->request->getFullUrl());
-            }
-            if (!$this->isAssigned("messages")) {
-                $this->assign("messages", FlashMessenger::getMessages());
-            }
+            $this->assignIfNotSet("base_href", $this->request->getBaseHref());
+            $this->assignIfNotSet("current_url", $this->request->getUrl());
+            $this->assignIfNotSet("full_url", $this->request->getFullUrl());
+            $this->assignIfNotSet("messages", FlashMessenger::getMessages());
 
             foreach ($this->var_stack as $var => $val) {
                 $this->smarty->assign($var, $val);
             }
-            $this->response->setBody($this->smarty->fetch($template.".tpl"));
-            return true;
+            return $this->smarty->fetch($template.".tpl");
         }
 
         throw new CoreException(
@@ -242,6 +248,12 @@ abstract class Controller {
 
     public function isAssigned($var) {
         return isset($this->var_stack[$var]);
+    }
+
+    public function assignIfNotSet($var, $val) {
+        if (!$this->isAssigned($var)) {
+            $this->assign($var, $val);
+        }
     }
 
     public function unassign($var) {
