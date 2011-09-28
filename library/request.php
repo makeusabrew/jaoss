@@ -12,6 +12,7 @@ class JaossRequest {
     protected $ip = NULL;
     protected $hostname = NULL;
     protected $userAgent = NULL;
+    protected $timestamp = NULL;
 
     protected $cacheKey = NULL;
 
@@ -57,6 +58,7 @@ class JaossRequest {
         $this->ip = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : NULL;
         $this->hostname = isset($_SERVER["SERVER_NAME"]) ? $_SERVER["SERVER_NAME"] : NULL;
         $this->userAgent = isset($_SERVER["HTTP_USER_AGENT"]) ? $_SERVER["HTTP_USER_AGENT"] : NULL;
+        $this->timestamp = isset($_SERVER["REQUEST_TIME"]) ? $_SERVER["REQUEST_TIME"] : NULL;
 	}
 
 	public function setUrl($url) {
@@ -205,5 +207,9 @@ class JaossRequest {
 
     public function getUserAgent() {
         return $this->userAgent;
+    }
+
+    public function getTimestamp() {
+        return $this->timestamp;
     }
 }

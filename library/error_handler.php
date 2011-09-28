@@ -3,6 +3,8 @@
 class ErrorHandler {
 	private $smarty;
     private $response;
+    private $request;
+
 	public function __construct() {
 		require_once(JAOSS_ROOT."library/Smarty/libs/Smarty.class.php");
 		
@@ -17,6 +19,10 @@ class ErrorHandler {
         
         $this->response = new JaossResponse();
 	}
+
+    public function setRequest($request) {
+        $this->request = $request;
+    }
 		
 	public function handleError($e) {
 		$code = $e->getCode();
@@ -38,7 +44,7 @@ class ErrorHandler {
         if ($e instanceof CoreException && $e->getCode() == CoreException::TPL_DIR_NOT_WRITABLE) {
             // we assume if we've got this error that the user's chosen dir isn't writable, so
             // we need to switch to one we know (hope!) is to render the error
-            $this->smarty->compile_dir = '/tmp';
+            $this->smarty->compile_dir = sys_get_temp_dir();
         }
         if ($e instanceof CoreException) {
             $path = "core/{$code}.tpl";
@@ -58,6 +64,7 @@ class ErrorHandler {
         }
         if ($displayErrors) {
             $this->smarty->assign("e", $e);
+            $this->smarty->assign("request", $this->request);
             if ($this->smarty->templateExists($path)) {
                 $this->response->setBody($this->smarty->fetch($path));
             } else {
