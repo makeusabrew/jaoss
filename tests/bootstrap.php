@@ -67,3 +67,7 @@ try {
 } catch (CoreException $e) {
     die("Could not initialise library test logfile. Please ensure it exists.\n");
 }
+
+require_once("library/test/phpunit_test_controller.php");
+require_once("library/test/selenium_test_controller.php");
+require_once("library/test/test_request.php");
