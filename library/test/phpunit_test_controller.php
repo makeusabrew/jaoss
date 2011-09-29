@@ -21,7 +21,7 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
     }
 
     public function setUp() {
-        $this->request = JaossRequest::getInstance(); 
+        $this->request = JaossRequest::getInstance(true); 
         $session = Session::getInstance();
         $session->destroy();
     }

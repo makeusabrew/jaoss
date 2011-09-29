@@ -19,11 +19,9 @@ class JaossRequest {
 
     private static $instance = NULL;
 
-    public static function getInstance() {
+    public static function getInstance($testInstance = false) {
         if (self::$instance === NULL) {
-            // this is the *only* place we reference settings mode directly
-            // NEVER do it anywhere else - always use a setting instead
-            if (Settings::getMode() === "test" && php_sapi_name() === "cli") {
+            if ($testInstance === true && php_sapi_name() === "cli") {
                 self::$instance = new TestRequest();
             } else {
                 self::$instance = new JaossRequest($_SERVER);
