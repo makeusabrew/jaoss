@@ -19,9 +19,9 @@ class JaossRequest {
 
     private static $instance = NULL;
 
-    public static function getInstance($testInstance = false) {
+    public static function getInstance() {
         if (self::$instance === NULL) {
-            if ($testInstance === true && php_sapi_name() === "cli") {
+            if (Settings::getValue("request", "handler", false) == "test" && php_sapi_name() === "cli") {
                 self::$instance = new TestRequest();
             } else {
                 self::$instance = new JaossRequest($_SERVER);
