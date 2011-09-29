@@ -45,4 +45,40 @@ class PathTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals('bar', $this->path->getMatch('foo'));
     }
+
+    public function testSetAndGetCacheTtl() {
+        $this->assertNull($this->path->getCacheTtl());
+        $this->path->setCacheTtl(60);
+        $this->assertEquals(60, $this->path->getCacheTtl());
+    }
+
+    public function testSetAndGetIsCacheable() {
+        $this->assertFalse($this->path->isCacheable());
+        $this->path->setCacheable(true);
+        $this->assertTrue($this->path->isCacheable());
+    }
+
+    public function testRunThrowsExceptionWithNullExistingAppAndController() {
+        try {
+            $this->path->run();
+        } catch (CoreException $e) {
+            $this->assertEquals(CoreException::EMPTY_CONTROLLER_FACTORY_STRING, $e->getCode());
+            return;
+        }
+
+        $this->fail("Expected exception not thrown");
+    }
+
+    public function testRunThrowsExceptionWithNotFoundController() {
+        $this->path->setController("DoesNotExist");
+        try {
+            $this->path->run();
+        } catch (CoreException $e) {
+            $this->assertEquals(CoreException::CONTROLLER_CLASS_NOT_FOUND, $e->getCode());
+            return;
+        }
+
+        $this->fail("Expected exception not thrown");
+    }
+
 }

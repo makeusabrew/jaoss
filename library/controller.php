@@ -44,6 +44,12 @@ abstract class Controller {
     }
 	
     public static function factory($controller, $app_path = NULL, $request = NULL) {
+        if (!is_string($controller) || $controller == "") {
+            throw new CoreException(
+                "Controller::factory must be passed a non-empty string",
+                CoreException::EMPTY_CONTROLLER_FACTORY_STRING
+            );
+        }
         $c_class = $controller."Controller";
         if (!class_exists($c_class)) {
             // can force a path if required

@@ -15,6 +15,7 @@ class CoreException extends Exception {
     const MODEL_CLASS_NOT_FOUND = 12;
     const COULD_NOT_ATTACH_COOKIE_JAR = 13;
     const SETTING_NOT_FOUND = 14;
+    const EMPTY_CONTROLLER_FACTORY_STRING = 15;
 	
 	protected $args = array();
 	

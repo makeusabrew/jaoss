@@ -15,6 +15,14 @@ if (php_sapi_name() !== 'cli') {
     echo "Please use the jaoss tool in CLI mode only\n";
     exit(1);
 }
+
+error_reporting(E_ALL ^ E_STRICT);
+
+// convert errors into exceptions
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
+    throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+});
+
 include("library/cli/cli.php");
 include("library/cli/colours.php");
 include("library/cli/exception.php");

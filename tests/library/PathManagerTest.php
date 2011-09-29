@@ -196,4 +196,41 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
         }
         $this->fail("Expected exception not raised");
     }
+
+    public function testMatchUrlIgnoresDiscardedPaths() {
+        PathManager::loadPath("/foo", "index", "Foo", "FooApp");
+        PathManager::loadPath("/bar", "bar", "Foo", "FooApp");
+
+        try {
+            PathManager::matchUrl("/nomatch");
+        } catch (CoreException $e) {
+            $this->assertEquals(CoreException::URL_NOT_FOUND, $e->getCode());
+            // this isn't a valid use case for discarded paths, but it's a valid simulation
+            // in reality, a path is only discarded by the request object when a
+            // particular exception is thrown, but to simulate the equivalent, let's just match
+            // a *valid* path and make sure it doesn't work
+            try {
+                PathManager::matchUrl("/foo");
+            } catch (CoreException $e) {
+                $this->assertEquals(CoreException::URL_NOT_FOUND, $e->getCode());
+                return;
+            }
+        }
+        $this->fail("Expected exception not raised");
+    }
+
+    public function testReloadPathsMarksPathsNotDiscarded() {
+        PathManager::loadPath("/foo", "index", "Foo", "FooApp");
+
+        try {
+            PathManager::matchUrl("/nomatch");
+        } catch (CoreException $e) {
+            $this->assertEquals(CoreException::URL_NOT_FOUND, $e->getCode());
+            list($path) = PathManager::getPaths();
+            $this->assertTrue($path->isDiscarded());
+            PathManager::reloadPaths();
+            $path = PathManager::matchUrl("/foo");
+            $this->assertFalse($path->isDiscarded());
+        }
+    }
 }

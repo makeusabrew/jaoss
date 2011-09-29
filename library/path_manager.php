@@ -75,24 +75,6 @@ class PathManager {
 			self::loadPath($pattern, $action, $controller, $location, $cacheTtl);
 		}
 	}
-	
-    public static function loadPathsFromController($controller) {
-        $location = self::getLocationFromTrace();
-        $path = "apps/".$location."/controllers/".strtolower($controller).".php";
-        Log::verbose("looking for controller [".$path."]");
-        if (!file_exists($path)) {
-            throw new CoreException("file does not exist");
-        }
-        include_once($path);
-        if (!class_exists($controller."Controller")) {
-            throw new CoreException("controller class does not exist");
-        }
-        $reflection = new ReflectionClass($controller."Controller");
-        $methods = $reflection->getMethods(ReflectionMethod::IS_PUBLIC);
-        //@todo filter out methods declared in child class only
-        //@todo map to paths
-        throw new CoreException("Not Implemented");
-    }
 
 	public static function reset() {
 		self::$paths = array();

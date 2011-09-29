@@ -8,7 +8,7 @@ class JaossPath {
     protected $matches = array();
     protected $discarded;
     protected $cacheable = false;
-    protected $cacheTtl = 60;
+    protected $cacheTtl = null;
 
     public function run($request = NULL) {
         $controller = Controller::factory($this->controller, $this->app, $request);
