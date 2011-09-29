@@ -1,5 +1,6 @@
 <?php
 class JaossRequest {
+    protected $response = NULL;
     protected $folder_base = NULL;
     protected $url = NULL;
     protected $query_string = NULL;
@@ -20,29 +21,35 @@ class JaossRequest {
 
     public static function getInstance() {
         if (self::$instance === NULL) {
-            self::$instance = new JaossRequest();
+            // this is the *only* place we reference settings mode directly
+            // NEVER do it anywhere else - always use a setting instead
+            if (Settings::getMode() === "test" && php_sapi_name() === "cli") {
+                self::$instance = new TestRequest();
+            } else {
+                self::$instance = new JaossRequest($_SERVER);
+            }
         }
         return self::$instance;
     }
+
+    public static function destroyInstance() {
+        self::$instance = null;
+    }
 	
-	public function __construct() {
+	public function __construct(array $reqData = array()) {
         $this->sapi = php_sapi_name();
-        if ($this->sapi == "cli") {
-            // abadon all hope... for now @todo improve
-            return;
-        }
-        $basePath = basename($_SERVER["PHP_SELF"]);  // should be index.php or xhprof.php
+        $basePath = basename($reqData["PHP_SELF"]);  // should be index.php or xhprof.php
         // we now support subfolders, conditionally anyway
-        if (substr_compare($_SERVER["PHP_SELF"], "public/".$basePath, -strlen("public/".$basePath), strlen("public/".$basePath)) === 0) {
+        if (substr_compare($reqData["PHP_SELF"], "public/".$basePath, -strlen("public/".$basePath), strlen("public/".$basePath)) === 0) {
             // we're probably running off http://localhost/foo/bar, so adjust base path
             $basePath = "public/".$basePath;
         }
-		$this->folder_base = substr($_SERVER["PHP_SELF"], 0, strpos($_SERVER["PHP_SELF"], $basePath));
-        $this->base_href = "http://".$_SERVER["SERVER_NAME"].$this->folder_base;
+		$this->folder_base = substr($reqData["PHP_SELF"], 0, strpos($reqData["PHP_SELF"], $basePath));
+        $this->base_href = "http://".$reqData["SERVER_NAME"].$this->folder_base;
 		$this->setUrl(
             // we're not interested in %20 instead of spaces, so get rid
             urldecode(
-                substr($_SERVER["REQUEST_URI"], strlen($this->folder_base)-1)
+                substr($reqData["REQUEST_URI"], strlen($this->folder_base)-1)
             )
         );
 		$queryString = strrpos($this->url, "?");
@@ -52,13 +59,13 @@ class JaossRequest {
 		} else {
 			$this->query_string = "";
 		}
-        $this->method = isset($_SERVER["REQUEST_METHOD"]) ? $_SERVER["REQUEST_METHOD"] : NULL;
-        $this->ajax = isset($_SERVER["HTTP_X_REQUESTED_WITH"]) ? true : false;
-        $this->referer = isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : NULL;
-        $this->ip = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : NULL;
-        $this->hostname = isset($_SERVER["SERVER_NAME"]) ? $_SERVER["SERVER_NAME"] : NULL;
-        $this->userAgent = isset($_SERVER["HTTP_USER_AGENT"]) ? $_SERVER["HTTP_USER_AGENT"] : NULL;
-        $this->timestamp = isset($_SERVER["REQUEST_TIME"]) ? $_SERVER["REQUEST_TIME"] : NULL;
+        $this->method    = isset($reqData["REQUEST_METHOD"]) ? $reqData["REQUEST_METHOD"] : NULL;
+        $this->ajax      = isset($reqData["HTTP_X_REQUESTED_WITH"]) ? true : false;
+        $this->referer   = isset($reqData["HTTP_REFERER"]) ? $reqData["HTTP_REFERER"] : NULL;
+        $this->ip        = isset($reqData["REMOTE_ADDR"]) ? $reqData["REMOTE_ADDR"] : NULL;
+        $this->hostname  = isset($reqData["SERVER_NAME"]) ? $reqData["SERVER_NAME"] : NULL;
+        $this->userAgent = isset($reqData["HTTP_USER_AGENT"]) ? $reqData["HTTP_USER_AGENT"] : NULL;
+        $this->timestamp = isset($reqData["REQUEST_TIME"]) ? $reqData["REQUEST_TIME"] : NULL;
 	}
 
 	public function setUrl($url) {
@@ -66,7 +73,7 @@ class JaossRequest {
         $this->full_url = substr($this->getBaseHref(), 0, -1).$url;
 	}
 
-    protected function isCacheable() {
+    public function isCacheable() {
         return ($this->isGet() && $this->query_string == "");
     }
 	
@@ -211,5 +218,9 @@ class JaossRequest {
 
     public function getTimestamp() {
         return $this->timestamp;
+    }
+
+    public function getSapi() {
+        return $this->sapi;
     }
 }

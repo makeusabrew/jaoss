@@ -5,7 +5,7 @@ class TestRequest extends JaossRequest {
     protected $folder_base = '/';
 
     public function __construct() {
-        parent::__construct();
+        $this->sapi = php_sapi_name();
         $this->method = 'GET';  // assume get by default
     }
 

@@ -21,7 +21,7 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
     }
 
     public function setUp() {
-        $this->request = new TestRequest(); 
+        $this->request = JaossRequest::getInstance(); 
         $session = Session::getInstance();
         $session->destroy();
     }
@@ -29,6 +29,7 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
     public function tearDown() {
         $this->request = null;
         PathManager::reloadPaths();
+        JaossRequest::destroyInstance();
     }
 
     public function assertController($controller) {
