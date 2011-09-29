@@ -3,8 +3,10 @@
 abstract class Cli {
 
     const MIN_ARG_COUNT = 2;
+    
+    protected $args = array();
 
-    public static function factory($argc, $argv) {
+    public static function factory($argc, $argv, $mode) {
         if ($argc < self::MIN_ARG_COUNT) {
             throw new Exception(
                 "Insufficient arguments",
@@ -14,6 +16,16 @@ abstract class Cli {
 
         // it feels bad to ditch the first arg, but we really don't care about it
         array_shift($argv);
+
+        $path = JAOSS_ROOT."library/cli/".strtolower($argv[0]).".php";
+        if (!file_exists($path)) {
+            throw new CliException(
+                "Path ".$path." does not exist",
+                1
+            );
+        }
+
+        require_once($path);
 
         $class = "Cli_".ucfirst($argv[0]);
         if (!class_exists($class)) {
@@ -26,7 +38,8 @@ abstract class Cli {
         array_shift($argv);
 
         $object = new $class;
-        $object->run($argv);
+        $object->setArgs($argv);
+        $object->run();
     }
 
     protected function readLine() {
@@ -77,5 +90,19 @@ abstract class Cli {
             );
         }
         return $this;
+    }
+
+    protected function hasArg($arg) {
+        return (is_array($this->args) && in_array($arg, $this->args));
+    }
+
+    protected function shiftArg() {
+        return array_shift($this->args);
+    }
+
+    abstract public function run();
+    
+    public function setArgs($args) {
+        $this->args = $args;
     }
 }

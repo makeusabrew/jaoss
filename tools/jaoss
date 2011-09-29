@@ -1,18 +1,49 @@
 #!/usr/bin/php
 <?php
-set_include_path(get_include_path() . PATH_SEPARATOR . realpath(dirname( __FILE__).'/../').'/');
+define("JAOSS_CLI", true);
+
+if (file_exists("build.xml")) {
+    define("PROJECT_ROOT", getcwd().'/');
+}
+
+if (!defined("JAOSS_ROOT")) {
+    define("JAOSS_ROOT", realpath(dirname( __FILE__).'/../').'/');
+}
+
+set_include_path(get_include_path() . PATH_SEPARATOR . JAOSS_ROOT);
 if (php_sapi_name() !== 'cli') {
     echo "Please use the jaoss tool in CLI mode only\n";
     exit(1);
 }
-require_once("library/cli/cli.php");
-require_once("library/cli/exception.php");
-require_once("library/cli/create.php");
+include("library/cli/cli.php");
+include("library/cli/colours.php");
+include("library/cli/exception.php");
+
+include("library/core_exception.php");
+include("library/log.php");
+include("library/path.php");
+include("library/path_manager.php");
+include("library/settings.php");
+include("library/database.php");
+include("library/table.php");
+include("library/object.php");
+include("library/app.php");
+include("library/app_manager.php");
+include("library/utils.php");
+
+$mode = getenv("PROJECT_MODE") !== false ? getenv("PROJECT_MODE") : "test";
+echo "PROJECT_MODE set to ".Colours::cyan($mode)."\n";
 
 try {
-    $class = Cli::factory($argc, $argv);
-} catch (Exception $e) {
+    Settings::setMode($mode);
+    include("library/boot.php");
+    include("library/load_apps.php");
+    $class = Cli::factory($argc, $argv, $mode);
+} catch (CliException $e) {
     echo $e->getMessage()."\n";
     exit($e->getCode());
+} catch (Exception $e) {
+    echo Colours::red("[".get_class($e)."] ".$e->getMessage())."\n";
+    exit(255);
 }
 exit(0);
