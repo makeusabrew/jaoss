@@ -9,7 +9,7 @@ class JaossResponse {
     protected $path = NULL;
     protected $headers = array();
 
-    const HTTP_VERSION = "HTTP/1.0";
+    const HTTP_VERSION = "HTTP/1.1";
 
     public function getBody() {
         return $this->body;
@@ -23,7 +23,7 @@ class JaossResponse {
         $this->responseCode = $code;
     }
 
-    public function setRedirect($url, $code = 302) {
+    public function setRedirect($url, $code = 303) {
         $this->isRedirect = true;
         $this->redirectUrl = $url;
         $this->setResponseCode($code);
