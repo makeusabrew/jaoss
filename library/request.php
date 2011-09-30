@@ -16,6 +16,7 @@ class JaossRequest {
     protected $timestamp = NULL;
 
     protected $cacheKey = NULL;
+    protected $cacheDisabled = false;
 
     private static $instance = NULL;
 
@@ -116,7 +117,9 @@ class JaossRequest {
                 throw $e;
             }
         }
-        if ($this->cacheKey !== null) {
+        if ($this->cacheKey          !== null &&
+            $this->isCacheDisabled() === false) { // make sure something hasn't explicitly disabled cache during the request
+
             Log::info("Caching response for URL [".$this->url."] with ttl [".$path->getCacheTtl()."]");
             $cached = Cache::store($this->cacheKey, $this->response, $path->getCacheTtl());
             if ($cached) {
@@ -220,5 +223,13 @@ class JaossRequest {
 
     public function getSapi() {
         return $this->sapi;
+    }
+
+    public function isCacheDisabled() {
+        return $this->cacheDisabled;
+    }
+
+    public function disableCache() {
+        $this->cacheDisabled = true;
     }
 }

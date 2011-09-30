@@ -17,6 +17,7 @@ class JaossPath {
                 $controller->setPath($this);
 
                 try {
+                    Log::debug("Init [".$this->controller."Controller->".$this->action."]");
                     $controller->init();
                 } catch (CoreException $e) {
                     Log::debug($this->controller."Controller->init() failed with message [".$e->getMessage()."]");
