@@ -67,7 +67,7 @@ class Cli_Create extends Cli {
         // right then, let's get busy!
         $sql = $this->createSql($class->getTable(), $columns);
         if ($this->hasArg("--output-only")) {
-            $this->writeLine($sql);
+            $this->writeLine(Colours::yellow($sql));
             return;
         }
 
@@ -132,8 +132,12 @@ class Cli_Create extends Cli {
                 case "email":
                     $sql .= "VARCHAR( 255 ) NOT NULL";
                     break;
+                case "postcode":
+                    $sql .= "VARCHAR( 8 ) NOT NULL";
+                    break;
                 default:
                     Log::warn("Creating default VARCHAR(255) field for unknown type [".$column["type"]."]");
+                    $sql .= "VARCHAR( 255 ) NOT NULL";
                     break;
             }
         }

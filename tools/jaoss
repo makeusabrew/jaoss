@@ -43,10 +43,14 @@ $mode = getenv("PROJECT_MODE") !== false ? getenv("PROJECT_MODE") : "test";
 echo "PROJECT_MODE set to ".Colours::cyan($mode)."\n";
 
 try {
+    $init = microtime(true);
     Settings::setMode($mode);
     include("library/boot.php");
     include("library/load_apps.php");
     $class = Cli::factory($argc, $argv, $mode);
+    $class->run();
+    $execTime = microtime(true) - $init;
+    echo Colours::green("Done (".round($execTime, 3)." secs)")."\n";
 } catch (CliException $e) {
     echo $e->getMessage()."\n";
     exit($e->getCode());

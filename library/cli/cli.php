@@ -39,7 +39,7 @@ abstract class Cli {
 
         $object = new $class;
         $object->setArgs($argv);
-        $object->run();
+        return $object;
     }
 
     protected function readLine() {

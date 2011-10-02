@@ -8,6 +8,10 @@
         return self::colour($str, "0;32");
     }
 
+    public static function yellow($str) {
+        return self::colour($str, "0;33");
+    }
+
     public static function cyan($str) {
         return self::colour($str, "0;36");
     }
