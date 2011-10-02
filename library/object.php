@@ -92,7 +92,9 @@ abstract class Object {
             $this->values[$field] = $this->process($field, $value, $settings["type"]);
 
         }
-        return (count($this->errors) == 0) ? true : false;
+        $retVal = (count($this->errors) == 0) ? true : false;
+        Log::debug(get_called_class()."::setValues() returning [".($retVal ? "true" : "false") ."] with error count [".count($this->errors)."]");
+        return $retVal;
 	}
 	
 	public function updateValues($values, $partial = false) {
@@ -248,8 +250,8 @@ abstract class Object {
                 Log::debug("not validating empty value against [".$func."]");
                 continue;
             }
-            Log::debug("Validate::$func($value) [$field]");
             $result = Validate::$func($value, $settings);
+            Log::debug("Validate::$func($value) [$field] - [".($result ? "OK" : "FAIL")."]");
             if ($result !== true) {
                 return Validate::getMessage($func, $settings, $value);
             }
