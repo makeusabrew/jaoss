@@ -6,6 +6,7 @@ class Cli_Fixture extends Cli {
             // ok, interactive
             $method = $this->promptOptions('Please choose an option', array(
                 'update',
+                'import',
             ));
         } else {
             $method = $this->shiftArg();
@@ -14,6 +15,52 @@ class Cli_Fixture extends Cli {
     }
 
     protected function update() {
+        $fixture = $this->getFixtureFile();
+
+        if (!is_writable($fixture)) {
+            throw new CliException(
+                "Fixture file [".$fixture."] is not writable",
+                1
+            );
+        }
+
+        // okay! Off we go!
+        $user = Settings::getValue("db.user");
+        $host = Settings::getValue("db.host");
+        $pass = Settings::getValue("db.pass");
+        $db = Settings::getValue("db.dbname");
+        $cmd = "mysqldump -u ".$user." -p".$pass." -h ".$host." ".$db." > ".$fixture;
+        $cmdMasked = str_replace($pass, str_repeat("*", strlen($pass)), $cmd);
+        $this->writeLine($cmdMasked, Colours::YELLOW);
+
+        $retVal = 255;
+        $output = array();
+        exec($cmd, $output, $retVal);
+        if ($retVal != 0) {
+            throw new CliException("Command failed!", $retVal);
+        }
+    }
+
+    protected function import() {
+        $fixture = $this->getFixtureFile();
+
+        $user = Settings::getValue("db.user");
+        $host = Settings::getValue("db.host");
+        $pass = Settings::getValue("db.pass");
+        $db = Settings::getValue("db.dbname");
+        $cmd = "mysql -u ".$user." -p".$pass." -h ".$host." ".$db." < ".$fixture;
+        $cmdMasked = str_replace($pass, str_repeat("*", strlen($pass)), $cmd);
+        $this->writeLine($cmdMasked, Colours::YELLOW);
+
+        $retVal = 255;
+        $output = array();
+        exec($cmd, $output, $retVal);
+        if ($retVal != 0) {
+            throw new CliException("Command failed!", $retVal);
+        }
+    }
+
+    protected function getFixtureFile() {
         if (count($this->args) === 0) {
             $this->writeLine("Looking for fixtures in tests/fixtures/*.sql");
             $fixtures = glob(PROJECT_ROOT."tests/fixtures/*.sql");
@@ -40,27 +87,6 @@ class Cli_Fixture extends Cli {
                 1
             );
         }
-        if (!is_writable($fixture)) {
-            throw new CliException(
-                "Fixture file [".$fixture."] is not writable",
-                1
-            );
-        }
-
-        // okay! Off we go!
-        $user = Settings::getValue("db.user");
-        $host = Settings::getValue("db.host");
-        $pass = Settings::getValue("db.pass");
-        $db = Settings::getValue("db.dbname");
-        $cmd = "mysqldump -u ".$user." -p".$pass." -h ".$host." ".$db." > ".$fixture;
-        $cmdMasked = str_replace($pass, str_repeat("*", strlen($pass)), $cmd);
-        $this->writeLine($cmdMasked, Colours::YELLOW);
-
-        $retVal = 255;
-        $output = array();
-        exec($cmd, $output, $retVal);
-        if ($retVal != 0) {
-            throw new CliException("Command failed!", $retVal);
-        }
+        return $fixture;
     }
 }
