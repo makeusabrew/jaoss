@@ -5,6 +5,7 @@ abstract class Cli {
     const MIN_ARG_COUNT = 2;
     
     protected $args = array();
+    protected $outputColour = null;
 
     public static function factory($argc, $argv, $mode) {
         if ($argc < self::MIN_ARG_COUNT) {
@@ -46,12 +47,22 @@ abstract class Cli {
         return trim(fgets(STDIN));
     }
 
-    protected function write($data) {
+    protected function write($data, $colour = null) {
+        $colourCode = null;
+        if ($colour !== null) {
+            $colourCode = $colour;
+        } else if ($this->outputColour !== null) {
+            $colourCode = $this->outputColour;
+        }
+
+        if ($colourCode !== null) {
+            $data = Colours::colour($data, $colourCode);
+        }
         fwrite(STDOUT, $data);
     }
 
-    protected function writeLine($data) {
-        $this->write($data."\n");
+    protected function writeLine($data, $colour = null) {
+        $this->write($data."\n", $colour);
     }
 
     protected function prompt($prompt, $default = null) {
@@ -104,5 +115,13 @@ abstract class Cli {
     
     public function setArgs($args) {
         $this->args = $args;
+    }
+
+    public function setOutputColour($colour) {
+        $this->outputColour = $colour;
+    }
+
+    public function clearOutputColour() {
+        $this->outputColour = null;
     }
 }

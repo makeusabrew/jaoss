@@ -104,7 +104,10 @@ class PathManager {
                 $pattern = $path->getPattern();
 			}
 			if (preg_match("@{$pattern}@", $url, $matches)) {
+
 				Log::debug("matched pattern [".$pattern."] against URL [".$url."] (location [".$path->getLocation()."] controller [".$path->getController()."]");
+
+                $matches = self::cleanMatches($matches);
 				$path->setMatches($matches);
 				return $path;
 			}
@@ -198,5 +201,18 @@ class PathManager {
 
     public static function setAppPrefix($prefix) {
         self::$defaultPrefix[self::getLocationFromTrace()] = $prefix;
+    }
+
+    /**
+     * ensure that any matches from the route are associative keys
+     */
+    protected static function cleanMatches($matches) {
+        $clean = array();
+        foreach ($matches as $key => $val) {
+            if (!is_numeric($key)) {
+                $clean[$key] = $val;
+            }
+        }
+        return $clean;
     }
 }

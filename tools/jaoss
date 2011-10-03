@@ -55,7 +55,7 @@ include("library/cache.php");
 require_once("library/test/test_request.php");
 
 $mode = getenv("PROJECT_MODE") !== false ? getenv("PROJECT_MODE") : "test";
-echo "PROJECT_MODE set to ".Colours::cyan($mode)."\n";
+echo "PROJECT_MODE set to ".Colours::cyan($mode)."\n\n";
 
 try {
     $init = microtime(true);

@@ -94,6 +94,10 @@ class JaossPath {
         $this->matches = $matches;
     }
 
+    public function getMatches() {
+        return $this->matches;
+    }
+
     public function hasMatch($match) {
         return isset($this->matches[$match]);
     }

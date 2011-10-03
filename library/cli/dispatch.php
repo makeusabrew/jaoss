@@ -2,13 +2,7 @@
 
 class Cli_Dispatch extends Cli {
     public function run() {
-        if (count($this->args) === 0) {
-            $method = "url";
-            $this->writeLine("Assuming url option - only one available!");
-        } else {
-            $method = $this->shiftArg();
-        }
-        $this->$method();
+        $this->url();
     }
 
     protected function url() {
@@ -24,17 +18,51 @@ class Cli_Dispatch extends Cli {
         $request->dispatch($url);
 
         $response = $request->getResponse();
-        $this->writeLine(Colours::yellow("Response Headers"));
-        $this->writeLine(Colours::yellow("Response Code: ".$response->getResponseCode()));
+
+        $path = $response->getPath();
+        $matches = $path->getMatches();
+
+        $this->setOutputColour(Colours::BLUE);
+        $this->writeLine("Path Information");
+        $this->writeLine("----------------");
+        $this->writeLine("Pattern   : ".$path->getPattern());
+        $this->writeLine("App       : ".$path->getApp());
+        $this->writeLine("Controller: ".$path->getController());
+        $this->writeLine("Action    : ".$path->getAction());
+        $this->writeLine("Cacheable : ".($path->isCacheable() ? "Yes" : "No"));
+        if ($path->isCacheable()) {
+            $this->writeLine("Cache TTL : ".$path->getCacheTtl());
+        }
+
+        if (count($matches)) {
+            $this->write("\n");
+            $this->writeLine("Matches");
+            $this->writeLine("-------");
+            foreach ($matches as $match => $value) {
+                $this->writeLine($match." => ".$value);
+            }
+        }
+                
+        $this->clearOutputColour();
+
+        $this->write("\n");
+
+        $this->setOutputColour(Colours::YELLOW);
+        $this->writeLine("Response Headers");
+        $this->writeLine("----------------");
+        $this->writeLine("Response Code: ".$response->getResponseCode());
         if ($response->isRedirect()) {
-            $this->writeLine(Colours::yellow("Redirect URL: ".$response->getRedirectUrl()));
+            $this->writeLine("Redirect URL: ".$response->getRedirectUrl());
         }
         foreach ($response->getHeaders() as $key => $value) {
-            $this->writeLine(Colours::yellow($key.": ".$value));
+            $this->writeLine($key.": ".$value);
         }
 
-        // render body too?
+        $this->clearOutputColour();
 
+        $this->write("\n");
+
+        // render body too?
         if (!$this->hasArg("--no-render")) {
             $this->write("\n");
             $this->write($response->getBody());
