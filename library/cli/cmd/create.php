@@ -1,6 +1,16 @@
 <?php
 class Cli_Create extends Cli {
 
+    protected $smarty;
+
+    public function __construct() {
+        require_once(JAOSS_ROOT."library/Smarty/libs/Smarty.class.php");
+
+        $this->smarty = new Smarty();
+        $this->smarty->template_dir	= array(JAOSS_ROOT."library/cli/cmd/resources/");
+        $this->smarty->compile_dir = sys_get_temp_dir();
+    }
+
     public function run() {
         if (count($this->args) === 0) {
             // ok, interactive
@@ -8,6 +18,7 @@ class Cli_Create extends Cli {
                 1 => 'project',
                 2 => 'app',
                 3 => 'table',
+                4 => 'app',
             ));
         } else {
             $method = $this->shiftArg();
@@ -36,10 +47,52 @@ class Cli_Create extends Cli {
     }
 
     protected function app() {
-        throw new CliException(
-            "Not Implemented!",
-            1
-        );
+        if (count($this->args) === 0) {
+            $appName = $this->prompt('Please choose an app name (all lowercase, single word)');
+        } else {
+            $appName = $this->shiftArg();
+        }
+        if (!defined("PROJECT_ROOT")) {
+            throw new CliException("This method is designed to be used in project mode only", 1);
+        }
+
+        $appPath = PROJECT_ROOT."apps/".$appName;
+        if (is_dir($appPath)) {
+            throw new CliException("App directory [".$appName."] already exists", 1);
+        }
+        if (!is_writable(PROJECT_ROOT."apps/")) {
+            throw new CliException("Apps directory is not writable", 1);
+        }
+
+        $this->writeLine("Creating apps/".$appName." directory");
+        mkdir($appPath);
+        $this->writeLine("Creating apps/".$appName."/controllers directory");
+        mkdir($appPath."/controllers");
+        $this->writeLine("Creating apps/".$appName."/views directory");
+        mkdir($appPath."/views");
+
+        $this->write("\n");
+
+        $this->smarty->assign("pattern", "/".$appName);
+        $this->smarty->assign("action", "index");
+        $this->smarty->assign("controller", ucfirst(strtolower($appName)));
+        $this->smarty->assign("app", $appName);
+        $this->smarty->assign("fullPath", $appPath);
+
+        $this->writeLine("Creating apps/".$appName."/paths.php file");
+        $handle = fopen($appPath."/paths.php", "w");
+        fwrite($handle, $this->smarty->fetch("create/app/paths.php.tpl"));
+        fclose($handle);
+
+        $this->writeLine("Creating apps/".$appName."/controllers/".strtolower($appName).".php controller");
+        $handle = fopen($appPath."/controllers/".strtolower($appName).".php", "w");
+        fwrite($handle, $this->smarty->fetch("create/app/controller.php.tpl"));
+        fclose($handle);
+
+        $this->writeLine("Creating apps/".$appName."/views/index.tpl view");
+        $handle = fopen($appPath."/views/index.tpl", "w");
+        fwrite($handle, $this->smarty->fetch("create/app/view.tpl.tpl"));
+        fclose($handle);
     }
 
     protected function table() {
