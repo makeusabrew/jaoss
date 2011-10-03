@@ -32,7 +32,7 @@ class ErrorHandler {
         $action = Settings::getValue("errors.action", false);
 
         try {
-            Log::warn("Handling error of type [".get_class($e)."] with message [".$e->getMessage()."]");
+            Log::warn("Handling error of type [".get_class($e)."] with message [".$e->getMessage()."] and code [".$e->getCode()."]");
         } catch (CoreException $ex) {
             // if something goes wrong logging the error then we're probably in all sorts of trouble, so
             // just swallow the exception so the original error can be shown.
@@ -56,7 +56,10 @@ class ErrorHandler {
             $path = "db/{$code}.tpl";
             $this->response->setResponseCode(500);
         } else if ($e instanceof SmartyCompilerException) {
-            $path = "smarty/{$code}.tpl";
+            $path = "smarty/compiler_exception.tpl";
+            $this->response->setResponseCode(500);
+        } else if ($e instanceof SmartyException) {
+            $path = "smarty/exception.tpl";
             $this->response->setResponseCode(500);
         } else {
             $path = "unknown_exception.tpl";

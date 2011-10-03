@@ -197,31 +197,44 @@ abstract class Controller {
     }
 
     public function fetchTemplate($template) {
-        if ($this->smarty->templateExists($template.".tpl")) {
-
-            // we have to delay assigning these template vars as we only want them
-            // *if* we're rendering a template - but this means we get issues calling
-            // render twice. NB we can't just blindly overwrite the vars as things
-            // like the flash messages only exist once!
-            $this->assignIfNotSet("base_href", $this->request->getBaseHref());
-            $this->assignIfNotSet("current_url", $this->request->getUrl());
-            $this->assignIfNotSet("full_url", $this->request->getFullUrl());
-            $this->assignIfNotSet("messages", FlashMessenger::getMessages());
-
-            foreach ($this->var_stack as $var => $val) {
-                $this->smarty->assign($var, $val);
-            }
-            return $this->smarty->fetch($template.".tpl");
+        if (!$this->smarty->templateExists($template.".tpl")) {
+            throw new CoreException(
+                "Template Not Found",
+                CoreException::TPL_NOT_FOUND,
+                array(
+                    "paths" => $this->smarty->template_dir,
+                    "tpl" => $template,
+                )
+            );
         }
 
-        throw new CoreException(
-            "Template Not Found",
-            CoreException::TPL_NOT_FOUND,
-            array(
-                "paths" => $this->smarty->template_dir,
-                "tpl" => $template,
-            )
-        );
+        // we have to delay assigning these template vars as we only want them
+        // *if* we're rendering a template - but this means we get issues calling
+        // render twice. NB we can't just blindly overwrite the vars as things
+        // like the flash messages only exist once!
+        $this->assignIfNotSet("base_href", $this->request->getBaseHref());
+        $this->assignIfNotSet("current_url", $this->request->getUrl());
+        $this->assignIfNotSet("full_url", $this->request->getFullUrl());
+        $this->assignIfNotSet("messages", FlashMessenger::getMessages());
+
+        foreach ($this->var_stack as $var => $val) {
+            $this->smarty->assign($var, $val);
+        }
+
+        try {
+            return $this->smarty->fetch($template.".tpl");
+        } catch (Exception $e) {
+            /*
+            Smarty::fetch() internally turns on output buffering and then starts
+            echoing contents. Therefore because we have exception throwing turned on
+            it never gets a chance to call ob_get_clean(), so the exception gets
+            flushed along with all the output thus far (not what we want).
+            so, flush the buffer manually and throw the exception
+            */
+            ob_end_clean();
+            throw $e;
+        }
+
     }
 	
     public function renderStatic($template) {
