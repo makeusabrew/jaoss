@@ -47,6 +47,13 @@ class Cli_Create extends Cli {
     }
 
     protected function app() {
+        if ($this->hasArg("--model")) {
+            $model = $this->getArgValue("--model");
+            if ($model === null) {
+                $model = $this->prompt("Please enter a SINGULAR model name (e.g. Car not Cars)");
+            }
+        }
+
         if (count($this->args) === 0) {
             $appName = $this->prompt('Please choose an app name (all lowercase, single word)');
         } else {
@@ -68,6 +75,12 @@ class Cli_Create extends Cli {
         mkdir($appPath);
         $this->writeLine("Creating apps/".$appName."/controllers directory");
         mkdir($appPath."/controllers");
+
+        if (isset($model)) {
+            $this->writeLine("Creating apps/".$appName."/models directory");
+            mkdir($appPath."/models");
+        }
+
         $this->writeLine("Creating apps/".$appName."/views directory");
         mkdir($appPath."/views");
 
@@ -78,6 +91,9 @@ class Cli_Create extends Cli {
         $this->smarty->assign("controller", ucfirst(strtolower($appName)));
         $this->smarty->assign("app", $appName);
         $this->smarty->assign("fullPath", $appPath);
+        if (isset($model)) {
+            $this->smarty->assign("model", $model);
+        }
 
         $this->writeLine("Creating apps/".$appName."/paths.php file");
         $handle = fopen($appPath."/paths.php", "w");
@@ -88,6 +104,13 @@ class Cli_Create extends Cli {
         $handle = fopen($appPath."/controllers/".strtolower($appName).".php", "w");
         fwrite($handle, $this->smarty->fetch("create/app/controller.php.tpl"));
         fclose($handle);
+
+        if (isset($model)) {
+            $this->writeLine("Creating apps/".$appName."/models/".strtolower($model)."s.php model");
+            $handle = fopen($appPath."/models/".strtolower($model)."s.php", "w");
+            fwrite($handle, $this->smarty->fetch("create/app/model.php.tpl"));
+            fclose($handle);
+        }
 
         $this->writeLine("Creating apps/".$appName."/views/index.tpl view");
         $handle = fopen($appPath."/views/index.tpl", "w");

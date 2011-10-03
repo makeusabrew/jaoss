@@ -109,7 +109,25 @@ abstract class Cli {
     }
 
     protected function hasArg($arg) {
-        return (is_array($this->args) && in_array($arg, $this->args));
+        foreach ($this->args as $_arg) {
+            if (preg_match("#(--[a-z-]+)(=([a-z-]+))?#", $_arg, $matches)) {
+                if ($matches[1] == $arg) {
+                    return true;
+                }
+            } else if ($_arg == $arg) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected function getArgValue($arg) {
+        foreach ($this->args as $_arg) {
+            if (preg_match("#(--[a-z-]+)=([A-z-]+)#", $_arg, $matches)) {
+                return $matches[2];
+            }
+        }
+        return null;
     }
 
     protected function shiftArg() {
