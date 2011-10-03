@@ -18,7 +18,7 @@ abstract class Cli {
         // it feels bad to ditch the first arg, but we really don't care about it
         array_shift($argv);
 
-        $path = JAOSS_ROOT."library/cli/".strtolower($argv[0]).".php";
+        $path = JAOSS_ROOT."library/cli/cmd/".strtolower($argv[0]).".php";
         if (!file_exists($path)) {
             throw new CliException(
                 "Path ".$path." does not exist",
