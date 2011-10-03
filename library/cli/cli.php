@@ -65,7 +65,7 @@ abstract class Cli {
         $this->write($data."\n", $colour);
     }
 
-    protected function prompt($prompt, $default = null) {
+    protected function prompt($prompt, $default = null, $shortcuts = array()) {
         $out = $prompt;
         if ($default !== null) {
             $out .= " [".$default."]";
@@ -75,16 +75,21 @@ abstract class Cli {
         $val = $this->readLine();
         if ($val === '') {
             return $default;
+        } else if (count($shortcuts) && isset($shortcuts[$val])) {
+            return $shortcuts[$val];
         }
         return $val;
     }
 
     protected function promptOptions($prompt, $options, $default = null) {
         $out = $prompt."\n";
-        foreach ($options as $option) {
-            $out .= "\t".$option."\n";
+        $shortcuts = array();
+
+        foreach ($options as $key => $option) {
+            $out .= "\t".$key.") ".$option."\n";
+            $shortcuts[$key] = $option;
         }
-        return $this->prompt($out, $default);
+        return $this->prompt($out, $default, $shortcuts);
     }
 
     protected function exec($cmd, $desc = null) {

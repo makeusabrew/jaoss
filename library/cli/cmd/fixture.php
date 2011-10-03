@@ -5,8 +5,8 @@ class Cli_Fixture extends Cli {
         if (count($this->args) === 0) {
             // ok, interactive
             $method = $this->promptOptions('Please choose an option', array(
-                'update',
-                'import',
+                1 => 'update',
+                2 => 'import',
             ));
         } else {
             $method = $this->shiftArg();

@@ -5,9 +5,9 @@ class Cli_Create extends Cli {
         if (count($this->args) === 0) {
             // ok, interactive
             $method = $this->promptOptions('Please choose an option', array(
-                'project',
-                'app',
-                'table',
+                1 => 'project',
+                2 => 'app',
+                3 => 'table',
             ));
         } else {
             $method = $this->shiftArg();
