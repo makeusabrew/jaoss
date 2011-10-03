@@ -1,6 +1,7 @@
 <?php
  class Colours {
 
+    const GREEN  = "0;32";
     const YELLOW = "0;33";
     const BLUE   = "0;34";
 
@@ -9,7 +10,7 @@
     }
 
     public static function green($str) {
-        return self::colour($str, "0;32");
+        return self::colour($str, self::GREEN);
     }
 
     public static function yellow($str) {
