@@ -16,7 +16,7 @@ if (php_sapi_name() !== 'cli') {
     exit(1);
 }
 
-error_reporting(E_ALL ^ E_STRICT);
+error_reporting(-1);
 
 // convert errors into exceptions
 set_error_handler(function($errno, $errstr, $errfile, $errline) {
@@ -64,6 +64,7 @@ try {
     include("library/load_apps.php");
     $class = Cli::factory($argc, $argv, $mode);
     $class->run();
+    $class->clearOutputColour();
     $execTime = microtime(true) - $init;
     echo Colours::green("Done (".round($execTime, 3)." secs)")."\n";
 } catch (CliException $e) {
