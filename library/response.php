@@ -43,9 +43,13 @@ class JaossResponse {
             exit;
         } 
         header($this->getHeaderString());
-        foreach ($this->headers as $key => $value) {
+        foreach ($this->getHeaders() as $key => $value) {
             header($key.": ".$value);
         }
+    }
+
+    public function getHeaders() {
+        return $this->headers;
     }
 
     public function setPath($path) {
