@@ -9,6 +9,7 @@ class JaossPath {
     protected $discarded;
     protected $cacheable = false;
     protected $cacheTtl = null;
+    protected $requestMethods = array();
 
     public function run($request = NULL) {
         $controller = Controller::factory($this->controller, $this->app, $request);
@@ -128,5 +129,31 @@ class JaossPath {
     
     public function isDiscarded() {
         return $this->discarded;
+    }
+
+    public function setRequestMethods($methods = array()) {
+        foreach ($methods as $key => $val) {
+            $methods[$key] = strtoupper($val);
+        }
+        $this->requestMethods = $methods;
+    }
+
+    public function getRequestMethods() {
+        return $this->requestMethods;
+    }
+
+    public function supportsMethod($method) {
+        // if we've got nothing defined at all, then it's all good
+        if (count($this->getRequestMethods()) == 0) {
+            return true;
+        }
+
+        // if we've got an 'ALL' entry in the array anywhere, it's all good
+        if (in_array("ALL", $this->getRequestMethods())) {
+            return true;
+        }
+
+        // otherwise, actually check the method against our array 
+        return in_array($method, $this->getRequestMethods());
     }
 }

@@ -5,6 +5,10 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
         PathManager::reset();
     }
 
+    public function tearDown() {
+        JaossRequest::destroyInstance();
+    }
+
 	public function testPathsStartsEmptyAndIsArray() {
 		$paths = PathManager::getPaths();
 		$this->assertInternalType("array", $paths);
@@ -106,6 +110,76 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("baz", $path->getController());
         $this->assertEquals("apps/test", $path->getLocation());
         $this->assertFalse($path->isCacheable());
+    }
+
+    public function testMatchUrlFailsWithIncorretRequestMethod() {
+        $request = JaossRequest::getInstance();
+        PathManager::loadPath("/foo", "bar", "baz", "test", "POST");
+        try {
+            $path = PathManager::matchUrl("/foo");
+        } catch (CoreException $e) {
+            $this->assertEquals(CoreException::URL_NOT_FOUND, $e->getCode());
+            return;
+        }
+        $this->fail("expected exception not raised");
+    }
+
+    public function testMatchUrlFailsWithIncorretRequestMethodLowerCase() {
+        $request = JaossRequest::getInstance();
+        PathManager::loadPath("/foo", "bar", "baz", "test", "post");
+        try {
+            $path = PathManager::matchUrl("/foo");
+        } catch (CoreException $e) {
+            $this->assertEquals(CoreException::URL_NOT_FOUND, $e->getCode());
+            return;
+        }
+        $this->fail("expected exception not raised");
+    }
+
+    public function testMatchUrlFailsWhenExpectedMethodIsGetButMethodIsPost() {
+        $request = JaossRequest::getInstance();
+        $request->setMethod("POST");
+        PathManager::loadPath("/foo", "bar", "baz", "test", "GET");
+        try {
+            $path = PathManager::matchUrl("/foo");
+        } catch (CoreException $e) {
+            $this->assertEquals(CoreException::URL_NOT_FOUND, $e->getCode());
+            return;
+        }
+        $this->fail("expected exception not raised");
+    }
+
+    public function testMatchUrlSucceedsWhenExpectedMethodIsArrayContainingGetAndPost() {
+        $request = JaossRequest::getInstance();
+        PathManager::loadPath("/foo", "bar", "baz", "test", array("GET", "POST"));
+        $path = PathManager::matchUrl("/foo");
+        $this->assertEquals(array("GET", "POST"), $path->getRequestMethods());
+    }
+
+    public function testMatchUrlSucceedsWhenExpectedMethodIsAll() {
+        $request = JaossRequest::getInstance();
+        $request->setMethod("POST");
+
+        PathManager::loadPath("/foo", "bar", "baz", "test", "all");
+        $path = PathManager::matchUrl("/foo");
+        $this->assertEquals(array("ALL"), $path->getRequestMethods());
+    }
+
+    public function testMatchUrlSucceedsWhenExpectedMethodSetByLoadPathsAssociative() {
+        $request = JaossRequest::getInstance();
+        $request->setMethod("POST");
+
+        PathManager::loadPaths(
+            array(
+                "pattern" => "/foo",
+                "action" => "foo",
+                "controller" => "foo",
+                "location" => "foo",
+                "method" => "post",
+            )
+        );
+        $path = PathManager::matchUrl("/foo");
+        $this->assertEquals(array("POST"), $path->getRequestMethods());
     }
 
     public function testsetPrefix() {

@@ -44,13 +44,20 @@ class JaossRequest {
             $basePath = "public/".$basePath;
         }
 		$this->folder_base = substr($reqData["PHP_SELF"], 0, strpos($reqData["PHP_SELF"], $basePath));
-        $this->base_href = "http://".$reqData["SERVER_NAME"].$this->folder_base;
-		$this->setUrl(
-            // we're not interested in %20 instead of spaces, so get rid
-            urldecode(
-                substr($reqData["REQUEST_URI"], strlen($this->folder_base)-1)
-            )
-        );
+        if (isset($reqData["SERVER_NAME"])) {
+            $this->base_href = "http://".$reqData["SERVER_NAME"].$this->folder_base;
+        } else {
+            $this->base_href = Settings::getValue("site", "base_href", "http://unknown/");
+        }
+
+        if (isset($reqData["REQUEST_URI"])) {
+            $this->setUrl(
+                // we're not interested in %20 instead of spaces, so get rid
+                urldecode(
+                    substr($reqData["REQUEST_URI"], strlen($this->folder_base)-1)
+                )
+            );
+        }
 		$queryString = strrpos($this->url, "?");
 		if ($queryString !== FALSE) {
 			$this->query_string = substr($this->url, $queryString+1);

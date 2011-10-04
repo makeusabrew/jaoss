@@ -43,6 +43,9 @@ Settings::setFromArray(array(
     "email" => array(
         "handler" => "test",
     ),
+    "request" => array(
+        "handler" => "test",
+    ),
     "log" => array(
         "warn" => JAOSS_ROOT."tests/log/test_log.log",
         "info" => JAOSS_ROOT."tests/log/test_log.log",

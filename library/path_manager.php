@@ -7,7 +7,7 @@ class PathManager {
     protected static $defaultCacheTtl = array();
     protected static $defaultPrefix = array();
 	
-	public static function loadPath($pattern = NULL, $action = NULL, $controller = NULL, $location = NULL, $cacheTtl = NULL) {
+	public static function loadPath($pattern = NULL, $action = NULL, $controller = NULL, $location = NULL, $requestMethods = NULL, $cacheTtl = NULL) {
 		if (!isset($pattern)) {
 			throw new CoreException("No pattern passed");
 		}
@@ -37,6 +37,13 @@ class PathManager {
 		$path->setController($controller);
 		$path->setAction($action);
 
+        if ($requestMethods !== null) {
+            if (!is_array($requestMethods)) {
+                $requestMethods = array($requestMethods);
+            }
+            $path->setRequestMethods($requestMethods);
+        }
+
         if ($cacheTtl === NULL && isset(self::$defaultCacheTtl[$location])) {
             $cacheTtl = self::$defaultCacheTtl[$location];
             Log::verbose("using defaultCacheTtl value for path [".$cacheTtl."]");
@@ -64,11 +71,11 @@ class PathManager {
             // associative or not, and is NOT reliable. but for our purposes, it'll
             // do since we don't allow mixing associative / indexed arrays when declaring paths
             if (isset($path[0])) {
-                // array is faster than range(0,4)
-                $keys = array(0,1,2,3,4);
+                // array is faster than range()
+                $keys = array(0,1,2,3,4,5);
             } else {
                 Log::verbose("Loading path with associative array");
-                $keys = array("pattern", "action", "controller", "location", "cacheTtl");
+                $keys = array("pattern", "action", "controller", "location", "method", "cacheTtl");
             }
 			$pattern = isset($path[$keys[0]]) ? $path[$keys[0]] : NULL;
 			$action = isset($path[$keys[1]]) ? $path[$keys[1]] : NULL;
@@ -78,8 +85,9 @@ class PathManager {
 			} else {
 				$location = $path[$keys[3]];
 			}
-			$cacheTtl = isset($path[$keys[4]]) ? $path[$keys[4]] : NULL;
-			self::loadPath($pattern, $action, $controller, $location, $cacheTtl);
+			$methods = isset($path[$keys[4]]) ? $path[$keys[4]] : NULL;
+			$cacheTtl = isset($path[$keys[5]]) ? $path[$keys[5]] : NULL;
+			self::loadPath($pattern, $action, $controller, $location, $methods, $cacheTtl);
 		}
 	}
 
@@ -98,12 +106,21 @@ class PathManager {
                 )
 			);
 		}
-		Log::verbose("Looking for match against URL [".$url."]");
+
+        // we want to be request-aware, since paths can be filtered to certain request methods
+        $request = JaossRequest::getInstance();
+		Log::verbose("Looking for match against URL [".$url."] and request method [".$request->getMethod()."]");
 		foreach (self::$paths as $path) {
             if ($path->isDiscarded()) {
                 Log::verbose("Path already discarded, ignoring pattern [".$path->getPattern()."]");
                 continue;
             }
+
+            // checking the request method first is cheaper than a preg_match()
+            if (!$path->supportsMethod($request->getMethod())) {
+                continue;
+            }
+
 			// check for simple(r) routes
             $pattern = $path->getPattern();
 			if (substr($pattern, 0, 1) != "^" && substr($pattern, -1) != "$") {
