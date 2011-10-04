@@ -91,6 +91,21 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("apps/test", $path->getLocation());
     }
 
+    public function testMatchUrlWithSimpleAssociatedPathLoadedAndWithMatchingUrl() {
+        PathManager::loadPaths(array(
+            "pattern" => "/foo",
+            "action" => "bar",
+            "controller" => "baz",
+            "location" => "test",
+        ));
+        $path = PathManager::matchUrl("/foo");
+        $this->assertEquals("^/foo$", $path->getPattern());
+        $this->assertEquals("bar", $path->getAction());
+        $this->assertEquals("baz", $path->getController());
+        $this->assertEquals("apps/test", $path->getLocation());
+        $this->assertFalse($path->isCacheable());
+    }
+
     public function testsetPrefix() {
         PathManager::setPrefix("/someprefix");
         PathManager::loadPath("/foo", "bar", "baz", "test");

@@ -50,28 +50,35 @@ class PathManager {
 	}
 	
 	public static function loadPaths() {
-		$n_args = func_num_args();
 		$args = func_get_args();
 
 		foreach ($args as $path) {
 			if (!is_array($path)) {
 				throw new CoreException("loadPaths called without array");
 			}
-		
 			if (count($path) == 0) {
 				throw new CoreException("loadPaths called with empty array");
 			}
-		}
-		foreach ($args as $path) {
-			$pattern = isset($path[0]) ? $path[0] : NULL;
-			$action = isset($path[1]) ? $path[1] : NULL;
-			$controller = isset($path[2]) ? $path[2] : NULL;
-			if (!isset($path[3])) {
+
+            // this is this quickest way of determining if the array is
+            // associative or not, and is NOT reliable. but for our purposes, it'll
+            // do since we don't allow mixing associative / indexed arrays when declaring paths
+            if (isset($path[0])) {
+                // array is faster than range(0,4)
+                $keys = array(0,1,2,3,4);
+            } else {
+                Log::verbose("Loading path with associative array");
+                $keys = array("pattern", "action", "controller", "location", "cacheTtl");
+            }
+			$pattern = isset($path[$keys[0]]) ? $path[$keys[0]] : NULL;
+			$action = isset($path[$keys[1]]) ? $path[$keys[1]] : NULL;
+			$controller = isset($path[$keys[2]]) ? $path[$keys[2]] : NULL;
+			if (!isset($path[$keys[3]])) {
                 $location = self::getLocationFromTrace();
 			} else {
-				$location = $path[3];
+				$location = $path[$keys[3]];
 			}
-			$cacheTtl = isset($path[4]) ? $path[4] : NULL;
+			$cacheTtl = isset($path[$keys[4]]) ? $path[$keys[4]] : NULL;
 			self::loadPath($pattern, $action, $controller, $location, $cacheTtl);
 		}
 	}
