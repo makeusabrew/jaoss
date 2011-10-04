@@ -66,7 +66,9 @@ class Log {
                     throw new CoreException("Could not open logfile for writing", CoreException::LOG_FILE_ERROR, array("path" => $path));
                 }
             }
-            fwrite(self::$handle[$path], date("d/m/Y H:i:s")." - ".$str.PHP_EOL);
+            $dbgOut = "(".strtoupper($logLevel).")";
+            $dbgOut = str_pad($dbgOut, 9);
+            fwrite(self::$handle[$path], date("d/m/Y H:i:s")." ".$dbgOut." - ".$str.PHP_EOL);
         }
 	}
 }
