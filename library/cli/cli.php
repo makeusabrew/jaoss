@@ -18,6 +18,11 @@ abstract class Cli {
         // it feels bad to ditch the first arg, but we really don't care about it
         array_shift($argv);
 
+        // allow varying ways of accessing help
+        if ($argv[0] == "--help" || $argv[0] == "-h") {
+            $argv[0] = "help";
+        }
+
         $path = JAOSS_ROOT."library/cli/cmd/".strtolower($argv[0]).".php";
         if (!file_exists($path)) {
             throw new CliException(

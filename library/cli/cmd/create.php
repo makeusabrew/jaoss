@@ -18,7 +18,6 @@ class Cli_Create extends Cli {
                 1 => 'project',
                 2 => 'app',
                 3 => 'table',
-                4 => 'app',
             ));
         } else {
             $method = $this->shiftArg();
