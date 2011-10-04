@@ -80,6 +80,7 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("bar", $path->getAction());
         $this->assertEquals("baz", $path->getController());
         $this->assertEquals("apps/test", $path->getLocation());
+        $this->assertFalse($path->isCacheable());
     }
 
     public function testMatchUrlWithSimplePathsLoadedAndWithMatch() {
@@ -89,9 +90,10 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("bar", $path->getAction());
         $this->assertEquals("baz", $path->getController());
         $this->assertEquals("apps/test", $path->getLocation());
+        $this->assertFalse($path->isCacheable());
     }
 
-    public function testMatchUrlWithSimpleAssociatedPathLoadedAndWithMatchingUrl() {
+    public function testMatchUrlWithSimpleAssociativeLoadPathsMethod() {
         PathManager::loadPaths(array(
             "pattern" => "/foo",
             "action" => "bar",
