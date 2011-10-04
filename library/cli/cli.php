@@ -10,7 +10,7 @@ abstract class Cli {
     public static function factory($argc, $argv, $mode) {
         if ($argc < self::MIN_ARG_COUNT) {
             throw new Exception(
-                "Insufficient arguments",
+                "Insufficient arguments. Run with --help for a list of available commands.",
                 1
             );
         }
