@@ -75,7 +75,7 @@ abstract class Controller {
             return new $c_class($request);
         }
         throw new CoreException(
-            "Could not find controller in any path",
+            "Could not find controller class '".$c_class."'",
             CoreException::CONTROLLER_CLASS_NOT_FOUND,
             array(
                 "controller" => $controller,
