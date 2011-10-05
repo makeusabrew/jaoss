@@ -101,7 +101,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
         try {
             Controller::factory("Unknown");
         } catch (CoreException $e) {
-            $this->assertEquals("Could not find controller in any path", $e->getMessage());
+            $this->assertEquals("Could not find controller class 'UnknownController'", $e->getMessage());
             $this->assertEquals(CoreException::CONTROLLER_CLASS_NOT_FOUND, $e->getCode());
             return;
         }
