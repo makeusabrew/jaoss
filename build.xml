@@ -9,7 +9,6 @@
 
     <target name="build" description="Build">
         <exec dir="${tests.dir}" checkreturn="true" passthru="true" command="phpunit --log-junit ${reports.dir}/test-results.xml 
-        --coverage-html ${reports.dir}/coverage
         --coverage-clover ${reports.dir}/phpunit.coverage.xml" />
     </target>
 
