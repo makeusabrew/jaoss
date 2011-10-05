@@ -46,7 +46,8 @@ class Smarty_Internal_Write_File {
         }
 
         // remove original file
-        unlink($_filepath);
+        // we need the @ in case we have error_reporting set to -1
+        @unlink($_filepath);
 
         // rename tmp file
         $success = rename($_tmp_file, $_filepath);
