@@ -16,16 +16,17 @@ abstract class Controller {
     public function __construct($request = NULL) {
         $this->smarty = new Smarty();
 
-        $apps = AppManager::getAppPaths();
         $tpl_dirs = array(PROJECT_ROOT."apps/");
 		
-        $this->smarty->template_dir  = $tpl_dirs;
-        $this->smarty->compile_dir   = Settings::getValue("smarty", "compile_dir");
-        $this->smarty->compile_check = Settings::getBool("smarty", "compile_check");
-        $this->smarty->plugins_dir   = array(
+        $this->smarty->setTemplateDir($tpl_dirs)
+                     ->setCompileDir(Settings::getValue("smarty", "compile_dir"))
+                     ->setPluginsDir(array(
             JAOSS_ROOT."library/Smarty/libs/plugins",  // default smarty dir
             JAOSS_ROOT."library/Smarty/custom_plugins",
-        );
+        ));
+
+        // no setter for this, strangely...
+        $this->smarty->compile_check = Settings::getBool("smarty", "compile_check");
 
         $this->request = $request;
         $this->response = new JaossResponse();
@@ -36,10 +37,10 @@ abstract class Controller {
     public function setPath($path) {
         $this->path = $path;
         if (isset($this->smarty)) {
-            $this->smarty->template_dir = array_merge(
+            $this->smarty->setTemplateDir(array_merge(
                 array(PROJECT_ROOT."apps/".$this->path->getApp()."/views/"),
-                $this->smarty->template_dir
-            );
+                $this->smarty->getTemplateDir()
+            ));
         }
     }
 	
@@ -231,7 +232,11 @@ abstract class Controller {
             flushed along with all the output thus far (not what we want).
             so, flush the buffer manually and throw the exception
             */
-            ob_end_clean();
+            $buffer = ob_get_contents();
+            if ($buffer !== false && strlen($buffer) > 0) {
+                ob_end_clean();
+            }
+
             throw $e;
         }
 
