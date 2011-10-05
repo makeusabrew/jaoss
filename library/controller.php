@@ -80,7 +80,7 @@ abstract class Controller {
             array(
                 "controller" => $controller,
                 "class" => $c_class,
-                "app_path" => $app_path,
+                "path" => isset($app_path) ? $path : null,
                 "apps" => isset($apps) ? $apps : null,
             )
         );
