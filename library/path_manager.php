@@ -7,19 +7,19 @@ class PathManager {
     protected static $defaultCacheTtl = array();
     protected static $defaultPrefix = array();
 	
-	public static function loadPath($pattern = NULL, $action = NULL, $controller = NULL, $location = NULL, $requestMethods = NULL, $cacheTtl = NULL) {
-		if (!isset($pattern)) {
-			throw new CoreException("No pattern passed");
-		}
-		if (!isset($action)) {
+    public static function loadPath($pattern = NULL, $action = NULL, $controller = NULL, $location = NULL, $requestMethods = NULL, $cacheTtl = NULL) {
+        if (!isset($pattern)) {
+            throw new CoreException("No pattern passed");
+        }
+        if (!isset($action)) {
             $action = "templateForPattern";
-		}
-		if (!isset($location)) {
+        }
+        if (!isset($location)) {
             $location = self::getLocationFromTrace();
-		}
-		if (!isset($controller)) {
-			$controller = ucwords($location);
-		}
+        }
+        if (!isset($controller)) {
+            $controller = ucwords($location);
+        }
 
         if (isset(self::$defaultPrefix[$location])) {
             $prefix = self::$defaultPrefix[$location];
@@ -30,12 +30,12 @@ class PathManager {
 
         $pattern = $prefix.$pattern;
 		
-		$path = new JaossPath();
-		$path->setPattern($pattern);
-		$path->setLocation("apps/".$location);
+        $path = new JaossPath();
+        $path->setPattern($pattern);
+        $path->setLocation("apps/".$location);
         $path->setApp($location);
-		$path->setController($controller);
-		$path->setAction($action);
+        $path->setController($controller);
+        $path->setAction($action);
 
         if ($requestMethods !== null) {
             if (!is_array($requestMethods)) {
@@ -52,20 +52,20 @@ class PathManager {
             $path->setCacheable(true);
             $path->setCacheTtl($cacheTtl);
         }
-		self::$paths[] = $path;
-		Log::verbose("Loading path: pattern [".$path->getPattern()."] location [".$path->getLocation()."] controller [".$path->getController()."] action [".$path->getAction()."] cacheTtl [".$cacheTtl."]");
-	}
+        self::$paths[] = $path;
+        Log::verbose("Loading path: pattern [".$path->getPattern()."] location [".$path->getLocation()."] controller [".$path->getController()."] action [".$path->getAction()."] cacheTtl [".$cacheTtl."]");
+    }
 	
-	public static function loadPaths() {
-		$args = func_get_args();
+    public static function loadPaths() {
+        $args = func_get_args();
 
-		foreach ($args as $path) {
-			if (!is_array($path)) {
-				throw new CoreException("loadPaths called without array");
-			}
-			if (count($path) == 0) {
-				throw new CoreException("loadPaths called with empty array");
-			}
+        foreach ($args as $path) {
+            if (!is_array($path)) {
+                throw new CoreException("loadPaths called without array");
+            }
+            if (count($path) == 0) {
+                throw new CoreException("loadPaths called with empty array");
+            }
 
             // this is this quickest way of determining if the array is
             // associative or not, and is NOT reliable. but for our purposes, it'll
@@ -77,40 +77,40 @@ class PathManager {
                 Log::verbose("Loading path with associative array");
                 $keys = array("pattern", "action", "controller", "location", "method", "cacheTtl");
             }
-			$pattern = isset($path[$keys[0]]) ? $path[$keys[0]] : NULL;
-			$action = isset($path[$keys[1]]) ? $path[$keys[1]] : NULL;
-			$controller = isset($path[$keys[2]]) ? $path[$keys[2]] : NULL;
-			if (!isset($path[$keys[3]])) {
+            $pattern = isset($path[$keys[0]]) ? $path[$keys[0]] : NULL;
+            $action = isset($path[$keys[1]]) ? $path[$keys[1]] : NULL;
+            $controller = isset($path[$keys[2]]) ? $path[$keys[2]] : NULL;
+            if (!isset($path[$keys[3]])) {
                 $location = self::getLocationFromTrace();
-			} else {
-				$location = $path[$keys[3]];
-			}
-			$methods = isset($path[$keys[4]]) ? $path[$keys[4]] : NULL;
-			$cacheTtl = isset($path[$keys[5]]) ? $path[$keys[5]] : NULL;
-			self::loadPath($pattern, $action, $controller, $location, $methods, $cacheTtl);
-		}
-	}
+            } else {
+                $location = $path[$keys[3]];
+            }
+            $methods = isset($path[$keys[4]]) ? $path[$keys[4]] : NULL;
+            $cacheTtl = isset($path[$keys[5]]) ? $path[$keys[5]] : NULL;
+            self::loadPath($pattern, $action, $controller, $location, $methods, $cacheTtl);
+        }
+    }
 
-	public static function reset() {
-		self::$paths = array();
+    public static function reset() {
+        self::$paths = array();
         self::$prefix = "";
-	}
+    }
 	
-	public static function matchUrl($url) {
-		if (empty(self::$paths)) {
-			throw new CoreException(
-				"No paths loaded",
+    public static function matchUrl($url) {
+        if (empty(self::$paths)) {
+            throw new CoreException(
+                "No paths loaded",
                 CoreException::NO_PATHS_LOADED,
                 array(
                     "apps" => AppManager::getInstalledApps(),
                 )
-			);
-		}
+            );
+        }
 
         // we want to be request-aware, since paths can be filtered to certain request methods
         $request = JaossRequest::getInstance();
-		Log::verbose("Looking for match against URL [".$url."] and request method [".$request->getMethod()."]");
-		foreach (self::$paths as $path) {
+        Log::verbose("Looking for match against URL [".$url."] and request method [".$request->getMethod()."]");
+        foreach (self::$paths as $path) {
             if ($path->isDiscarded()) {
                 Log::verbose("Path already discarded, ignoring pattern [".$path->getPattern()."]");
                 continue;
@@ -123,35 +123,35 @@ class PathManager {
 
 			// check for simple(r) routes
             $pattern = $path->getPattern();
-			if (substr($pattern, 0, 1) != "^" && substr($pattern, -1) != "$") {
-				$path->setPattern("^{$pattern}$");
+            if (substr($pattern, 0, 1) != "^" && substr($pattern, -1) != "$") {
+                $path->setPattern("^{$pattern}$");
                 $pattern = $path->getPattern();
-			}
-			if (preg_match("@{$pattern}@", $url, $matches)) {
+            }
+            if (preg_match("@{$pattern}@", $url, $matches)) {
 
-				Log::debug("matched pattern [".$pattern."] against URL [".$url."] (location [".$path->getLocation()."] controller [".$path->getController()."]");
+                Log::debug("matched pattern [".$pattern."] against URL [".$url."] (location [".$path->getLocation()."] controller [".$path->getController()."]");
 
                 $matches = self::cleanMatches($matches);
-				$path->setMatches($matches);
-				return $path;
-			}
+                $path->setMatches($matches);
+                return $path;
+            }
             $path->setDiscarded(true);
-			Log::verbose("Discarding path pattern [".$pattern."]");
-		}
-		// no match :(
-		throw new CoreException(
-			"No matching path for URL ".$url,
-			CoreException::URL_NOT_FOUND,
-			array(
-				"paths" => self::$paths,
-				"url" => $url,
-			)
-		);
-	}
+            Log::verbose("Discarding path pattern [".$pattern."]");
+        }
+        // no match :(
+        throw new CoreException(
+            "No matching path for URL ".$url,
+            CoreException::URL_NOT_FOUND,
+            array(
+                "paths" => self::$paths,
+                "url" => $url,
+            )
+        );
+    }
 	
-	public static function getPaths() {
-		return self::$paths;
-	}
+    public static function getPaths() {
+        return self::$paths;
+    }
 
     private static function getLocationFromTrace() {
         $trace = debug_backtrace();
