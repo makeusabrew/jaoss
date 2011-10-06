@@ -54,6 +54,12 @@ include("library/cache.php");
 
 require_once("library/test/test_request.php");
 
+if (($key = array_search("--no-colour", $argv)) !== false) {
+    unset($argv[$key]);
+    $argv = array_values($argv);
+    Colours::disable();
+}
+
 $mode = getenv("PROJECT_MODE") !== false ? getenv("PROJECT_MODE") : "test";
 echo "PROJECT_MODE set to ".Colours::cyan($mode)."\n\n";
 
