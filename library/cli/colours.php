@@ -5,6 +5,12 @@
     const YELLOW = "0;33";
     const BLUE   = "0;34";
 
+    protected static $disabled = false;
+
+    public static function disable() {
+        self::$disabled = true;
+    }
+
     public static function red($str) {
         return self::colour($str, "0;31");
     }
@@ -30,6 +36,9 @@
     }
 
     public static function colour($str, $code) {
+        if (self::$disabled) {
+            return $str;
+        }
         return chr(27)."[".$code."m".$str.chr(27)."[0m";
     }
         
