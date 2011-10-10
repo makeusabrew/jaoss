@@ -1,33 +1,33 @@
 <?php
 
 abstract class Object {
-	protected $id = NULL;
-	protected $created = NULL;
-	protected $updated = NULL;
+    protected $id = NULL;
+    protected $created = NULL;
+    protected $updated = NULL;
     protected $table = NULL;
     protected $table_name = NULL;
 	
-	protected $values = array();
-	protected $externals = array();
+    protected $values = array();
+    protected $externals = array();
     protected $errors = array();
 
     private $pk = "id";
 	
-	public function __set($var, $val) {
-		if (property_exists($this, $var)) {
-			$this->$var = $val;
-		} else {
-			$this->values[$var] = $val;
-		}
-	}
-	
-	public function getTable() {
-		if (!isset($this->table)) {
-			$table = Utils::fromCamelCase(get_class($this));
-			$this->table = "{$table}s";
-		}
-		return $this->table;
-	}
+    public function __set($var, $val) {
+        if (property_exists($this, $var)) {
+            $this->$var = $val;
+        } else {
+            $this->values[$var] = $val;
+        }
+    }
+
+    public function getTable() {
+        if (!isset($this->table)) {
+            $table = Utils::fromCamelCase(get_class($this));
+            $this->table = "{$table}s";
+        }
+        return $this->table;
+    }
 
 	public function __get($var) {
 		if (isset($this->$var)) {
