@@ -51,6 +51,22 @@ class Validate {
         return isset($settings['options'][$value]);
     }
 
+    public static function matchCheckboxOptions($value, $settings) {
+        if (!is_array($value) || count($value) == 0) {
+            return false;
+        }
+        foreach ($value as $key => $val) {
+            // we expect $value to be something like
+            // array("actual_value" => "On")
+            // in effect, we ignore the $val, as the key's
+            // presence is all we're interested in
+            if (!isset($settings['options'][$key])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static function unique($value, $settings) {
         $model = $settings["model"];
         $method = $settings["method"];
@@ -128,6 +144,8 @@ class Validate {
                 return "{$title} is not a valid postcode";
             case "matchOption":
                 return "{$title} does not match one of the available options";
+            case "matchCheckboxOptions":
+                return "one or more of the options chosen for {$title} are not valid";
             default:
                 return "{$title} is not valid";
         }

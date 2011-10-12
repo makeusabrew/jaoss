@@ -254,6 +254,63 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(array(), $this->object->getErrors());
     }
 
+    public function testSetValuesValidatesCheckboxOptionsAccordingToArrayKeys() {
+        $this->object = $this->getMockForAbstractClass('Object', array(), '', true, true, true, array('getColumns'));
+        $this->object->expects($this->any())
+             ->method('getColumns')
+             ->will($this->returnValue(array(
+                'interests' => array(
+                    'type' => 'checkbox',
+                    'options' => array(
+                        'football' => 'Football',
+                        'swimming' => 'Swimming',
+                        'squash' => 'Squash',
+                    ),
+                ),
+            )));
+
+        $this->object->setValues(array(
+            'interests' => array(
+                'tennis' => 'On',
+            ),
+        ));
+
+        $this->assertEquals(array(
+            'interests' => 'one or more of the options chosen for interests are not valid',
+        ), $this->object->getErrors());
+
+        $this->object->setValues(array(
+            'interests' => array(
+                'football' => 'On',
+                'swimming' => 'On',
+            )
+        ));
+
+        $this->assertEquals(array(), $this->object->getErrors());
+    }
+
+    public function testSetValuesReturnsTrueWhenEmptyArrayPassedForCheckboxOptionsWhenNotRequired() {
+        $this->object = $this->getMockForAbstractClass('Object', array(), '', true, true, true, array('getColumns'));
+        $this->object->expects($this->any())
+             ->method('getColumns')
+             ->will($this->returnValue(array(
+                'interests' => array(
+                    'type' => 'checkbox',
+                    'options' => array(
+                        'football' => 'Football',
+                        'swimming' => 'Swimming',
+                        'squash' => 'Squash',
+                    ),
+                ),
+            )));
+
+        $this->assertTrue(
+            $this->object->setValues(array(
+                'interests' => array(),
+            ))
+        );
+    }
+
     public function testSetValuesValidatesDateTimeFieldType() {
         $this->object = $this->getMockForAbstractClass('Object', array(), '', true, true, true, array('getColumns'));
         $this->object->expects($this->any())

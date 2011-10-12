@@ -89,7 +89,7 @@ abstract class Object {
                 }
             }
             // always set, regardless of validation problems etc
-            $this->values[$field] = $this->process($field, $value, $settings["type"]);
+            $this->values[$field] = $this->process($field, $value, $settings);
 
         }
         $retVal = (count($this->errors) == 0) ? true : false;
@@ -231,6 +231,10 @@ abstract class Object {
             $validation[] = "matchOption";
         }
 
+        if ($settings["type"] == "checkbox" && isset($settings["options"]) && is_array($settings["options"])) {
+            $validation[] = "matchCheckboxOptions";
+        }
+
         if (isset($settings["validation"])) {
             if (!is_array($settings["validation"])) {
                 $settings["validation"] = array($settings["validation"]);
@@ -245,7 +249,7 @@ abstract class Object {
                 $settings["method"] = "find";
                 $settings["field"] = $field;
             }
-            if ($func != "required" && $value == "") {
+            if ($func != "required" && empty($value)) {
                 // don't try and validate empty non-requireds
                 Log::debug("not validating empty value against [".$func."]");
                 continue;
@@ -260,9 +264,13 @@ abstract class Object {
         return true;
     }
     
-    protected function process($field, $value, $type) {
-        switch ($type) {
+    protected function process($field, $value, $settings) {
+        switch ($settings["type"]) {
             case "checkbox":
+                if (isset($settings["options"]) && is_array($settings["options"])) {
+                    return json_encode($value);
+                }
+                // otherwise just assume a bool-esque field
                 if (isset($value)) {
                     return true;
                 } else {

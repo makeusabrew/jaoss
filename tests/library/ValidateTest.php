@@ -118,6 +118,48 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue(Validate::matchOption('baz', $options));
     }
 
+    public function testMatchCheckboxOptions() {
+        $options = array(
+            'options' => array(
+                'foo' => 'Foo',
+                'bar' => 'Bar',
+                'baz' => 'Baz',
+            ),
+        );
+
+        $this->assertTrue(Validate::matchCheckboxOptions(array(
+            'foo' => 'On',
+        ), $options));
+
+        $this->assertTrue(Validate::matchCheckboxOptions(array(
+            'foo' => 'On',
+            'bar' => 'On',
+        ), $options));
+
+        $this->assertTrue(Validate::matchCheckboxOptions(array(
+            'foo' => 'On',
+            'bar' => 'On',
+            'baz' => 'On',
+        ), $options));
+
+        $this->assertFalse(Validate::matchCheckboxOptions(array(
+            'foo' => 'On',
+            'bar' => 'On',
+            'baz' => 'On',
+            'invalid' => 'On',
+        ), $options));
+
+        $this->assertFalse(Validate::matchCheckboxOptions(array(
+            'Foo' => 'On',
+        ), $options));
+
+        $this->assertFalse(Validate::matchCheckboxOptions(array(), $options));
+    }
+
+    public function testMatchCheckboxOptionsFailsWithStrings() {
+        $this->assertFalse(Validate::matchCheckboxOptions("foo", array("foo" => "Foo")));
+    }
+
     public function testGetMessage() {
         $this->assertEquals(
             'foo is not a valid email address',
@@ -197,6 +239,11 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(
             'foo does not match one of the available options',
             Validate::getMessage('matchOption', array('title' => 'foo'), null)
+        );
+        
+        $this->assertEquals(
+            'one or more of the options chosen for foo are not valid',
+            Validate::getMessage('matchCheckboxOptions', array('title' => 'foo'), null)
         );
     }
 }
