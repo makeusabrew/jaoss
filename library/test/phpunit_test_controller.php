@@ -2,6 +2,7 @@
 
 class PHPUnitTestController extends PHPUnit_Framework_TestCase {
     protected $request = null;
+    protected $bodyPositionOffset = 0;
     public static function setUpBeforeClass() {
         $class = get_called_class();
         if (isset($class::$fixture_file)) {
@@ -32,6 +33,7 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
 
     public function tearDown() {
         $this->request = null;
+        $this->bodyPositionOffset = 0;
         PathManager::reloadPaths();
         JaossRequest::destroyInstance();
     }
@@ -51,6 +53,15 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
     public function assertBodyHasContents($contents) {
         $body = $this->request->getResponse()->getBody();
         $this->assertTrue((strpos($body, $contents) !== false), "Response missing body contents: '{$contents}'");
+    }
+
+    public function assertBodyHasContentsInOrder($contents) {
+        $body = $this->request->getResponse()->getBody();
+        $offset = strpos($body, $contents, $this->bodyPositionOffset);
+        if ($offset !== false) {
+            $this->bodyPositionOffset = $offset;
+        }
+        $this->assertTrue(($offset !== false), "Response body does not have body contents in correct order");
     }
 
     public function assertBodyDoesNotHaveContents($contents) {

@@ -15,7 +15,7 @@ class ErrorHandler {
         if ($compile_dir === false) {
             $compile_dir = sys_get_temp_dir();
         }
-        $this->smarty->compile_dir = $compile_dir;
+        $this->smarty->setCompileDir($compile_dir);
         
         $this->response = new JaossResponse();
 	}
@@ -44,7 +44,7 @@ class ErrorHandler {
         if ($e instanceof CoreException && $e->getCode() == CoreException::TPL_DIR_NOT_WRITABLE) {
             // we assume if we've got this error that the user's chosen dir isn't writable, so
             // we need to switch to one we know (hope!) is to render the error
-            $this->smarty->compile_dir = sys_get_temp_dir();
+            $this->smarty->setCompileDir(sys_get_temp_dir());
         }
         if ($e instanceof CoreException) {
             $path = "core/{$code}.tpl";

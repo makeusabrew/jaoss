@@ -23,12 +23,26 @@ abstract class Cli {
             $argv[0] = "help";
         }
 
-        $path = JAOSS_ROOT."library/cli/cmd/".strtolower($argv[0]).".php";
-        if (!file_exists($path)) {
-            throw new CliException(
-                "Path ".$path." does not exist",
-                1
-            );
+        $path = null;
+        if (defined("PROJECT_ROOT")) {
+            $apps = AppManager::getAppPaths();
+            foreach ($apps as $app) {
+                $path = PROJECT_ROOT."apps/".$app."/cli/".strtolower($argv[0]).".php";
+                if (file_exists($path)) {
+                    break;
+                } else {
+                    $path = null;
+                }
+            }
+        }
+        if ($path === null) {
+            $path = JAOSS_ROOT."library/cli/cmd/".strtolower($argv[0]).".php";
+            if (!file_exists($path)) {
+                throw new CliException(
+                    "Path ".$path." does not exist",
+                    1
+                );
+            }
         }
 
         require_once($path);

@@ -4,6 +4,8 @@ define("JAOSS_CLI", true);
 
 if (file_exists("build.xml")) {
     define("PROJECT_ROOT", getcwd().'/');
+} else {
+    define("PROJECT_ROOT", null);
 }
 
 if (!defined("JAOSS_ROOT")) {
