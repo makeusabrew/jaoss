@@ -31,14 +31,8 @@ class Cli_Fixture extends Cli {
         $db = Settings::getValue("db.dbname");
         $cmd = "mysqldump -u ".$user." -p".$pass." -h ".$host." ".$db." > ".$fixture;
         $cmdMasked = str_replace($pass, str_repeat("*", strlen($pass)), $cmd);
-        $this->writeLine($cmdMasked, Colours::YELLOW);
 
-        $retVal = 255;
-        $output = array();
-        exec($cmd, $output, $retVal);
-        if ($retVal != 0) {
-            throw new CliException("Command failed!", $retVal);
-        }
+        $this->exec($cmd, Colours::yellow($cmdMasked));
     }
 
     protected function import() {
@@ -50,14 +44,8 @@ class Cli_Fixture extends Cli {
         $db = Settings::getValue("db.dbname");
         $cmd = "mysql -u ".$user." -p".$pass." -h ".$host." ".$db." < ".$fixture;
         $cmdMasked = str_replace($pass, str_repeat("*", strlen($pass)), $cmd);
-        $this->writeLine($cmdMasked, Colours::YELLOW);
 
-        $retVal = 255;
-        $output = array();
-        exec($cmd, $output, $retVal);
-        if ($retVal != 0) {
-            throw new CliException("Command failed!", $retVal);
-        }
+        $this->exec($cmd, Colours::yellow($cmdMasked));
     }
 
     protected function getFixtureFile() {
