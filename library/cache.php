@@ -11,4 +11,8 @@ class Cache {
     public static function store($key, $value, $ttl = 0) {
         return apc_store($key, $value, $ttl);
     }
+    
+    public static function isEnabled() {
+        return (Settings::getValue("site", "cache_enabled", false) == true);
+    }
 }

@@ -95,7 +95,7 @@ class JaossRequest {
 
         if ($path->isCacheable() &&
             $this->isCacheable() &&
-            Settings::getValue("site", "cache_enabled", false) == true) {
+            Cache::isEnabled()) {
 
             Log::info("Attempting to retrieve URL contents [".$this->url."] from cache...");
             $this->cacheKey = Settings::getValue("site", "namespace").sha1($this->url);
