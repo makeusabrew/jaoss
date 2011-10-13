@@ -39,7 +39,7 @@ class JaossRequest {
         $this->sapi = php_sapi_name();
         $basePath = basename($reqData["PHP_SELF"]);  // should be index.php or xhprof.php
         // we now support subfolders, conditionally anyway
-        if (substr_compare($reqData["PHP_SELF"], "public/".$basePath, -strlen("public/".$basePath), strlen("public/".$basePath)) === 0) {
+        if (strpos($reqData["PHP_SELF"], "public/".$basePath) !== false) {
             // we're probably running off http://localhost/foo/bar, so adjust base path
             $basePath = "public/".$basePath;
         }
