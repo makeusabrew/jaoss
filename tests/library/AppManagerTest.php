@@ -13,13 +13,13 @@ class AppManagerTest extends PHPUnit_Framework_TestCase {
 		$this->assertFalse(AppManager::isAppInstalled("Fake App"));
 	}
 
-    public function testLoadAppFromPath() {
+    public function testInstallApp() {
         if (!is_dir(PROJECT_ROOT."apps")) {
             mkdir(PROJECT_ROOT."apps");
             $appDirCreated = true;
         }
         $this->createDir(PROJECT_ROOT."apps/testapp");
-        AppManager::loadAppFromPath("testapp");
+        AppManager::installApp("testapp");
         $this->removeDir(PROJECT_ROOT."apps/testapp");
         if (isset($appDirCreated)) {
             $this->removeDir(PROJECT_ROOT."apps/");
@@ -34,7 +34,7 @@ class AppManagerTest extends PHPUnit_Framework_TestCase {
             $appDirCreated = true;
         }
         $this->createDir(PROJECT_ROOT."apps/testapp");
-        AppManager::loadAppFromPath("testapp");
+        AppManager::installApp("testapp");
         $this->removeDir(PROJECT_ROOT."apps/testapp");
         if (isset($appDirCreated)) {
             $this->removeDir(PROJECT_ROOT."apps/");
