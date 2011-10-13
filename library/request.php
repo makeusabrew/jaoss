@@ -97,16 +97,16 @@ class JaossRequest {
             $this->isCacheable() &&
             Cache::isEnabled()) {
 
-            Log::info("Attempting to retrieve URL contents [".$this->url."] from cache...");
+            Log::info("Attempting to retrieve response contents for [".$this->url."] from cache...");
             $this->cacheKey = Settings::getValue("site", "namespace").sha1($this->url);
             $success = false;
             $response = Cache::fetch($this->cacheKey, $success);
             if ($success === true) {
-                Log::info("cache hit");
+                Log::info("cache hit - found response");
                 $this->response = $response;
                 return $this->response;
             }
-            Log::info("cache miss");
+            Log::info("cache miss - no response ofound");
         }
 
         try {
@@ -130,9 +130,9 @@ class JaossRequest {
             Log::info("Caching response for URL [".$this->url."] with ttl [".$path->getCacheTtl()."]");
             $cached = Cache::store($this->cacheKey, $this->response, $path->getCacheTtl());
             if ($cached) {
-                Log::info("Cache stored successfully");
+                Log::info("Response cached successfully");
             } else {
-                Log::warn("URL [".$this->url."] could not be cached!");
+                Log::warn("Response for URL [".$this->url."] could not be cached!");
             }
         }
         return $this->response;

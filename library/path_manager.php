@@ -153,6 +153,10 @@ class PathManager {
         return self::$paths;
     }
 
+    public static function setPaths($paths) {
+        self::$paths = $paths;
+    }
+
     private static function getLocationFromTrace() {
         $trace = debug_backtrace();
         if (!isset($trace[1]["file"])) {

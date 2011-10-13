@@ -21,5 +21,23 @@ try {
 }
 
 foreach ($apps as $app) {
-    AppManager::loadAppFromPath($app);
+    AppManager::installApp($app);
+}
+
+if (Cache::isEnabled()) {
+    Log::debug("Cache enabled - attempting to fetch paths from cache");
+    $pathKey = Settings::getValue("site", "namespace").AppManager::getInstalledAppsHash();
+
+    $success = false;
+    $paths = Cache::fetch($pathKey, $success);
+    if ($success === true) {
+        Log::debug("Got [".count($paths)."] paths from cache");
+        PathManager::setPaths($paths);
+    } else {
+        Log::debug("Cache path miss - loading paths and storing in cache");
+        AppManager::loadAppPaths();
+        Cache::store($pathKey, PathManager::getPaths(), 300);
+    }
+} else {
+    AppManager::loadAppPaths();
 }

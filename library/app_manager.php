@@ -1,18 +1,29 @@
 <?php
 class AppManager {
-	private static $installed_apps = array();
+    protected static $installed_apps = array();
+    protected static $appFolders = array();
 	
-	public static function loadAppFromPath($folder) {
+	public static function installApp($folder) {
 		if (is_dir(PROJECT_ROOT."apps/".$folder)) {			
 			$app = new App($folder);
-			$app->loadPaths();
 			self::$installed_apps[] = $app;			
+            self::$appFolders[] = $folder;
 		}
 	}
 	
 	public static function getInstalledApps() {
 		return self::$installed_apps;
 	}
+
+    public static function getInstalledAppsHash() {
+        return sha1(implode("-", self::$appFolders));
+    }
+
+    public static function loadAppPaths() {
+        foreach (self::$installed_apps as $app) {
+			$app->loadPaths();
+        }
+    }
 	
 	public static function getAppPaths() {
 		$_apps = array();
