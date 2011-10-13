@@ -1,12 +1,14 @@
 <?php
 class Log {
-	private static $handle = array();
-    private static $levels = array(
+	protected static $handle = array();
+    protected static $paths  = array();
+    protected static $levels = array(
         "verbose" => 10,
-        "debug" => 20,
-        "info" => 30,
-        "warn" => 40,
+        "debug"   => 20,
+        "info"    => 30,
+        "warn"    => 40,
     );
+    protected static $level = null;
 
 	public static function debug($str) {
 		self::_log($str, "debug");
@@ -29,29 +31,42 @@ class Log {
     }
 	
 	private static function _log($str, $logLevel) {
-        $allowed = Settings::getValue("log.level", "warn");
+        if (self::$level === null) {
+            self::$level = Settings::getValue("log.level", "warn");
+        }
 
-        if (self::$levels[$logLevel] < self::$levels[$allowed]) {
+        // don't do anything if the level we're trying to log at is
+        // less than our current output level (e.g. debug < warn)
+        if (self::$levels[$logLevel] < self::$levels[self::$level]) {
             return;
         }
+
+        // save doing this call each time inside the loop
+        $timestamp = date("d/m/Y H:i:s");
+
         foreach (self::$levels as $level => $val) {
-            if ($val < self::$levels[$allowed]) {
+            // don't bother logging if this level is less than the one
+            // we're trying to log at (e.g. verbose, but we want to log at debug)
+            if ($val < self::$levels[self::$level]) {
                 continue;
             }
+
+            // if we've passed the current output level, give up
             if ($val > self::$levels[$logLevel]) {
                 break;
             }
-            $path = Settings::getValue("log.".$level);
+
+            if (!isset(self::$paths[$level])) {
+                self::$paths[$level] = Settings::getValue("log.".$level);
+            }
+            $path = self::$paths[$level];
+
             if (!isset(self::$handle[$path])) {
                 if (!file_exists($path)) {
-                    // file doesn't exist, so a call to is_writable will always fail. so, we have to be a bit dirty i'm afraid :(
-                    // have to surpress the E_WARNING, check the result, and then throw an error if it's failed
-                    // we also need a try catch in case we're in exception throwing mode, in which case @ does naff all
-                    try {
-                        $file = @fopen($path, "w");
-                    } catch (ErrorException $e) {
-                        $file = false;
-                    }
+
+                    // surpress the error otherwise we'll throw an exception
+                    $file = @fopen($path, "w");
+
                     if ($file === false) {
                         throw new CoreException("Logfile does not exist and could not be created", CoreException::LOG_FILE_ERROR, array("path" => $path));
                     }
@@ -68,7 +83,7 @@ class Log {
             }
             $dbgOut = "(".strtoupper($logLevel).")";
             $dbgOut = str_pad($dbgOut, 9);
-            fwrite(self::$handle[$path], date("d/m/Y H:i:s")." ".$dbgOut." - ".$str.PHP_EOL);
+            fwrite(self::$handle[$path], $timestamp." ".$dbgOut." - ".$str.PHP_EOL);
         }
 	}
 }
