@@ -2,7 +2,7 @@ jaoss (pronounced jay-oss)
 ==========================
 
 JAOSS (which once upon a time I think stood for Just Another Open Source System)
-is a lightweight, fast, object oriented, PHP5, blah blah blah, framework.
+is a lightweight, fast, object oriented, PHP5, MVC framework.
 
 Another one?
 ------------
@@ -13,9 +13,9 @@ that.
 How do I use it?
 ---------------
 
-Short of some proper documentation (one day, I promise...) your best bet is to
-probably check out the [jaoss web template](https://github.com/makeusabrew/jaoss-web-template)
-which is a bare bones full project skeleton using the jaoss library.
+Documentation is slowly but surely coming together on the [jaoss.org website](http://jaoss.org).
+Your best bet for now is to check out the [tutorial](http://jaoss.org/docs/tutorial) and the 
+various open source websites linked from there which use the jaoss framework.
 
 Requirements
 ------------
