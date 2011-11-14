@@ -222,15 +222,57 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
             "test" => "value",
         ), $this->stub->getErrors());
     }
+
+    public function testRedirectToExternalSiteFromRootFolderBase() {
+        $this->stub->redirect("http://foo.com");
+        $response = $this->stub->getResponse();
+
+        $this->assertEquals("http://foo.com", $response->getRedirectUrl());
+    }
+
+    public function testRedirectToInternalUrlFromRootFolderBase() {
+        $this->stub->redirect("/foo");
+        $response = $this->stub->getResponse();
+
+        $this->assertEquals("/foo", $response->getRedirectUrl());
+    }
+
+    public function testRedirectToExternalSiteFromSubfolderBase() {
+        $this->stub = new ConcreteController(array(
+            'base_href'  => 'http://localhost/my/subfolder/',
+            'folder_base' => '/my/subfolder/',
+        ));
+
+
+        $this->stub->redirect("http://foo.com");
+        $response = $this->stub->getResponse();
+
+        $this->assertEquals("http://foo.com", $response->getRedirectUrl());
+    }
+
+    public function testRedirectToInternalUrlFromSubfolderBase() {
+        $this->stub = new ConcreteController(array(
+            'base_href'  => 'http://localhost/my/subfolder/',
+            'folder_base' => '/my/subfolder/',
+        ));
+
+
+        $this->stub->redirect("/foo");
+        $response = $this->stub->getResponse();
+
+        $this->assertEquals("http://localhost/my/subfolder/foo", $response->getRedirectUrl());
+    }
 }
 
 // I'd much rather use a mock here but for some reason code coverage doesn't
 // seem to work properly. Look at fixing this later.
 class ConcreteController extends Controller {
-    public function __construct() {
+    public function __construct($properties = array()) {
         // don't want abstract controller construct firing cos it throws an exception
         // could look at moving stuff out of construct?
         $this->request = new TestRequest();
+        $this->request->setProperties($properties);
+
         $this->response = new JaossResponse();
         $this->session = Session::getInstance();
     }
