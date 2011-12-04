@@ -9,7 +9,6 @@ class Email {
     protected $handler;
 
     public static function factory() {
-        // pretty pointless for now. @todo improve to take note of mode etc
         $email = new Email();
         try {
             $handler = Settings::getValue("email.handler");
@@ -61,7 +60,7 @@ class Email {
         if ($canSend) {
             $this->setHeader("From", $this->from);
             Log::debug("sending mail to [".$this->getToAsString()."], from [".$this->getFrom()."], subject [".$this->getSubject()."], body length [".strlen($this->getBody())."]");
-            return $this->handler->send($this->getToAsString(), $this->getSubject(), $this->getBody(), $this->getHeadersAsString());
+            return $this->handler->send($this->getToAsString(), $this->getSubject(), $this->getBody(), $this->getHeadersAsString(), $this->getFrom());
         }
         return false;
     }
@@ -151,7 +150,7 @@ class Email {
 }
 
 interface IEmailHandler {
-    public function send($to, $subject, $body, $headers);
+    public function send($to, $subject, $body, $headers, $from);
 }
 
 abstract class EmailHandler {
@@ -167,13 +166,33 @@ abstract class EmailHandler {
 }
 
 class DefaultEmailHandler implements IEmailHandler {
-    public function send($to, $subject, $body, $headers) {
+    public function send($to, $subject, $body, $headers, $from) {
         return mail($to, $subject, $body, $headers);
     }
 }
 
 class TestEmailHandler implements IEmailHandler {
-    public function send($to, $subject, $body, $headers) {
+    protected static $sentEmails = array();
+
+    public static function resetSentEmails() {
+        self::$sentEmails = array();
+    }
+
+    public static function getSentEmails() {
+        return self::$sentEmails;
+    }
+
+    public function send($to, $subject, $body, $headers, $from) {
+        // this could obviously be improved!
+        $email = array(
+            'to' => $to,
+            'subject' => $subject,
+            'body' => $body,
+            'headers' => $headers,
+            'from' => $from,
+        );
+        self::$sentEmails[] = $email;
+
         try {
             $outputDir = Settings::getValue("email.output_dir");
         } catch (CoreException $e) {
