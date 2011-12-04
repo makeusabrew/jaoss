@@ -4,6 +4,10 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
     protected $request = null;
     protected $bodyPositionOffset = 0;
     public static function setUpBeforeClass() {
+        self::loadFixture();
+    }
+
+    public static function loadFixture() {
         $class = get_called_class();
         if (isset($class::$fixture_file)) {
             $user = Settings::getValue("db.user");
