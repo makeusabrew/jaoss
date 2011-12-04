@@ -156,12 +156,21 @@ interface IEmailHandler {
 abstract class EmailHandler {
 
     public static function factory($mode) {
+        if ($mode == "autodetect") {
+            if (php_sapi_name() == "cli") {
+                $mode = "test";
+            } else {
+                // test, apache and autodetect = DB please
+                $mode = "db";
+            }
+        }
+
         $prefix = ucfirst(strtolower($mode));
         if (class_exists($prefix."EmailHandler")) {
             $class = $prefix."EmailHandler";
             return new $class;
         }
-        return null;
+        throw new CoreException("Email Handler [".$prefix."EmailHandler] does not exist");
     }
 }
 
@@ -212,5 +221,41 @@ class TestEmailHandler implements IEmailHandler {
         fclose($handle);
         Log::debug("Written test email to file [".$outputDir."/".$outputFile.".txt");
         return true;
+    }
+}
+
+class DbEmailHandler implements IEmailHandler {
+
+	private static $db = NULL;
+
+	public static function getDb() {
+		if (self::$db === NULL) {
+            Log::debug("Opening new sqlite instance");
+
+            self::$db = new PDO('sqlite:/tmp/test_emails.db');
+            self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+		} else {
+            Log::debug("already got instance");
+        }
+		
+		return self::$db;
+	}
+
+    public static function resetSentEmails() {
+        $db = self::getDb();
+        Log::debug("dropping table...");
+        $db->exec("DROP TABLE IF EXISTS emails");
+    }
+
+    public function send($to, $subject, $body, $headers, $from) {
+        $db = self::getDb();
+        $db->exec("CREATE TABLE IF NOT EXISTS emails (`to` varchar(255) NOT NULL)");
+        $db->exec("INSERT INTO emails (`to`) VALUES('this is a test')");
+    }
+
+    public static function getSentEmails() {
+        $db = self::getDb();
+        return $db->query("SELECT * FROM emails");
     }
 }
