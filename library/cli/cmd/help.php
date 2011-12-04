@@ -11,8 +11,8 @@ class Cli_Help extends Cli {
         $this->writeLine("  create app [<folder>] [--model=Model]");
         $this->writeLine("  create table [<Model>] [--output-only]");
         $this->writeLine("  dispatch <url> [--no-render]");
-        $this->writeLine("  fixture update [<file>]");
-        $this->writeLine("  fixture import [<file>]");
+        $this->writeLine("  fixture import-from-db [<file>]");
+        $this->writeLine("  fixture update-db [<file>]");
         $this->writeLine("  list paths");
         $this->write("\n");
     }

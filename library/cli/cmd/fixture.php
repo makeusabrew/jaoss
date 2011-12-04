@@ -5,8 +5,8 @@ class Cli_Fixture extends Cli {
         if (count($this->args) === 0) {
             // ok, interactive
             $method = $this->promptOptions('Please choose an option', array(
-                1 => 'update',
-                2 => 'import',
+                1 => 'import-from-db',
+                2 => 'update-db',
             ));
         } else {
             $method = $this->shiftArg();
@@ -14,7 +14,7 @@ class Cli_Fixture extends Cli {
         $this->$method();
     }
 
-    protected function update() {
+    protected function import_from_db() {
         $fixture = $this->getFixtureFile();
 
         if (!is_writable($fixture)) {
@@ -35,7 +35,7 @@ class Cli_Fixture extends Cli {
         $this->exec($cmd, Colours::yellow($cmdMasked));
     }
 
-    protected function import() {
+    protected function update_db() {
         $fixture = $this->getFixtureFile();
 
         $user = Settings::getValue("db.user");

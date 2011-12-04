@@ -166,4 +166,15 @@ abstract class Cli {
     public function clearOutputColour() {
         $this->outputColour = null;
     }
+
+    public function __call($name, $arguments) {
+        // well, if we got here then the method wasn't valid. Try a few known tweaks
+        $method = str_replace("-", "_", $name);
+        if (method_exists($this, $method) &&
+            is_callable(array($this, $method))) {
+            return $this->$method($arguments);
+        }
+
+        throw new CliException("Method [".$name."] does not exist", 1);
+    }
 }
