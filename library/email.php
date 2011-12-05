@@ -201,61 +201,47 @@ class TestEmailHandler implements IEmailHandler {
             'from' => $from,
         );
         self::$sentEmails[] = $email;
-
-        try {
-            $outputDir = Settings::getValue("email.output_dir");
-        } catch (CoreException $e) {
-            Log::debug("No email.output_dir setting found, not writing email but returning success");
-            return true;
-        }
-
-        $data = "To: ".$to."\n";
-        $data .= "Subject: ".$subject."\n";
-        $data .= $headers."\n";
-        $data .= "\n\n\n";
-        $data .= $body;
-
-        $outputFile = sha1($to.$subject.$body.$headers);
-        $handle = fopen($outputDir."/".$outputFile.".txt", "w");
-        fwrite($handle, $data);
-        fclose($handle);
-        Log::debug("Written test email to file [".$outputDir."/".$outputFile.".txt");
         return true;
     }
 }
 
 class DbEmailHandler implements IEmailHandler {
-
-	private static $db = NULL;
-
-	public static function getDb() {
-		if (self::$db === NULL) {
-            Log::debug("Opening new sqlite instance");
-
-            self::$db = new PDO('sqlite:/tmp/test_emails.db');
-            self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-		} else {
-            Log::debug("already got instance");
-        }
-		
-		return self::$db;
-	}
+    protected static $lastId = null;
 
     public static function resetSentEmails() {
-        $db = self::getDb();
-        Log::debug("dropping table...");
-        $db->exec("DROP TABLE IF EXISTS emails");
+        $db = Db::getInstance();
+        $result = $db->query("SELECT `id` FROM `test_emails` ORDER BY `id` DESC LIMIT 1")->fetch();
+        self::$lastId = $result[0];
     }
 
     public function send($to, $subject, $body, $headers, $from) {
-        $db = self::getDb();
-        $db->exec("CREATE TABLE IF NOT EXISTS emails (`to` varchar(255) NOT NULL)");
-        $db->exec("INSERT INTO emails (`to`) VALUES('this is a test')");
+        $db = Db::getInstance();
+        /*
+        $db->exec("CREATE TABLE IF NOT EXISTS test_emails (
+            `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+            `to` varchar(255) NOT NULL,
+            `subject` varchar(255) NOT NULL,
+            `body` TEXT NOT NULL,
+            `headers` TEXT NOT NULL,
+            `from` varchar(255) NOT NULL,
+            `created` DATETIME NOT NULL,
+            PRIMARY KEY(`id`))");
+        */
+        $sth = $db->prepare("INSERT INTO test_emails (`to`,`subject`,`body`,`headers`,`from`, `created`) VALUES(?, ?, ?, ?, ?, ?)");
+        return $sth->execute(array($to, $subject, $body, $headers, $from, Utils::getDate("Y-m-d H:i:s")));
     }
 
     public static function getSentEmails() {
-        $db = self::getDb();
-        return $db->query("SELECT * FROM emails");
+        $db = Db::getInstance();
+        $params = array();
+        $query = "SELECT * FROM `test_emails`";
+        if (self::$lastId !== null) {
+            $query .= " WHERE `id` > ?";
+            $params[] = self::$lastId;
+        }
+        $query .= " ORDER BY `id` ASC";
+        $sth = $db->prepare($query);
+        $sth->execute($params);
+        return $sth->fetchAll();
     }
 }
