@@ -156,12 +156,21 @@ interface IEmailHandler {
 abstract class EmailHandler {
 
     public static function factory($mode) {
+        if ($mode == "autodetect") {
+            if (php_sapi_name() == "cli") {
+                $mode = "test";
+            } else {
+                // test, apache and autodetect = DB please
+                $mode = "db";
+            }
+        }
+
         $prefix = ucfirst(strtolower($mode));
         if (class_exists($prefix."EmailHandler")) {
             $class = $prefix."EmailHandler";
             return new $class;
         }
-        return null;
+        throw new CoreException("Email Handler [".$prefix."EmailHandler] does not exist");
     }
 }
 
@@ -192,25 +201,47 @@ class TestEmailHandler implements IEmailHandler {
             'from' => $from,
         );
         self::$sentEmails[] = $email;
-
-        try {
-            $outputDir = Settings::getValue("email.output_dir");
-        } catch (CoreException $e) {
-            Log::debug("No email.output_dir setting found, not writing email but returning success");
-            return true;
-        }
-
-        $data = "To: ".$to."\n";
-        $data .= "Subject: ".$subject."\n";
-        $data .= $headers."\n";
-        $data .= "\n\n\n";
-        $data .= $body;
-
-        $outputFile = sha1($to.$subject.$body.$headers);
-        $handle = fopen($outputDir."/".$outputFile.".txt", "w");
-        fwrite($handle, $data);
-        fclose($handle);
-        Log::debug("Written test email to file [".$outputDir."/".$outputFile.".txt");
         return true;
+    }
+}
+
+class DbEmailHandler implements IEmailHandler {
+    protected static $lastId = null;
+
+    public static function resetSentEmails() {
+        $db = Db::getInstance();
+        $result = $db->query("SELECT `id` FROM `test_emails` ORDER BY `id` DESC LIMIT 1")->fetch();
+        self::$lastId = $result[0];
+    }
+
+    public function send($to, $subject, $body, $headers, $from) {
+        $db = Db::getInstance();
+        /*
+        $db->exec("CREATE TABLE IF NOT EXISTS test_emails (
+            `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+            `to` varchar(255) NOT NULL,
+            `subject` varchar(255) NOT NULL,
+            `body` TEXT NOT NULL,
+            `headers` TEXT NOT NULL,
+            `from` varchar(255) NOT NULL,
+            `created` DATETIME NOT NULL,
+            PRIMARY KEY(`id`))");
+        */
+        $sth = $db->prepare("INSERT INTO test_emails (`to`,`subject`,`body`,`headers`,`from`, `created`) VALUES(?, ?, ?, ?, ?, ?)");
+        return $sth->execute(array($to, $subject, $body, $headers, $from, Utils::getDate("Y-m-d H:i:s")));
+    }
+
+    public static function getSentEmails() {
+        $db = Db::getInstance();
+        $params = array();
+        $query = "SELECT * FROM `test_emails`";
+        if (self::$lastId !== null) {
+            $query .= " WHERE `id` > ?";
+            $params[] = self::$lastId;
+        }
+        $query .= " ORDER BY `id` ASC";
+        $sth = $db->prepare($query);
+        $sth->execute($params);
+        return $sth->fetchAll();
     }
 }
