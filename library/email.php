@@ -59,7 +59,8 @@ class Email {
 
         if ($canSend) {
             $this->setHeader("From", $this->from);
-            Log::debug("sending mail to [".$this->getToAsString()."], from [".$this->getFrom()."], subject [".$this->getSubject()."], body length [".strlen($this->getBody())."]");
+            $handler = get_class($this->handler);
+            Log::debug("[".$handler."] sending mail to [".$this->getToAsString()."], from [".$this->getFrom()."], subject [".$this->getSubject()."], body length [".strlen($this->getBody())."]");
             return $this->handler->send($this->getToAsString(), $this->getSubject(), $this->getBody(), $this->getHeadersAsString(), $this->getFrom());
         }
         return false;

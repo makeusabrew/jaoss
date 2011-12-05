@@ -81,7 +81,7 @@ class TestRequest extends JaossRequest {
         $this->postFields = array();
         $this->getFields = array();
         $this->response = null;
-        $this->method = null;
+        $this->method = 'GET';
         $this->referer = null;
         PathManager::reloadPaths();
         return $this;
