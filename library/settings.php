@@ -59,7 +59,7 @@ class Settings {
                     "Setting '".$section.".".$key."' not found",
                     CoreException::SETTING_NOT_FOUND,
                     array(
-                        "mode" => self::getMode(),
+                        "mode" => self::$mode,
                         "setting_key" => $section.".".$key,
                     )
                 );
@@ -94,10 +94,6 @@ class Settings {
             );
         }
         self::$mode = $mode;
-    }
-
-    public static function getMode() {
-        return self::$mode;
     }
     
     public static function reset() {
