@@ -100,6 +100,17 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse(Validate::postcode("LS1"));
     }
 
+    public function testUnsigned() {
+        $this->assertTrue(Validate::unsigned(0));
+        $this->assertTrue(Validate::unsigned("0"));
+        $this->assertTrue(Validate::unsigned(1));
+        $this->assertTrue(Validate::unsigned(10));
+
+        $this->assertFalse(Validate::unsigned(-1));
+        $this->assertFalse(Validate::unsigned("-1"));
+        $this->assertFalse(Validate::unsigned(-123.45));
+    }
+
     public function testMatchOption() {
         $options = array(
             'options' => array(
@@ -244,6 +255,11 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(
             'one or more of the options chosen for foo are not valid',
             Validate::getMessage('matchCheckboxOptions', array('title' => 'foo'), null)
+        );
+
+        $this->assertEquals(
+            'foo must be zero or greater',
+            Validate::getMessage('unsigned', array('title' => 'foo'), null)
         );
     }
 }

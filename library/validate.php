@@ -14,6 +14,10 @@ class Validate {
         return preg_match("#^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,6})$#i", $value) > 0;
     }
 
+    public static function unsigned($value, $settings = null) {
+        return ($value >= 0);
+    }
+
     public static function postcode($value, $settings = null) {
         // @see http://en.wikipedia.org/wiki/Postcodes_in_the_United_Kingdom
         return preg_match("#^(GIR 0AA)|(((A[BL]|B[ABDHLNRSTX]?|C[ABFHMORTVW]|D[ADEGHLNTY]|E[HNX]?|F[KY]|G[LUY]?|H[ADGPRSUX]|I[GMPV]|JE|K[ATWY]|L[ADELNSU]?|M[EKL]?|N[EGNPRW]?|O[LX]|P[AEHLOR]|R[GHM]|S[AEGKLMNOPRSTY]?|T[ADFNQRSW]|UB|W[ADFNRSV]|YO|ZE)[1-9]?[0-9]|((E|N|NW|SE|SW|W)1|EC[1-4]|WC[12])[A-HJKMNPR-Y]|(SW|W)([2-9]|[1-9][0-9])|EC[1-9][0-9]) [0-9][ABD-HJLNP-UW-Z]{2})$#i", $value) > 0;
@@ -146,6 +150,8 @@ class Validate {
                 return "{$title} does not match one of the available options";
             case "matchCheckboxOptions":
                 return "one or more of the options chosen for {$title} are not valid";
+            case "unsigned":
+                return "{$title} must be zero or greater";
             default:
                 return "{$title} is not valid";
         }
