@@ -210,6 +210,9 @@ class Cli_Create extends Cli {
                 case "postcode":
                     $sql .= "VARCHAR( 8 ) NOT NULL";
                     break;
+                case "bool":
+                    $sql .= "TINYINT(1) NOT NULL";
+                    break;
                 default:
                     Log::warn("Creating default VARCHAR(255) field for unknown type [".$column["type"]."]");
                     $sql .= "VARCHAR( 255 ) NOT NULL";

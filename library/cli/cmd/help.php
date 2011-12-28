@@ -8,8 +8,8 @@ class Cli_Help extends Cli {
         $this->write("\n");
         $this->writeLine("The available commands are:");
         $this->writeLine("  create project [<dir>]");
-        $this->writeLine("  create app [<folder>] [--model=Model]");
-        $this->writeLine("  create table [<Model>] [--output-only]");
+        $this->writeLine("  create app [<folder>] [--model=Object]");
+        $this->writeLine("  create table [<Table>] [--output-only]");
         $this->writeLine("  dispatch <url> [--no-render]");
         $this->writeLine("  fixture import-from-db [<file>]");
         $this->writeLine("  fixture update-db [<file>]");
