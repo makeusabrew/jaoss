@@ -8,6 +8,7 @@ class JaossRequest {
     protected $base_href = NULL;
     protected $full_url = NULL;
     protected $ajax = false;
+    protected $pjax = false;
     protected $referer = NULL;
     protected $sapi = NULL;
     protected $ip = NULL;
@@ -66,6 +67,7 @@ class JaossRequest {
 			$this->query_string = "";
 		}
         $this->method    = isset($reqData["REQUEST_METHOD"]) ? $reqData["REQUEST_METHOD"] : NULL;
+        $this->pjax      = isset($reqData["HTTP_X_PJAX"]) ? true : false;
         $this->ajax      = isset($reqData["HTTP_X_REQUESTED_WITH"]) ? true : false;
         $this->referer   = isset($reqData["HTTP_REFERER"]) ? $reqData["HTTP_REFERER"] : NULL;
         $this->ip        = isset($reqData["REMOTE_ADDR"]) ? $reqData["REMOTE_ADDR"] : NULL;
@@ -202,6 +204,10 @@ class JaossRequest {
     
     public function isAjax() {
     	return $this->ajax;
+    }
+
+    public function isPjax() {
+        return $this->pjax;
     }
 	
 	public function disableAjax() {

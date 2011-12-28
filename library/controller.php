@@ -139,11 +139,21 @@ abstract class Controller {
         if (count($this->errors)) {
             $this->assign("_errors", $this->errors);
         }
+
+        if ($this->request->isPjax()) {
+            return $this->renderPjax($template);
+        }
+
         if ($this->request->isAjax()) {
             return $this->renderJson();
-        } else {
-            return $this->renderTemplate($template);
         }
+
+        return $this->renderTemplate($template);
+    }
+
+    public function renderPjax($template) {
+        $this->assign('_pjax', true);
+        return $this->renderTemplate($template);
     }
 	
     /**
