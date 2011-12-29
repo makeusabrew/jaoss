@@ -41,6 +41,7 @@ class UtilsTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testCurrentTimestampReturnsTimeValueWhenNotOverridden() {
+        Utils::setCurrentDate(null);
         $time = time();
         $ts   = Utils::getTimestamp();
 

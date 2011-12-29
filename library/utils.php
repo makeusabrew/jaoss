@@ -87,7 +87,11 @@ class Utils {
 
     public static function setCurrentDate($dateStr) {
         if (Settings::getValue("date.allow_override", false)) {
-            self::$currentTimestamp = strtotime($dateStr);
+            if ($dateStr === null) {
+                self::$currentTimestamp = null;
+            } else {
+                self::$currentTimestamp = strtotime($dateStr);
+            }
         } else {
             Log::info("Attempted to set the current timestamp to [".$dateStr."] when not allowed");
         }
