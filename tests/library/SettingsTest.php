@@ -2,7 +2,9 @@
 class SettingsTest extends PHPUnit_Framework_TestCase {
 
     protected function tearDown() {
-        Settings::reset();
+        // reset was nerfing everything after this test which
+        // relied on settings!
+        //Settings::reset();
     }
 
     public function testInvalidModeThrowsException() {

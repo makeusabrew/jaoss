@@ -68,6 +68,9 @@ Settings::setFromArray(array(
     "site" => array(
         "namespace" => "test_namespace",
     ),
+    "date" => array(
+        "allow_override" => true,
+    ),
 ));
 
 // log some debug straight away to check the file is there

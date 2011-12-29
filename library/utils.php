@@ -77,6 +77,14 @@ class Utils {
         return date($str, self::$currentTimestamp);
     }
 
+    public static function getTimestamp() {
+        if (self::$currentTimestamp === null) {
+            return time();
+        }
+
+        return self::$currentTimestamp;
+    }
+
     public static function setCurrentDate($dateStr) {
         if (Settings::getValue("date.allow_override", false)) {
             self::$currentTimestamp = strtotime($dateStr);
@@ -87,5 +95,10 @@ class Utils {
 
     public static function reset() {
         self::$currentTimestamp = null;
+    }
+
+    public static function olderThan($seconds, $value) {
+        $value = strtotime($value);
+        return self::getTimestamp() > $value + $seconds;
     }
 }

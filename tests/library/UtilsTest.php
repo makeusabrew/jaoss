@@ -35,4 +35,37 @@ class UtilsTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(1, strlen(Utils::generatePassword(1)));
         $this->assertEquals(100, strlen(Utils::generatePassword(100)));
     }
+
+    public function testGetCurrentTimestampReturnsInteger() {
+        $this->assertInternalType('integer', Utils::getTimestamp());
+    }
+
+    public function testCurrentTimestampReturnsTimeValueWhenNotOverridden() {
+        $time = time();
+        $ts   = Utils::getTimestamp();
+
+        $this->assertSame($ts, $time);
+    }
+
+    public function testCurrentTimestampReturnsCorrectValueWhenOverridden() {
+        Utils::setCurrentDate("2009-01-01 00:00:00");
+
+        $this->assertEquals(
+            1230768000,
+            Utils::getTimestamp()
+        );
+    }
+
+    public function testOlderThan() {
+        Utils::setCurrentDate("2009-01-01 12:00:00");
+
+        $this->assertFalse(Utils::olderThan(60, "2009-01-01 13:00:00"));
+        $this->assertFalse(Utils::olderThan(60, "2009-01-01 12:00:00"));
+
+        // we define "older than" to literally be >, not >=
+        $this->assertFalse(Utils::olderThan(60, "2009-01-01 11:59:00"));
+
+        $this->assertTrue(Utils::olderThan(60, "2009-01-01 11:58:59"));
+        $this->assertTrue(Utils::olderThan(60, "2008-01-01 12:00:00"));
+    }
 }
