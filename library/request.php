@@ -108,7 +108,7 @@ class JaossRequest {
                 $this->response = $response;
                 return $this->response;
             }
-            Log::info("cache miss - no response ofound");
+            Log::info("cache miss - no response found");
         }
 
         try {
