@@ -18,12 +18,22 @@ abstract class Controller {
 
         $tpl_dirs = array(PROJECT_ROOT."apps/");
 		
-        $this->smarty->setTemplateDir($tpl_dirs)
-                     ->setCompileDir(Settings::getValue("smarty", "compile_dir"))
-                     ->setPluginsDir(array(
+        $plugin_dirs = array(
             JAOSS_ROOT."library/Smarty/libs/plugins",  // default smarty dir
             JAOSS_ROOT."library/Smarty/custom_plugins",
-        ));
+        );
+
+        // allow site specific plugin dirs - these should take precedence if present
+        if (($sitePlugins = Settings::getValue("smarty", "plugins", false)) !== false) {
+            $plugin_dirs = array_merge(
+                $sitePlugins,
+                $plugin_dirs
+            );
+        }
+
+        $this->smarty->setTemplateDir($tpl_dirs)
+                     ->setCompileDir(Settings::getValue("smarty", "compile_dir"))
+                     ->setPluginsDir($plugin_dirs);
 
         // no setter for this, strangely...
         $this->smarty->compile_check = Settings::getBool("smarty", "compile_check");
