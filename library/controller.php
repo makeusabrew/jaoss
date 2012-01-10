@@ -114,15 +114,20 @@ abstract class Controller {
             }
             $url = PathManager::getUrlForOptions($url);
         }
-        // always add the flash message - if the ajax handler obeys the 
-        // redirect we will pick it up next render
-    	if ($message) {
-    		FlashMessenger::addMessage($message);
-    	}
     	if ($this->request->isAjax()) {
     		$this->assign("redirect", $url);
+
+            // assume AJAX handlers won't follow a redirect, so assign
+            // the message directly instead
+            if ($message) {
+                $this->assign("message", $message);
+            }
             return $this->renderJson();
     	} else {
+            // bung a message in the session
+            if ($message) {
+                FlashMessenger::addMessage($message);
+            }
             // check for subfolder mode
             if ($this->request->getFolderBase() !== '/' && $url{0} === '/') {
                 $url = substr($this->request->getBaseHref(), 0, -1).$url;
