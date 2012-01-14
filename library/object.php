@@ -143,9 +143,13 @@ abstract class Object {
     	$sql = "";
     	$values = array();
     	if ($this->getId()) {
+            $updated = Utils::getDate("Y-m-d H:i:s");
+            $values[] = $updated;
+
     		// unset PK, just in case
     		unset($this->values[$this->pk]);
-    		$sql = "UPDATE `".$this->getTable()."` SET `updated` = NOW(),";
+
+    		$sql = "UPDATE `".$this->getTable()."` SET `updated` = ?,";
     		foreach ($this->getColumns() as $key => $val) {
     			if (isset($this->values[$key])) {
 	    			$sql .= "`{$key}` = ?,";
@@ -156,6 +160,10 @@ abstract class Object {
     		$sql .= " WHERE `{$this->pk}` = ?";
     		$values[] = $this->getId();
     	} else {
+            $created = $updated = Utils::getDate("Y-m-d H:i:s");
+            $values[] = $created;
+            $values[] = $updated;
+
     		$sql = "INSERT INTO `".$this->getTable()."` (`created`, `updated`,";
     		$params = "";
     		foreach ($this->getColumns() as $key => $val) {
@@ -167,7 +175,7 @@ abstract class Object {
     		}
     		$sql = substr($sql, 0, -1);
     		$params = substr($params, 0, -1);
-    		$sql .= ") VALUES (NOW(),NOW(),".$params.")";
+    		$sql .= ") VALUES (?, ?,".$params.")";
     	}
 
    		$dbh = Db::getInstance();
@@ -177,7 +185,9 @@ abstract class Object {
 		if (!$this->getId()) {
 			$pk = $this->pk;
 			$this->$pk = $id;
+            $this->created = $created;
 		}
+        $this->updated = $updated;
 		return TRUE;
     }
 
