@@ -223,7 +223,7 @@ abstract class Controller {
         return json_encode($data);
     }
 
-    public function fetchTemplate($template) {
+    public function fetchTemplate($template, $extra = array()) {
         if (!$this->smarty->templateExists($template.".tpl")) {
             throw new CoreException(
                 "Template Not Found",
@@ -245,6 +245,10 @@ abstract class Controller {
         $this->assignIfNotSet("messages", FlashMessenger::getMessages());
 
         foreach ($this->var_stack as $var => $val) {
+            $this->smarty->assign($var, $val);
+        }
+
+        foreach ($extra as $var => $val) {
             $this->smarty->assign($var, $val);
         }
 
