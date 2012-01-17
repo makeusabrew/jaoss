@@ -13,8 +13,8 @@ that.
 How do I use it?
 ---------------
 
-Documentation is slowly but surely coming together on the [jaoss.org website](http://jaoss.co.uk).
-Your best bet for now is to check out the [tutorial](http://jaoss.co.uk/docs/tutorial) and the 
+Documentation is slowly but surely coming together on the [jaoss.org website](http://jaoss.org).
+Your best bet for now is to check out the [tutorial](http://jaoss.org/docs/tutorial) and the 
 various open source websites linked from there which use the jaoss framework.
 
 Requirements
