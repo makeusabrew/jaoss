@@ -6,7 +6,7 @@ class File {
     protected $tmp_name;
     protected $error;
     protected $size;
-    protected $comittedName;
+    protected $committedName;
 
     const ERR_NO_FILE = 99;
 
@@ -55,7 +55,7 @@ class File {
 
         Log::debug("moving uploaded file [".$this->tmp_name."] to destination [".$path.$name."]");
         move_uploaded_file($this->tmp_name, $path.$name);
-        $this->commitedName = $path.$name;
+        $this->committedName = $path.$name;
     }
 
     public function getFilename() {
@@ -71,6 +71,6 @@ class File {
     }
 
     public function getCommittedName() {
-        return $this->comittedName;
+        return $this->committedName;
     }
 }
