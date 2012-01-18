@@ -40,11 +40,11 @@ class RequestTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($request->isCacheable());
     }
 
-    public function testRequestIsNotCachableWhenGetQueryStringSet() {
+    public function testRequestIsCachableWhenGetQueryStringSet() {
         $this->reqData['QUERY_STRING'] = 'foo=bar&baz=test';
         $this->reqData['REQUEST_URI']  = '/my/url?foo=bar&baz=test';
         $request = new JaossRequest($this->reqData);
-        $this->assertFalse($request->isCacheable());
+        $this->assertTrue($request->isCacheable());
     }
 
     public function testRequestIsNotCachableWhenPostAndNoQueryStringSet() {
