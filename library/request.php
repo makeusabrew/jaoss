@@ -82,7 +82,7 @@ class JaossRequest {
 	}
 
     public function isCacheable() {
-        return ($this->isGet() && $this->query_string == "");
+        return $this->isGet();
     }
 	
 	public function dispatch($url = null) {
@@ -99,8 +99,13 @@ class JaossRequest {
             $this->isCacheable() &&
             Cache::isEnabled()) {
 
-            Log::info("Attempting to retrieve response contents for [".$this->url."] from cache...");
-            $this->cacheKey = Settings::getValue("site", "namespace").sha1($this->url);
+            $cacheUrl = $this->url;
+            if ($this->query_string != '') {
+                $cacheUrl .= "?".$this->query_string;
+            }
+
+            Log::info("Attempting to retrieve response contents for [".$cacheUrl."] from cache...");
+            $this->cacheKey = Settings::getValue("site", "namespace").sha1($cacheUrl);
             $success = false;
             $response = Cache::fetch($this->cacheKey, $success);
             if ($success === true) {
@@ -129,12 +134,12 @@ class JaossRequest {
         if ($this->cacheKey          !== null &&
             $this->isCacheDisabled() === false) { // make sure something hasn't explicitly disabled cache during the request
 
-            Log::info("Caching response for URL [".$this->url."] with ttl [".$path->getCacheTtl()."]");
+            Log::info("Caching response for URL [".$cacheUrl."] with ttl [".$path->getCacheTtl()."]");
             $cached = Cache::store($this->cacheKey, $this->response, $path->getCacheTtl());
             if ($cached) {
                 Log::info("Response cached successfully");
             } else {
-                Log::warn("Response for URL [".$this->url."] could not be cached!");
+                Log::warn("Response for URL [".$cacheUrl."] could not be cached!");
             }
         }
         return $this->response;
