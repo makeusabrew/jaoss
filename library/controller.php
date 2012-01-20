@@ -181,6 +181,9 @@ abstract class Controller {
     }
 
     public function renderTemplate($template) {
+        if ($this->response->getHeader('Content-Type') === null) {
+            $this->response->addHeader('Content-Type', 'text/html; charset=utf-8');
+        }
         $this->response->setBody(
             $this->fetchTemplate($template)
         );
