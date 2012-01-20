@@ -9,7 +9,11 @@ class Cache {
     }
 
     public static function store($key, $value, $ttl = 0) {
-        return apc_store($key, $value, $ttl);
+        try {
+            $result = apc_store($key, $value, $ttl);
+        } catch (ErrorException $e) {
+            Log::warn("Caught APC error, swallowing. [".$e->getMessage()."]");
+        }
     }
     
     public static function isEnabled() {
