@@ -10,7 +10,7 @@ class Cache {
 
     public static function store($key, $value, $ttl = 0) {
         try {
-            $result = apc_store($key, $value, $ttl);
+            return apc_store($key, $value, $ttl);
         } catch (ErrorException $e) {
             Log::warn("Caught APC error, swallowing. [".$e->getMessage()."]");
         }
