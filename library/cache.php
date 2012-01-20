@@ -13,6 +13,7 @@ class Cache {
             return apc_store($key, $value, $ttl);
         } catch (ErrorException $e) {
             Log::warn("Caught APC error, swallowing. [".$e->getMessage()."]");
+            return false;
         }
     }
     
