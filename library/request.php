@@ -15,6 +15,7 @@ class JaossRequest {
     protected $hostname = NULL;
     protected $userAgent = NULL;
     protected $timestamp = NULL;
+    protected $headers = array();
 
     protected $cacheKey = NULL;
     protected $cacheDisabled = false;
@@ -74,6 +75,10 @@ class JaossRequest {
         $this->hostname  = isset($reqData["SERVER_NAME"]) ? $reqData["SERVER_NAME"] : NULL;
         $this->userAgent = isset($reqData["HTTP_USER_AGENT"]) ? $reqData["HTTP_USER_AGENT"] : NULL;
         $this->timestamp = isset($reqData["REQUEST_TIME"]) ? $reqData["REQUEST_TIME"] : NULL;
+
+        if ($this->sapi !== "cli") {
+            $this->headers = apache_request_headers();
+        }
 	}
 
 	public function setUrl($url) {
@@ -249,5 +254,9 @@ class JaossRequest {
 
     public function disableCache() {
         $this->cacheDisabled = true;
+    }
+
+    public function getHeader($key) {
+        return isset($this->headers[$key]) ? $this->headers[$key] : null;
     }
 }

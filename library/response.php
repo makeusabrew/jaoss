@@ -8,6 +8,8 @@ class JaossResponse {
     protected $responseCode = 200;
     protected $path = NULL;
     protected $headers = array();
+    protected $etag = null;
+    protected $ifNoneMatch = null;
 
     const HTTP_VERSION = "HTTP/1.1";
 
@@ -40,16 +42,30 @@ class JaossResponse {
     public function sendHeaders() {
         if ($this->isRedirect()) {
             header("Location: ".$this->redirectUrl, true, $this->getResponseCode());
-            exit;
+            return false;
         } 
+
+        // check for 304
+        if ($this->getEtag() === $this->ifNoneMatch) {
+            $this->setResponseCode(304);
+        } else {
+            $this->addHeader('ETag', $this->getEtag());
+        }
+
         header($this->getHeaderString());
         foreach ($this->getHeaders() as $key => $value) {
             header($key.": ".$value);
         }
+
+        return $this->getResponseCode() !== 304;
     }
 
     public function getHeaders() {
         return $this->headers;
+    }
+
+    public function getHeader($key) {
+        return isset($this->headers[$key]) ? $this->headers[$key]: null;
     }
 
     public function setPath($path) {
@@ -67,6 +83,7 @@ class JaossResponse {
     public function getHeaderString() {
         $headers = array(
             200 => "OK",
+            304 => "Not Modified",
             404 => "Not Found",
             500 => "Internal Server Error",
         );
@@ -76,5 +93,22 @@ class JaossResponse {
 
     public function addHeader($key, $value) {
         $this->headers[$key] = $value;
+    }
+
+    public function send() {
+        if ($this->sendHeaders()) {
+            echo $this->getBody();
+        }
+    }
+
+    public function setIfNoneMatch($match) {
+        $this->ifNoneMatch = $match;
+    }
+
+    public function getEtag() {
+        //$headers = implode("|", $this->getHeaders());
+        $headers = "";
+        $body = $this->getBody();
+        return '"'.sha1($headers."_".$body).'"';
     }
 }
