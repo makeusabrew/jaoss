@@ -119,6 +119,8 @@ class JaossRequest {
                 return $this->response;
             }
             Log::info("cache miss - no response found");
+        } else {
+            StatsD::increment("cache.nocache");
         }
 
         try {
