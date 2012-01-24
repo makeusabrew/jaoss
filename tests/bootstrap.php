@@ -40,6 +40,7 @@ include("library/session.php");
 include("library/utils.php");
 include("library/image.php");
 include("library/cache.php");
+include("library/statsd.php");
 
 // set some settings manually
 Settings::setFromArray(array(
