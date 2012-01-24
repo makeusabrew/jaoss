@@ -5,7 +5,13 @@
  */
 class Cache {
     public static function fetch($key, &$success) {
-        return apc_fetch($key, $success);
+        $data = apc_fetch($key, $success);
+        if ($success === true) {
+            StatsD::increment("cache.hit");
+        } else {
+            StatsD::increment("cache.miss");
+        }
+        return $data;
     }
 
     public static function store($key, $value, $ttl = 0) {
