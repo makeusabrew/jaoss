@@ -96,6 +96,7 @@ class StatsD {
             $fp = fsockopen("udp://$host", $port, $errno, $errstr);
             if (! $fp) { return; }
             foreach ($sampledData as $stat => $value) {
+                Log::debug("stat: ".$stat.":".$value);
                 fwrite($fp, "$stat:$value");
             }
             fclose($fp);
