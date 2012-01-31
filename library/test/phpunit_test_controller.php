@@ -54,13 +54,15 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
         $this->assertEquals($app, $this->request->getResponse()->getPath()->getApp());
     }
 
-    public function assertBodyHasContents($contents) {
-        $body = $this->request->getResponse()->getBody();
+    public function assertBodyHasContents($contents, $response = null) {
+        $response = $response ? $response : $this->request->getResponse();
+        $body = $response->getBody();
         $this->assertTrue((strpos($body, $contents) !== false), "Response missing body contents: '{$contents}'");
     }
 
-    public function assertBodyHasContentsInOrder($contents) {
-        $body = $this->request->getResponse()->getBody();
+    public function assertBodyHasContentsInOrder($contents, $response = null) {
+        $response = $response ? $response : $this->request->getResponse();
+        $body = $response->getBody();
         $offset = strpos($body, $contents, $this->bodyPositionOffset);
         if ($offset !== false) {
             $this->bodyPositionOffset = $offset;
@@ -87,7 +89,8 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
         $this->assertEquals($val, $data->$var);
     }
     
-    public function assertResponseCode($code) {
-        $this->assertEquals($code, $this->request->getResponse()->getResponseCode(), "Response Code is not '{$code}'");
+    public function assertResponseCode($code, $response = null) {
+        $response = $response ? $response : $this->request->getResponse();
+        $this->assertEquals($code, $response->getResponseCode(), "Response Code is not '{$code}'");
     }
 }
