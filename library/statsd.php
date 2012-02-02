@@ -77,7 +77,7 @@ class StatsD {
 
         foreach ($sampledData as $stat => $value) {
             unset($sampledData[$stat]);
-            $sampledData[Settings::getValue("statsd", "prefix").".".$stat] = $value;
+            $sampledData[Settings::getValue("statsd", "prefix", "unknown").".".$stat] = $value;
         }
         if (Settings::getValue("statsd", "enabled", false) == false) {
             foreach ($sampledData as $stat => $value) {
