@@ -172,7 +172,7 @@ abstract class Object {
     		$sql .= " WHERE `{$this->pk}` = ?";
     		$values[] = $this->getId();
     	} else {
-    		$sql = "INSERT INTO `".$this->getTable()."` (`created`, `updated`,";
+    		$sql = "INSERT INTO `".$this->getTable()."` (";
     		$params = "";
 
             if ($this->shouldStoreCreated()) {
@@ -207,7 +207,6 @@ abstract class Object {
 		if (!$this->getId()) {
 			$pk = $this->pk;
 			$this->$pk = $id;
-            $this->created = $created;
 		}
 		return TRUE;
     }
