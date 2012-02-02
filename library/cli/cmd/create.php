@@ -140,7 +140,7 @@ class Cli_Create extends Cli {
         }
 
         // right then, let's get busy!
-        $sql = $this->createSql($class->getTable(), $columns);
+        $sql = $this->createSql($class, $columns);
         if ($this->hasArg("--output-only")) {
             $this->writeLine(Colours::yellow($sql));
             return;
@@ -163,12 +163,17 @@ class Cli_Create extends Cli {
         }
     }
 
-    public function createSql($tableName, $columns) {
+    public function createSql($class, $columns) {
         $sql = 
-        "CREATE TABLE `".$tableName."` (\n".
-        "`id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,\n".
-        "`created` DATETIME NOT NULL,\n".
-        "`updated` DATETIME NOT NULL";
+        "CREATE TABLE `".$class->getTable()."` (\n".
+        "`id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,\n";
+        if ($class->shouldStoreCreated()) {
+            $sql .= "`created` DATETIME NOT NULL,\n";
+        }
+        if ($class->shouldStoreUpdated()) {
+            $sql .= "`updated` DATETIME NOT NULL,\n";
+        }
+        $sql = substr($sql, 0, -2);
         foreach ($columns as $field => $column) {
             $sql .= ",\n`".$field."` ";
             if (!isset($column["type"])) {

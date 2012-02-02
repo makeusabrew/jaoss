@@ -7,6 +7,9 @@ class Table {
 	
 	protected $object_name = NULL;
 	protected $table = NULL;
+
+    protected $storeUpdated = true;
+    protected $storeCreated = true;
 	
 	protected $meta = array();
 	
@@ -175,6 +178,14 @@ class Table {
 	public function getColumns() {
 		return $this->meta["columns"];
 	}
+
+    public function shouldStoreCreated() {
+        return $this->storeCreated;
+    }
+
+    public function shouldStoreUpdated() {
+        return $this->storeUpdated;
+    }
 	
 	public function getColumnString($prefix = NULL) {
 		$cols = $this->getColumns();
