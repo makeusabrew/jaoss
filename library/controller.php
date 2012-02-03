@@ -104,15 +104,19 @@ abstract class Controller {
         return $this->path->getMatch($match);
     }
 
+    protected function resolveUrl($args) {
+        if (!isset($args["controller"])) {
+            $args["controller"] = $this->path->getController();
+        }
+        if (!isset($args["app"])) {
+            $args["app"] = $this->path->getApp();
+        }
+        return PathManager::getUrlForOptions($args);
+    }
+
     public function redirect($url, $message = NULL) {
         if (is_array($url)) {
-            if (!isset($url["controller"])) {
-                $url["controller"] = $this->path->getController();
-            }
-            if (!isset($url["app"])) {
-                $url["app"] = $this->path->getApp();
-            }
-            $url = PathManager::getUrlForOptions($url);
+            $url = $this->resolveUrl($url);
         }
     	if ($this->request->isAjax()) {
     		$this->assign("redirect", $url);
