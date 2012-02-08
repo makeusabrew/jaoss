@@ -19,11 +19,14 @@ class RequestTest extends PHPUnit_Framework_TestCase {
             'SERVER_ADMIN' => '[no address given]',
             'SCRIPT_FILENAME' => '/var/www/foo/bar/public/index.php',
             'REQUEST_METHOD' => 'GET',
-            'QUERY_STRING' => '',
-            'REQUEST_URI' => '/my/url',
+            'QUERY_STRING' => 'foo=bar',
+            'REQUEST_URI' => '/my/url?foo=bar',
             'SCRIPT_NAME' => '/index.php',
             'PHP_SELF' => '/index.php',
             'REQUEST_TIME' => 1317303304,
+            '_headers' => array(
+                'foo' => 'bar',
+            ),
         );
     }
 
@@ -136,12 +139,12 @@ class RequestTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("/", $request->getFolderBase());
     }
 
-    public function getUserAgent() {
+    public function testGetUserAgent() {
         $request = new JaossRequest($this->reqData);
-        $this->assertEquals("My Test Browser", $request->getUserAgent());
+        $this->assertEquals("A Test Browser", $request->getUserAgent());
     }
 
-    public function getTimestamp() {
+    public function testGetTimestamp() {
         $request = new JaossRequest($this->reqData);
         $this->assertEquals(1317303304, $request->getTimestamp());
     }
@@ -149,5 +152,48 @@ class RequestTest extends PHPUnit_Framework_TestCase {
     public function testGetSapi() {
         $request = new JaossRequest($this->reqData);
         $this->assertEquals("cli", $request->getSapi());
+    }
+
+    public function testGetQueryString() {
+        $request = new JaossRequest($this->reqData);
+        $this->assertEquals("foo=bar", $request->getQueryString());
+    }
+
+    public function testCacheDisabled() {
+        $request = new JaossRequest($this->reqData);
+
+        $this->assertFalse($request->isCacheDisabled());
+
+        $request->disableCache();
+
+        $this->assertTrue($request->isCacheDisabled());
+    }
+
+    public function testGetFile() {
+        $request = new JaossRequest($this->reqData);
+
+        $this->assertNull($request->getFile("invalid"));
+
+        $_FILES['foo'] = 'bar';
+
+        $this->assertEquals('bar', $request->getFile("foo"));
+
+        unset($_FILES['foo']);
+    }
+
+    public function testProcessFile() {
+        $request = new JaossRequest($this->reqData);
+
+        $file = $request->processFile("invalid");
+        $this->assertTrue($file instanceof File);
+
+        $this->assertEquals(99, $file->getError());
+    }
+
+    public function testGetHeader() {
+        $request = new JaossRequest($this->reqData);
+
+        $this->assertNull($request->getHeader('invalid'));
+        $this->assertEquals('bar', $request->getHeader('foo'));
     }
 }

@@ -78,7 +78,10 @@ class JaossRequest {
 
         if ($this->sapi !== "cli") {
             $this->headers = apache_request_headers();
+        } else if (isset($reqData["_headers"])) {
+            $this->headers = $reqData["_headers"];
         }
+            
 	}
 
 	public function setUrl($url) {
@@ -192,19 +195,6 @@ class JaossRequest {
         return (isset($_REQUEST[$var])) ? $_REQUEST[$var] : $default;
     }
     
-    public function getPost() {
-    	return $_POST;
-    }
-    
-    // euch, clumsy
-    public function getGet() {
-    	return $_GET;
-    }
-
-    public function getFiles() {
-        return $_FILES;
-    }
-
     public function getFile($file) {
         return isset($_FILES[$file]) ? $_FILES[$file] : null;
     }
