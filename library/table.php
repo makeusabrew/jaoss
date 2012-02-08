@@ -7,6 +7,9 @@ class Table {
 	
 	protected $object_name = NULL;
 	protected $table = NULL;
+
+    protected $storeUpdated = true;
+    protected $storeCreated = true;
 	
 	protected $meta = array();
 	
@@ -175,6 +178,14 @@ class Table {
 	public function getColumns() {
 		return $this->meta["columns"];
 	}
+
+    public function shouldStoreCreated() {
+        return $this->storeCreated;
+    }
+
+    public function shouldStoreUpdated() {
+        return $this->storeUpdated;
+    }
 	
 	public function getColumnString($prefix = NULL) {
 		$cols = $this->getColumns();
@@ -190,11 +201,24 @@ class Table {
 
     public function queryAll($sql, $params = array(), $objectName = NULL) {
         $objectName = $objectName ? $objectName : $this->getObjectName();
-		$dbh = Db::getInstance();
-		$sth = $dbh->prepare($sql);
-		$sth->setFetchMode(PDO::FETCH_CLASS, $objectName);
-		$sth->execute($params);
-		return $sth->fetchAll();
+        return $this->doQuery($sql, $params, $objectName, true);
+    }
+
+    public function query($sql, $params = array(), $objectName = NULL) {
+        $objectName = $objectName ? $objectName : $this->getObjectName();
+        return $this->doQuery($sql, $params, $objectName, false);
+    }
+
+    protected function doQuery($sql, $params, $objectName, $all) {
+        $dbh = Db::getInstance();
+        $sth = $dbh->prepare($sql);
+        $sth->setFetchMode(PDO::FETCH_CLASS, $objectName);
+        $sth->execute($params);
+        if ($all === true) {
+            return $sth->fetchAll();
+        } else {
+            return $sth->fetch();
+        }
     }
 		
 }
