@@ -194,6 +194,10 @@ class JaossRequest {
     public function getVar($var, $default = null) {
         return (isset($_REQUEST[$var])) ? $_REQUEST[$var] : $default;
     }
+
+    public function getPost() {
+        return $_POST;
+    }
     
     public function getFile($file) {
         return isset($_FILES[$file]) ? $_FILES[$file] : null;
