@@ -500,4 +500,26 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
     public function testOwnsWithNonObjectArgument() {
         $this->assertFalse($this->object->owns('foo'));
     }
+
+    public function testToArray() {
+        $this->object->setValues(array(
+            'myVariable' => 'foo',
+            'anotherVariable' => 123,
+        ));
+
+        $this->assertEquals(array(
+            'myVariable' => 'foo',
+            'anotherVariable' => 123,
+            'id' => null,
+        ), $this->object->toArray());
+    }
+
+    public function testToJson() {
+        $this->object->setValues(array(
+            'myVariable' => 'foo',
+            'anotherVariable' => 123,
+        ));
+
+        $this->assertEquals('{"id":null,"myVariable":"foo","anotherVariable":123}', $this->object->toJson());
+    }
 }

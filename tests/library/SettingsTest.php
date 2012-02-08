@@ -29,4 +29,17 @@ class SettingsTest extends PHPUnit_Framework_TestCase {
         }
         $this->fail("Expected exception not raised");
     }
+
+    public function testSetFromArray() {
+        $original = Settings::getSettings();
+        Settings::setFromArray(array(
+            'foo' => array(
+                'bar' => 'baz',
+            ),
+        ));
+
+        $this->assertEquals(array('bar' => 'baz'), Settings::getSettings('foo'));
+
+        Settings::setFromArray($original);
+    }
 }
