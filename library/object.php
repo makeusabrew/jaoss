@@ -11,7 +11,8 @@ abstract class Object {
     protected $externals = array();
     protected $errors = array();
 
-    private $pk = "id";
+    protected $pk = "id";
+    protected $autoIncrement = true;
 	
     public function __set($var, $val) {
         if (property_exists($this, $var)) {
@@ -152,8 +153,10 @@ abstract class Object {
     	$values = array();
     	if ($this->getId()) {
 
-    		// unset PK, just in case
-    		unset($this->values[$this->pk]);
+            if ($this->autoIncrement) {
+                // unset PK, just in case
+                unset($this->values[$this->pk]);
+            }
 
     		$sql = "UPDATE `".$this->getTable()."` SET";
 
@@ -203,8 +206,9 @@ abstract class Object {
    		$dbh = Db::getInstance();
 		$sth = $dbh->prepare($sql);
         $sth->execute($values);
-		$id = $dbh->lastInsertId();
+
 		if (!$this->getId()) {
+            $id = $this->autoIncrement ? $dbh->lastInsertId() : $this->values[$this->pk];
 			$pk = $this->pk;
 			$this->$pk = $id;
 		}
