@@ -150,6 +150,8 @@ class Table {
 		} else if ($this->order_by !== NULL) {
 			$q .= " ORDER BY {$this->order_by}";
 		}
+        $q .= " LIMIT 1";
+
 		$dbh = Db::getInstance();
 		$sth = $dbh->prepare($q);
 		$sth->setFetchMode(PDO::FETCH_CLASS, $this->getObjectName());
