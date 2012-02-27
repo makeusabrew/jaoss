@@ -95,9 +95,4 @@ class Settings {
         }
         self::$mode = $mode;
     }
-    
-    public static function reset() {
-        self::$settings = array();
-        self::$mode = null;
-    }
 }

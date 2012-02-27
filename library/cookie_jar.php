@@ -34,6 +34,10 @@ class CookieJar {
     public function getCookie($name) {
         return $this->storage->getCookie($name);
     }
+
+    public function destroy() {
+        $this->storage->destroy();
+    }
 }
 
 abstract class CookieJarStorage {
@@ -42,6 +46,7 @@ abstract class CookieJarStorage {
     abstract public function init();
     abstract public function setCookie($name, $value, $expire = null, $path = null, $domain = null, $secure = null, $httponly = null);
     abstract public function getCookie($name);
+    abstract public function destroy();
 
     public static function factory($mode) {
         if ($mode == "autodetect") {
@@ -64,6 +69,10 @@ class DefaultCookieJarStorage extends CookieJarStorage {
     public function init() {
     }
 
+    public function destroy() {
+        //
+    }
+
     public function setCookie($name, $value, $expire = null, $path = null, $domain = null, $secure = null, $httponly = null) {
         setcookie($name, $value, $expire, $path, $domain, $secure, $httponly);
     }
@@ -78,18 +87,20 @@ class DefaultCookieJarStorage extends CookieJarStorage {
 
 class TestCookieJarStorage extends CookieJarStorage {
     private $cookieJar = null;
+
     public function init() {
-        $this->cookieJar = array(
-            array(),
-            array(),
-        );
+        $this->cookieJar = array();
     }
 
-    public function setCookie($name, $value, $expire = null, $path = null, $domain = null, $secure = null, $httponly = null) {
-        // @todo
+    public function destroy() {
+        $this->init();
     }
 
-    public function getCookie($var) {
-        return null;
+    public function setCookie($key, $value, $expire = null, $path = null, $domain = null, $secure = null, $httponly = null) {
+        $this->cookieJar[$key] = $value;
+    }
+
+    public function getCookie($key) {
+        return isset($this->cookieJar[$key]) ? $this->cookieJar[$key] : null;
     }
 }

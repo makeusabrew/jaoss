@@ -33,6 +33,8 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
 
         $session = Session::getInstance();
         $session->destroy();
+
+        $cookieJar = CookieJar::getInstance()->destroy();
     }
 
     public function tearDown() {
