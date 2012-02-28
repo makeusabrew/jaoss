@@ -98,7 +98,7 @@ class Table {
     }
 	
 	public function findAll($where = NULL, $params = NULL, $order_by = NULL, $limit = NULL) {
-		$q = "SELECT * FROM `".$this->getTable()."`";
+		$q = "SELECT ".$this->getColumnString()." FROM `".$this->getTable()."`";
 		if ($where !== NULL) {
             if (is_array($where) && count($where) > 0) {
                 // add support for simple AND where clauses
@@ -130,7 +130,7 @@ class Table {
 	}
 
     public function find($where = NULL, $params = NULL, $order_by = NULL) {
-		$q = "SELECT * FROM `".$this->getTable()."`";
+		$q = "SELECT ".$this->getColumnString()." FROM `".$this->getTable()."`";
 		if ($where !== NULL) {
             if (is_array($where) && count($where) > 0) {
                 // add support for simple AND where clauses
@@ -161,7 +161,7 @@ class Table {
 	}
 	
 	public function read($id = NULL) {
-		$q = "SELECT * FROM `".$this->getTable()."` WHERE `{$this->primary_key}` = ?";
+		$q = "SELECT ".$this->getColumnString()." FROM `".$this->getTable()."` WHERE `{$this->primary_key}` = ?";
 		$dbh = Db::getInstance();
 		$sth = $dbh->prepare($q);
         $sth->setFetchMode(PDO::FETCH_CLASS, $this->getObjectName());
