@@ -189,17 +189,23 @@ class Table {
         return $this->storeUpdated;
     }
 	
-	public function getColumnString($prefix = NULL) {
-		$cols = $this->getColumns();
-		$cols = array_keys($cols);
-		array_unshift($cols, "id");
-		if ($prefix) {
-			foreach ($cols as &$col) {
-				$col = $prefix.".".$col;
-			}
-		}
-		return implode($cols, ",");
-	}
+    public function getColumnString($prefix = NULL) {
+        $cols = $this->getColumns();
+        $cols = array_keys($cols);
+        array_unshift($cols, $this->primary_key);
+        if ($this->shouldStoreCreated() === true) {
+            $cols[] = "created";
+        }
+        if ($this->shouldStoreUpdated() === true) {
+            $cols[] = "updated";
+        }
+        if ($prefix) {
+            foreach ($cols as &$col) {
+                $col = $prefix.".".$col;
+            }
+        }
+        return implode($cols, ",");
+    }
 
     public function queryAll($sql, $params = array(), $objectName = NULL) {
         $objectName = $objectName ? $objectName : $this->getObjectName();
