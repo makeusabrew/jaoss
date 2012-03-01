@@ -57,6 +57,7 @@ include("library/session.php");
 include("library/utils.php");
 include("library/image.php");
 include("library/cache.php");
+include("library/statsd.php");
 
 require_once("library/test/test_request.php");
 
