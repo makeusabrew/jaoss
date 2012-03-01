@@ -74,6 +74,9 @@
                 <div id="meta">
                     <h2>Request Information</h3>
                     <div>
+                        Response Code: <strong>{$response->getResponseCode()}</strong>
+                    </div>
+                    <div>
                         Time: <strong>{$request->getTimestamp()|date_format:"H:i:s"}</strong>
                     </div>
                     <div>

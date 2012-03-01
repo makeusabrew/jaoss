@@ -68,6 +68,7 @@ class ErrorHandler {
         if ($displayErrors) {
             $this->smarty->assign("e", $e);
             $this->smarty->assign("request", $this->request);
+            $this->smarty->assign("response", $this->response);
             if ($this->smarty->templateExists($path)) {
                 $this->response->setBody($this->smarty->fetch($path));
             } else {
