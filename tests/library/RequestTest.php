@@ -196,4 +196,29 @@ class RequestTest extends PHPUnit_Framework_TestCase {
         $this->assertNull($request->getHeader('invalid'));
         $this->assertEquals('bar', $request->getHeader('foo'));
     }
+
+    public function testGetBaseHref() {
+        $request = new JaossRequest($this->reqData);
+        $this->assertEquals('http://myproject.build/', $request->getBaseHref());
+    }
+
+    public function testGetBaseHrefHttpNonStandardPort() {
+        $this->reqData['SERVER_PORT'] = '8080';
+        $request = new JaossRequest($this->reqData);
+        $this->assertEquals('http://myproject.build:8080/', $request->getBaseHref());
+    }
+
+    public function testGetBaseHrefHttps() {
+        $this->reqData['SSL'] = 'on';
+        $this->reqData['SERVER_PORT'] = '443';
+        $request = new JaossRequest($this->reqData);
+        $this->assertEquals('https://myproject.build/', $request->getBaseHref());
+    }
+
+    public function testGetBaseHrefHttpsNonStandardPort() {
+        $this->reqData['SSL'] = 'on';
+        $this->reqData['SERVER_PORT'] = '4444';
+        $request = new JaossRequest($this->reqData);
+        $this->assertEquals('https://myproject.build:4444/', $request->getBaseHref());
+    }
 }

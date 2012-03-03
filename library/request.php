@@ -16,6 +16,8 @@ class JaossRequest {
     protected $userAgent = NULL;
     protected $timestamp = NULL;
     protected $headers = array();
+    protected $port = null;
+    protected $protocol = "http";
 
     protected $cacheKey = NULL;
     protected $cacheDisabled = false;
@@ -47,7 +49,18 @@ class JaossRequest {
         }
 		$this->folder_base = substr($reqData["PHP_SELF"], 0, strpos($reqData["PHP_SELF"], $basePath));
         if (isset($reqData["SERVER_NAME"])) {
-            $this->base_href = "http://".$reqData["SERVER_NAME"].$this->folder_base;
+            $this->protocol  = (isset($reqData['SSL']) && $reqData['SSL'] == 'on') ? 'https' : 'http';
+            $this->port      = $reqData['SERVER_PORT'];
+
+            $this->base_href = $this->protocol."://".$reqData["SERVER_NAME"];
+
+            if (($this->protocol === "https" && $this->port != 443) ||
+                ($this->protocol === "http"  && $this->port != 80)) {
+
+                $this->base_href .= ":".$this->port;
+            }
+
+            $this->base_href .= $this->folder_base;
         } else {
             $this->base_href = Settings::getValue("site", "base_href", "http://unknown/");
         }
