@@ -25,7 +25,7 @@ class Session {
             $mode = "default";
         }
         Log::verbose("Initialising session handler [".$mode."]");
-        $this->handler = SessionHandler::factory($mode);
+        $this->handler = JaossSessionHandler::factory($mode);
         if ($this->handler == null) {
             throw new CoreException("Could not attach session handler");
         }
@@ -73,7 +73,7 @@ class Session {
     }
 }
 
-abstract class SessionHandler {
+abstract class JaossSessionHandler {
     protected $namsepace = null;
 
     abstract public function init($namespace);
@@ -100,7 +100,7 @@ abstract class SessionHandler {
     }
 }
 
-class DefaultSessionHandler extends SessionHandler {
+class DefaultSessionHandler extends JaossSessionHandler {
     public function init($namespace) {
         $this->namespace = $namespace;
         if (session_id() == "") {
@@ -134,7 +134,7 @@ class DefaultSessionHandler extends SessionHandler {
     }
 }
 
-class TestSessionHandler extends SessionHandler {
+class TestSessionHandler extends JaossSessionHandler {
     private $session = null;
     public function init($namespace) {
         $this->namespace = $namespace;
