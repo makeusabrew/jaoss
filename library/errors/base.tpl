@@ -64,7 +64,7 @@
                             <tr>
                                 <td>{if isset($trace.file)}{$trace.file}{else}-{/if}</td>
                                 <td>{if isset($trace.line)}{$trace.line}{else}-{/if}</td>
-                                <td>{if isset($trace.class)}{$trace.class}{/if}{if isset($trace.type)}{$trace.type}{/if}{if isset($trace.function)}{$trace.function}{if isset($trace.args)}({foreach from=$trace.args item="_arg" name="aloop"}{if !is_object($_arg)}{$_arg}{else}Object{/if}{if !$smarty.foreach.aloop.last}, {/if}{/foreach}){/if}{else}-{/if}</td>
+                                <td>{if isset($trace.class)}{$trace.class}{/if}{if isset($trace.type)}{$trace.type}{/if}{if isset($trace.function)}{$trace.function}{if isset($trace.args)}({foreach from=$trace.args item="_arg" name="aloop"}{if is_object($_arg)}Object{elseif is_array($_arg)}Array{else}{$_arg}{/if}{if !$smarty.foreach.aloop.last}, {/if}{/foreach}){/if}{else}-{/if}</td>
                             </tr>
                         {/foreach}
                     </tbody>
