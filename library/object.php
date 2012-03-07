@@ -289,7 +289,8 @@ abstract class Object {
                 continue;
             }
             $result = Validate::$func($value, $settings);
-            Log::debug("Validate::$func($value) [$field] - [".($result ? "OK" : "FAIL")."]");
+            $vStr = is_array($value) ? "Array" : $value;
+            Log::debug("Validate::$func($vStr) [$field] - [".($result ? "OK" : "FAIL")."]");
             if ($result !== true) {
                 return Validate::getMessage($func, $settings, $value);
             }
