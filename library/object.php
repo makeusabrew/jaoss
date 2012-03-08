@@ -91,9 +91,6 @@ abstract class Object {
             }
             // always set, regardless of validation problems etc
             $this->values[$field] = $this->process($field, $value, $settings);
-            if ($this->autoIncrement === false && $field == $this->pk) {
-                $this->setId($this->values[$field]);
-            }
 
         }
         $retVal = (count($this->errors) == 0) ? true : false;
