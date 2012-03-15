@@ -65,6 +65,7 @@ class JaossRequest {
             $this->base_href = Settings::getValue("site", "base_href", "http://unknown/");
         }
 
+
         if (isset($reqData["REQUEST_URI"])) {
             $this->setUrl(
                 // we're not interested in %20 instead of spaces, so get rid
@@ -73,13 +74,20 @@ class JaossRequest {
                 )
             );
         }
-		$queryString = strrpos($this->url, "?");
-		if ($queryString !== FALSE) {
-			$this->query_string = substr($this->url, $queryString+1);
-			$this->setUrl(substr($this->url, 0, $queryString));
-		} else {
-			$this->query_string = "";
-		}
+        if (isset($reqData['QUERY_STRING']) && $reqData['QUERY_STRING'] != '') {
+            $this->query_string = $reqData['QUERY_STRING'];
+            $this->setUrl(substr(
+                $this->url,
+                0,
+                strpos(
+                    $this->url,
+                    "?".urldecode($this->query_string)
+                )
+            ));
+        } else {
+            $this->query_string = "";
+        }
+
         $this->method    = isset($reqData["REQUEST_METHOD"]) ? $reqData["REQUEST_METHOD"] : NULL;
         $this->pjax      = isset($reqData["HTTP_X_PJAX"]) ? true : false;
         $this->ajax      = isset($reqData["HTTP_X_REQUESTED_WITH"]) ? true : false;
