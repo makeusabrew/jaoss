@@ -106,8 +106,7 @@ class JaossResponse {
     }
 
     public function getEtag() {
-        //$headers = implode("|", $this->getHeaders());
-        $headers = "";
+        $headers = implode("|", $this->getHeaders());
         $body = $this->getBody();
         return '"'.sha1($headers."_".$body).'"';
     }
