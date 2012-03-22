@@ -15,9 +15,14 @@ class Db extends PDO {
 
             $dsn = "mysql:dbname=".Settings::getValue("db", "dbname").";host=".Settings::getValue("db", "host");
 
-            $options = array();
+            // charset?
             if (($charset = Settings::getValue("db", "charset", false)) != false) {
                 $dsn .=";charset=".$charset;
+            }
+            
+            // custom port?
+            if (($port = Settings::getValue("db", "port", false)) != false) {
+                $dsn .=";port=".$port;
             }
             Log::verbose("Instantiating db dsn [".$dsn."] user [".Settings::getValue("db", "user")."]");
 
