@@ -3,6 +3,10 @@
 class Utils {
     protected static $currentTimestamp = null;
 
+    // be warned - this method isn't great at mixing timezones
+    // (time() will always be UTC whereas your input dates probably
+    // aren't). Maybe best off not using it for now
+    // NP 26/03/2012
 	public static function fuzzyTime($from, $to = NULL) {
 		if (!is_numeric($from)) {
 			// handle dates graciously
@@ -15,6 +19,7 @@ class Utils {
 		}
 
 		$elapsed = $to - $from;
+
 		if ($elapsed < 30) {
 			return "Just now";
 		}
@@ -23,7 +28,7 @@ class Utils {
 		}
 		
 		// catch all
-		$days = floor($elapsed / 86400);
+		$days = ($elapsed / 86400);
 		if ($days == 1) {
             return "Yesterday";
 		}
