@@ -62,7 +62,10 @@ class StatsD {
      * Squirt the metrics over UDP
      **/
     public static function send($data, $sampleRate=1) {
-        // sampling
+        if (Settings::getValue("statsd", "enabled", false) == false) {
+            return;
+        }
+
         $sampledData = array();
 
         if ($sampleRate < 1) {
@@ -78,12 +81,6 @@ class StatsD {
         foreach ($sampledData as $stat => $value) {
             unset($sampledData[$stat]);
             $sampledData[Settings::getValue("statsd", "prefix", "unknown").".".$stat] = $value;
-        }
-        if (Settings::getValue("statsd", "enabled", false) == false) {
-            foreach ($sampledData as $stat => $value) {
-                Log::debug("Not tracking stat [".$stat."] => [".$value."]");
-            }
-            return;
         }
 
         if (empty($sampledData)) { return; }
