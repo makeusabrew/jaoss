@@ -41,6 +41,11 @@ class Log {
             return;
         }
 
+        // track anything above debug
+        if (self::$levels[$logLevel] > self::$levels["debug"]) {
+            StatsD::increment("log.".$logLevel);
+        }
+
         // save doing this call each time inside the loop
         $timestamp = date("d/m/Y H:i:s");
 
