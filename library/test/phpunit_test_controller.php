@@ -56,9 +56,12 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
         $this->assertEquals($app, $this->request->getResponse()->getPath()->getApp());
     }
 
-    public function assertBodyHasContents($contents, $response = null) {
+    public function assertBodyHasContents($contents, $response = null, $collapseWhitespace = false) {
         $response = $response ? $response : $this->request->getResponse();
         $body = $response->getBody();
+        if ($collapseWhitespace === true) {
+            $body = preg_replace("/\s+/", " ", $body);
+        }
         $this->assertTrue((strpos($body, $contents) !== false), "Response missing body contents: '{$contents}'");
     }
 
