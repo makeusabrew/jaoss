@@ -1,13 +1,8 @@
 <?php
 class App {
-	private $folder = NULL;
-	private $loaded = false;
-	private $paths_loaded = false;
-    private $paths_file = null;
-	
-	private $has_controllers = false;
-	private $has_models = false;
-	private $has_views = false;
+    protected $folder = NULL;
+    protected $loaded = false;
+    protected $paths_file = null;
 	
 	public function __construct($folder = NULL) {
 		if ($folder !== NULL) {
@@ -41,7 +36,7 @@ class App {
     }
 	
 	public function loadPaths() {
-		if ($this->paths_loaded) {
+		if ($this->getLoaded()) {
 			return false;
 		}
 		
