@@ -369,4 +369,14 @@ abstract class Controller {
     public function getErrors() {
         return $this->errors;
     }
+
+    protected function filterRequest() {
+        $final = array();
+        foreach (func_get_args() as $key) {
+            if ($this->request->getVar($key) !== null) {
+                $final[$key] = $this->request->getVar($key);
+            }
+        }
+        return $final;
+    }
 }
