@@ -1,9 +1,12 @@
 <?php
  class Colours {
 
-    const GREEN  = "0;32";
-    const YELLOW = "0;33";
-    const BLUE   = "0;34";
+    const RED     = "0;31";
+    const GREEN   = "0;32";
+    const YELLOW  = "0;33";
+    const BLUE    = "0;34";
+    const MAGENTA = "0;35";
+    const CYAN    = "0;36";
 
     protected static $disabled = false;
 
@@ -12,7 +15,7 @@
     }
 
     public static function red($str) {
-        return self::colour($str, "0;31");
+        return self::colour($str, self::RED);
     }
 
     public static function green($str) {
@@ -28,11 +31,11 @@
     }
 
     public static function magenta($str) {
-        return self::colour($str, "0;35");
+        return self::colour($str, self::MAGENTA);
     }
 
     public static function cyan($str) {
-        return self::colour($str, "0;36");
+        return self::colour($str, self::CYAN);
     }
 
     public static function colour($str, $code) {
