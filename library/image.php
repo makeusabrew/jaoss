@@ -15,7 +15,7 @@ class JaossImage {
         $newHandle = imagecreatetruecolor($width, $height);
 
         switch ($mime) {
-            case 'png':
+            case 'image/png':
 
                 $oldHandle = imagecreatefrompng($oldPath);
 
