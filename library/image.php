@@ -1,6 +1,6 @@
 <?php
 
-class Image {
+class JaossImage {
 
     /**
      * every public method should eventually defer to this method
