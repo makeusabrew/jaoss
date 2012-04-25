@@ -1,15 +1,13 @@
 <?php
 
 class ErrorHandler {
-	private $smarty;
+    private $smarty;
     private $response;
     private $request;
 
-	public function __construct() {
-		require_once(JAOSS_ROOT."library/Smarty/libs/Smarty.class.php");
-		
-		$this->smarty = new Smarty();		
-		$this->smarty->template_dir	= array(JAOSS_ROOT."library/errors");
+    public function __construct() {
+        $this->smarty = new Smarty();       
+        $this->smarty->template_dir = array(JAOSS_ROOT."library/errors");
         $compile_dir = Settings::getValue("smarty.compile_dir", false);
         // we might be running tests stand-alone, in which case just go for the system's tmp dir and hope for the best
         if ($compile_dir === false) {
@@ -18,14 +16,14 @@ class ErrorHandler {
         $this->smarty->setCompileDir($compile_dir);
         
         $this->response = new JaossResponse();
-	}
+    }
 
     public function setRequest($request) {
         $this->request = $request;
     }
-		
-	public function handleError($e) {
-		$code = $e->getCode();
+        
+    public function handleError($e) {
+        $code = $e->getCode();
         $displayErrors = Settings::getValue("errors.verbose", false);
         $app = Settings::getValue("errors.app", false);
         $controller = Settings::getValue("errors.controller", false);
@@ -96,7 +94,7 @@ class ErrorHandler {
         } else {
             $this->response->setBody($this->response->getHeaderString());   // better than nothing...
         }
-	}
+    }
 
     public function getResponse() {
         return $this->response;
