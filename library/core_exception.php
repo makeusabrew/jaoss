@@ -1,10 +1,10 @@
 <?php
 class CoreException extends Exception {
-	const UNKNOWN = 0;
-	const URL_NOT_FOUND = 1;
-	const ACTION_NOT_FOUND = 2;
-	const TPL_NOT_FOUND = 3;
-	const TPL_DIR_NOT_WRITABLE = 4;
+    const UNKNOWN = 0;
+    const URL_NOT_FOUND = 1;
+    const ACTION_NOT_FOUND = 2;
+    const TPL_NOT_FOUND = 3;
+    const TPL_DIR_NOT_WRITABLE = 4;
     const LOG_FILE_ERROR = 5;
     const INVALID_MODE = 6;
     const CONTROLLER_CLASS_NOT_FOUND = 7;
@@ -16,24 +16,24 @@ class CoreException extends Exception {
     const COULD_NOT_ATTACH_COOKIE_JAR = 13;
     const SETTING_NOT_FOUND = 14;
     const EMPTY_CONTROLLER_FACTORY_STRING = 15;
-	
-	protected $args = array();
-	
-	public function __construct($msg = "", $code = 0, $args = array()) {
-		parent::__construct($msg, $code);
-		$this->args = $args;
+
+    protected $args = array();
+
+    public function __construct($msg = "", $code = 0, $args = array()) {
+        parent::__construct($msg, $code);
+        $this->args = $args;
         if ($code !== CoreException::LOG_FILE_ERROR) {
             Log::verbose("CoreException thrown [".$this->getMessage()."]");
         }
-	}
-	
-	public function getArg($a) {
-		return isset($this->args[$a]) ? $this->args[$a] : null;
-	}
-	
-	public function ga($a) {
-		return "<strong>".$this->getArg($a)."</strong>";
-	}	
+    }
+
+    public function getArg($a) {
+        return isset($this->args[$a]) ? $this->args[$a] : null;
+    }
+
+    public function ga($a) {
+        return "<strong>".$this->getArg($a)."</strong>";
+    }
 
     public function getDefaultResponseCode() {
         $responseCodes = array(
