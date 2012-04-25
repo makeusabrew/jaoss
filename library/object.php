@@ -6,14 +6,14 @@ abstract class Object {
     protected $updated = NULL;
     protected $table = NULL;
     protected $table_name = NULL;
-	
+    
     protected $values = array();
     protected $externals = array();
     protected $errors = array();
 
     protected $pk = "id";
     protected $autoIncrement = true;
-	
+    
     public function __set($var, $val) {
         if (property_exists($this, $var)) {
             $this->$var = $val;
@@ -30,29 +30,29 @@ abstract class Object {
         return $this->table;
     }
 
-	public function __get($var) {
-		if (isset($this->$var)) {
-			return $this->$var;
-		} else if (isset($this->values[$var])) {
-			return $this->values[$var];
-		} else if (isset($this->externals[$var])) {
-			return $this->externals[$var];
-		} else if (isset($this->values[$var."_id"])) {
-			$col = $this->getColumnInfo($var."_id");
-			$this->externals[$var] = Table::factory($col["table"])->read($this->values[$var."_id"]);
-			return $this->externals[$var];
-		} else if (substr($var, -1) == "s" && ($table = $this->getHasManyInfo($var))) {
-			// one -> many
-			$foreign_id = $this->getFkName();
-			$this->externals[$var] = Table::factory($table)->findAll("`{$foreign_id}` = ?", array($this->getId()));
-			return $this->externals[$var];
-		}
-		return null;
-	}
-	
-	public function getValues() {
-		return array_merge(array($this->pk => $this->getId()), $this->values);
-	}
+    public function __get($var) {
+        if (isset($this->$var)) {
+            return $this->$var;
+        } else if (isset($this->values[$var])) {
+            return $this->values[$var];
+        } else if (isset($this->externals[$var])) {
+            return $this->externals[$var];
+        } else if (isset($this->values[$var."_id"])) {
+            $col = $this->getColumnInfo($var."_id");
+            $this->externals[$var] = Table::factory($col["table"])->read($this->values[$var."_id"]);
+            return $this->externals[$var];
+        } else if (substr($var, -1) == "s" && ($table = $this->getHasManyInfo($var))) {
+            // one -> many
+            $foreign_id = $this->getFkName();
+            $this->externals[$var] = Table::factory($table)->findAll("`{$foreign_id}` = ?", array($this->getId()));
+            return $this->externals[$var];
+        }
+        return null;
+    }
+    
+    public function getValues() {
+        return array_merge(array($this->pk => $this->getId()), $this->values);
+    }
 
     /**
      * override this if you want more specific JSON behaviour
@@ -64,8 +64,8 @@ abstract class Object {
     public function toArray() {
         return $this->getValues();
     }
-	
-	public function setValues($values, $subset = null) {
+    
+    public function setValues($values, $subset = null) {
         $this->errors = array();
 
         $columns = $this->getColumns();
@@ -96,32 +96,32 @@ abstract class Object {
         $retVal = (count($this->errors) == 0) ? true : false;
         Log::debug(get_called_class()."::setValues() returning [".($retVal ? "true" : "false") ."] with error count [".count($this->errors)."]");
         return $retVal;
-	}
-	
-	public function updateValues($values, $partial = false) {
+    }
+    
+    public function updateValues($values, $partial = false) {
         if ($partial === true) {
             return $this->setValues($values, array_keys($values));
         } else {
             return $this->setValues(array_merge($this->getValues(), $values));
         }
-	}
-	
-	public function getTableName() {
-		if (!isset($this->table_name)) {
-			$this->table_name = get_class($this)."s";
-		}
-		return $this->table_name;
-	}
-	
-	public function getColumnInfo($column) {
-		$table = Table::factory($this->getTableName());
-		return $table->getColumnInfo($column);
-	}
-	
-	public function getHasManyInfo($column) {
-		$table = Table::factory($this->getTableName());
-		return $table->getHasManyInfo($column);
-	}
+    }
+    
+    public function getTableName() {
+        if (!isset($this->table_name)) {
+            $this->table_name = get_class($this)."s";
+        }
+        return $this->table_name;
+    }
+    
+    public function getColumnInfo($column) {
+        $table = Table::factory($this->getTableName());
+        return $table->getColumnInfo($column);
+    }
+    
+    public function getHasManyInfo($column) {
+        $table = Table::factory($this->getTableName());
+        return $table->getHasManyInfo($column);
+    }
 
     public function getId() {
         $pk = $this->pk;
@@ -138,11 +138,11 @@ abstract class Object {
     }
     
     public function getFkName() {
-    	return strtolower(get_class($this))."_id";
+        return strtolower(get_class($this))."_id";
     }
     
     public function getColumns() {
-    	return Table::factory($this->getTableName())->getColumns();
+        return Table::factory($this->getTableName())->getColumns();
     }
 
     public function shouldStoreCreated() {
@@ -154,34 +154,34 @@ abstract class Object {
     }
     
     public function save() {
-    	$sql = "";
-    	$values = array();
-    	if ($this->getId()) {
+        $sql = "";
+        $values = array();
+        if ($this->getId()) {
 
             if ($this->autoIncrement) {
                 // unset PK, just in case
                 unset($this->values[$this->pk]);
             }
 
-    		$sql = "UPDATE `".$this->getTable()."` SET";
+            $sql = "UPDATE `".$this->getTable()."` SET";
 
             if ($this->shouldStoreUpdated()) {
                 $sql .= "`updated` = ?,";
                 $this->updated = Utils::getDate("Y-m-d H:i:s");
                 $values[] = $this->updated;
             }
-    		foreach ($this->getColumns() as $key => $val) {
-    			if (isset($this->values[$key])) {
-	    			$sql .= "`{$key}` = ?,";
-	    			$values[] = $this->values[$key];
-	    		}
-    		}
-    		$sql = substr($sql, 0, -1);
-    		$sql .= " WHERE `{$this->pk}` = ?";
-    		$values[] = $this->getId();
-    	} else {
-    		$sql = "INSERT INTO `".$this->getTable()."` (";
-    		$params = "";
+            foreach ($this->getColumns() as $key => $val) {
+                if (isset($this->values[$key])) {
+                    $sql .= "`{$key}` = ?,";
+                    $values[] = $this->values[$key];
+                }
+            }
+            $sql = substr($sql, 0, -1);
+            $sql .= " WHERE `{$this->pk}` = ?";
+            $values[] = $this->getId();
+        } else {
+            $sql = "INSERT INTO `".$this->getTable()."` (";
+            $params = "";
 
             if ($this->shouldStoreCreated()) {
                 $sql .= "`created`,";
@@ -196,28 +196,28 @@ abstract class Object {
                 }
             }
 
-    		foreach ($this->getColumns() as $key => $val) {
-    			if (isset($this->values[$key])) {
-    				$sql .= "`{$key}`,";
-    				$params .= "?,";
-    				$values[] = $this->values[$key];
-    			}
-    		}
-    		$sql = substr($sql, 0, -1);
-    		$params = substr($params, 0, -1);
-    		$sql .= ") VALUES (".$params.")";
-    	}
+            foreach ($this->getColumns() as $key => $val) {
+                if (isset($this->values[$key])) {
+                    $sql .= "`{$key}`,";
+                    $params .= "?,";
+                    $values[] = $this->values[$key];
+                }
+            }
+            $sql = substr($sql, 0, -1);
+            $params = substr($params, 0, -1);
+            $sql .= ") VALUES (".$params.")";
+        }
 
-   		$dbh = Db::getInstance();
-		$sth = $dbh->prepare($sql);
+        $dbh = Db::getInstance();
+        $sth = $dbh->prepare($sql);
         $sth->execute($values);
 
-		if (!$this->getId()) {
+        if (!$this->getId()) {
             $id = $this->autoIncrement ? $dbh->lastInsertId() : $this->values[$this->pk];
-			$pk = $this->pk;
-			$this->$pk = $id;
-		}
-		return TRUE;
+            $pk = $this->pk;
+            $this->$pk = $id;
+        }
+        return TRUE;
     }
 
     public function delete() {
@@ -237,11 +237,11 @@ abstract class Object {
         
     
     public function owns($object) {
-    	if (!is_object($object)) {
-    		return false;
-    	}
-    	$fk = $this->getFkName();
-    	return $object->$fk == $this->getId();
+        if (!is_object($object)) {
+            return false;
+        }
+        $fk = $this->getFkName();
+        return $object->$fk == $this->getId();
     }
 
     public function getErrors() {
