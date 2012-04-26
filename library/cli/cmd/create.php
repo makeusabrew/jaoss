@@ -185,7 +185,12 @@ class Cli_Create extends Cli {
                     $sql .= "INT UNSIGNED NOT NULL";
                     break;
                 case "number":
-                    $sql .= "INT NOT NULL";
+                    $modifier = isset($column['validation']) && $column['validation'] === 'unsigned' ? ' UNSIGNED' : '';
+                    $sql .= "INT{$modifier} NOT NULL";
+                    break;
+                case "double":
+                    $modifier = isset($column['validation']) && $column['validation'] === 'unsigned' ? ' UNSIGNED' : '';
+                    $sql .= "DOUBLE{$modifier} NOT NULL";
                     break;
                 case "textarea":
                 case "html_textarea":
