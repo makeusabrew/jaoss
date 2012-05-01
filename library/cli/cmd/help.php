@@ -10,6 +10,7 @@ class Cli_Help extends Cli {
         $this->writeLine("  create project [<dir>]");
         $this->writeLine("  create app [<folder>] [--model=Object]");
         $this->writeLine("  table create [<Table>] [--output-only]");
+        $this->writeLine("  table sync [<Table>] [--output-only]");
         $this->writeLine("  dispatch <url> [--no-render]");
         $this->writeLine("  fixture import-from-db [<file>]");
         $this->writeLine("  fixture update-db [<file>]");
