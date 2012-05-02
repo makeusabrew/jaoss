@@ -18,8 +18,12 @@ class Cli_Table extends Cli {
         list($class, $columns) = $this->getClassAndColumns();
         // right then, let's get busy!
         $sql = $this->createSql($class, $columns);
-        if ($this->hasArg("--output-only")) {
-            $this->writeLine(Colours::yellow($sql));
+        $this->writeLine("The following SQL will create the table [".Colours::cyan(Settings::getValue("db", "dbname").".".$class->getTable())."]:");
+        $this->writeLine(Colours::yellow($sql));
+
+        $result = $this->prompt("Do you wish to commit these changes? [y/n]");
+        if ($result !== 'y') {
+            $this->writeLine("Aborting.");
             return;
         }
 
@@ -69,8 +73,12 @@ class Cli_Table extends Cli {
 
         $sql = substr($sql, 0, -2);
 
-        if ($this->hasArg("--output-only")) {
-            $this->writeLine(Colours::yellow($sql));
+        $this->writeLine("The following changes will be made to the table [".Colours::cyan(Settings::getValue("db", "dbname").".".$class->getTable())."]:");
+        $this->writeLine(Colours::yellow($sql));
+
+        $result = $this->prompt("Do you wish to commit these changes? [y/n]");
+        if ($result !== 'y') {
+            $this->writeLine("Aborting.");
             return;
         }
 
@@ -81,6 +89,9 @@ class Cli_Table extends Cli {
         if ($result === true) {
             $this->writeLine(
                 Colours::green("Table ".$class->getTable()." synced to database [".Settings::getValue("db", "dbname")."]")
+            );
+            $this->writeLine(
+                Colours::green("Don't forget to update any test fixtures!")
             );
         } else {
             $this->writeLine(
@@ -182,6 +193,7 @@ class Cli_Table extends Cli {
                 $sql = "VARCHAR( 8 ) NOT NULL";
                 break;
             case "bool":
+            case "checkbox":
                 $sql = "TINYINT(1) NOT NULL";
                 break;
             default:
