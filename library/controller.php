@@ -104,14 +104,18 @@ abstract class Controller {
         return $this->path->getMatch($match);
     }
 
-    protected function resolveUrl($args) {
+    protected function resolveUrl($args, $full = false) {
         if (!isset($args["controller"])) {
             $args["controller"] = $this->path->getController();
         }
         if (!isset($args["app"])) {
             $args["app"] = $this->path->getApp();
         }
-        return PathManager::getUrlForOptions($args);
+        $url = PathManager::getUrlForOptions($args);
+        if ($full === true) {
+            $url = substr($this->request->getBaseHref(), 0, -1).$url;
+        }
+        return $url;
     }
 
     public function redirect($url, $message = NULL) {
