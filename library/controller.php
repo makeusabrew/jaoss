@@ -118,6 +118,10 @@ abstract class Controller {
         return $url;
     }
 
+    protected function resolveFullUrl($args) {
+        return $this->resolveUrl($args, true);
+    }
+
     public function redirect($url, $message = NULL) {
         if (is_array($url)) {
             $url = $this->resolveUrl($url);
