@@ -98,4 +98,8 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
         $response = $response ? $response : $this->request->getResponse();
         $this->assertEquals($code, $response->getResponseCode(), "Response Code is not '{$code}'");
     }
+
+    public function assertHeader($key, $val) {
+        $this->assertEquals($val, $this->request->getResponse()->getHeader($key));
+    }
 }
