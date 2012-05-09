@@ -387,4 +387,12 @@ abstract class Controller {
         }
         return $final;
     }
+
+    protected function filterRequestStrict() {
+        $final = array();
+        foreach (func_get_args() as $key) {
+            $final[$key] = $this->request->getVar($key);
+        }
+        return $final;
+    }
 }
