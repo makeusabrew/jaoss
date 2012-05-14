@@ -229,4 +229,12 @@ class Table {
         }
     }
 
+    public function findAllSelect() {
+        $final = array();
+        $rows = $this->findAll();
+        foreach ($rows as $row) {
+            $final[$row->getId()] = $row->title;
+        }
+        return $final;
+    }
 }
