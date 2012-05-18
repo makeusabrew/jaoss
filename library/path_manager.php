@@ -129,7 +129,7 @@ class PathManager {
             }
             if (preg_match("@{$pattern}@", $url, $matches)) {
 
-                Log::debug("matched pattern [".$pattern."] against URL [".$url."] method [apps/".$path->getApp()."/controllers/".$path->getController()."Controller::".$path->getAction()."]");
+                Log::debug($request->getMethod()." [".$url."] matches [".$pattern."] => [apps/".$path->getApp()."/controllers/".$path->getController()."Controller::".$path->getAction()."]");
 
                 $matches = self::cleanMatches($matches);
                 $path->setMatches($matches);
