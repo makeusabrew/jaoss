@@ -122,4 +122,14 @@ class JaossImage {
 
         return self::doResize($oldPath, $path, $x, $y, $width, $height, $scaleWidth, $scaleHeight);
     }
+
+    public static function resizeWidth($oldPath, $path, $width) {
+        list($oldWidth, $oldHeight, $mime) = self::getFileInfo($oldPath);
+
+        $oldAspect = $oldHeight / $oldWidth;
+
+        $height = round($width * $oldAspect);
+
+        return self::resizeOnly($oldPath, $path, $width, $height);
+    }
 }
