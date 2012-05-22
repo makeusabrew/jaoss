@@ -2,16 +2,20 @@
 class Db extends PDO {
 
     /**
-    * @var Db Singleton instance
+    * @var Db Singleton instances
     */
-    private static $instance = NULL;
+    private static $instances = NULL;
 
     /**
     * Get the singleton instance
     * @return Db
     */
-    public static function getInstance() {
-        if (self::$instance === NULL) {
+    public static function getInstance($class = null) {
+        if ($class === null) {
+            $class = Settings::getValue("db", "handler", "Db");
+        }
+
+        if (!isset(self::$instances[$class])) {
 
             $dsn = "mysql:dbname=".Settings::getValue("db", "dbname").";host=".Settings::getValue("db", "host");
 
@@ -26,16 +30,16 @@ class Db extends PDO {
             }
             Log::verbose("Instantiating db dsn [".$dsn."] user [".Settings::getValue("db", "user")."]");
 
-            self::$instance = new Db(
+            self::$instances[$class] = new $class(
                 $dsn,
                 Settings::getValue("db", "user"),
                 Settings::getValue("db", "pass")
             );
 
-            self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            self::$instances[$class]->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         }
 
-        return self::$instance;
+        return self::$instances[$class];
     }
 }
