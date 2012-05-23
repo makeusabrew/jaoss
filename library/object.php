@@ -145,6 +145,10 @@ abstract class Object {
         return Table::factory($this->getTableName())->getColumns();
     }
 
+    public function getColumnsArray() {
+        return Table::factory($this->getTableName())->getColumnsArray();
+    }
+
     public function shouldStoreCreated() {
         return Table::factory($this->getTableName())->shouldStoreCreated();
     }

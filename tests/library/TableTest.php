@@ -31,6 +31,20 @@ class TableTest extends PHPUnit_Framework_TestCase {
         );
     }
 
+    public function testGetColumnStringWithFieldPrefix() {
+        $this->assertEquals(
+            "id AS t_id,myVariable AS t_myVariable,anotherVariable AS t_anotherVariable,created AS t_created,updated AS t_updated",
+            $this->table->getColumnString(null, "t_")
+        );
+    }
+
+    public function testGetColumnStringWithPrefixAndFieldPrefix() {
+        $this->assertEquals(
+            "t.id AS t_id,t.myVariable AS t_myVariable,t.anotherVariable AS t_anotherVariable,t.created AS t_created,t.updated AS t_updated",
+            $this->table->getColumnString("t", "t_")
+        );
+    }
+
     public function testGetColumnStringNoCreated() {
         $this->table = $this->getMockForAbstractClass('Table', array(), '', true, true, true, array('getColumns', 'shouldStoreCreated'));
         $this->table->expects($this->any())
@@ -102,6 +116,13 @@ class TableTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(
             "id,myVariable,anotherVariable",
             $this->table->getColumnString()
+        );
+    }
+
+    public function testGetColumnsArray() {
+        $this->assertEquals(
+            array("id", "myVariable", "anotherVariable", "created", "updated"),
+            $this->table->getColumnsArray()
         );
     }
 }
