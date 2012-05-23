@@ -59,7 +59,8 @@ class ProfileStatement {
             $query = preg_replace($keys, $input_parameters, $query, 1);
         }
 
-        Log::db("Execute [".$query."] => ".round($duration*1000, 3)."ms");
+        $qc = ProfileDb::getQueryCount() + 1;
+        Log::db($qc.") Execute [".$query."] => ".round($duration*1000, 3)."ms");
 
         ProfileDb::addQuery($query, $duration);
         return $result;
