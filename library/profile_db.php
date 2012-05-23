@@ -39,22 +39,25 @@ class ProfileStatement {
         $this->pdoStatement = $statement;
     }
 
-    public function execute(array $input_parameters) {
+    public function execute($input_parameters) {
         // time the actual method call
         $start = microtime(true);
         $result = $this->pdoStatement->execute($input_parameters);
         $duration = microtime(true) - $start;
 
-        // substitute as best we can bound params for actual variables
-        $sql = $this->pdoStatement->queryString;
-        foreach ($input_parameters as $key => $param) {
-            if (is_string($key)) {
-                $keys[] = "/:".$key."/";
-            } else {
-                $keys[] = "/[?]/";
+        $query = $this->pdoStatement->queryString;
+
+        if (is_array($input_parameters)) {
+            // substitute as best we can bound params for actual variables
+            foreach ($input_parameters as $key => $param) {
+                if (is_string($key)) {
+                    $keys[] = "/:".$key."/";
+                } else {
+                    $keys[] = "/[?]/";
+                }
             }
+            $query = preg_replace($keys, $input_parameters, $query, 1);
         }
-        $query = preg_replace($keys, $input_parameters, $sql, 1);
 
         Log::db("Execute [".$query."] => ".round($duration*1000, 3)."ms");
 
