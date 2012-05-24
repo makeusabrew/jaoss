@@ -58,6 +58,7 @@ Settings::setFromArray(array(
         "info" => JAOSS_ROOT."tests/log/test_log.log",
         "debug" => JAOSS_ROOT."tests/log/test_log.log",
         "verbose" => JAOSS_ROOT."tests/log/test_log.log",
+        "db" => JAOSS_ROOT."tests/log/test_log.log",
         "level" => "verbose",
     ),
     "errors" => array(

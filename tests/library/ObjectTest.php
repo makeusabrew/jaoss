@@ -519,4 +519,13 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals('{"id":null,"myVariable":"foo","anotherVariable":123}', $this->object->toJson());
     }
+
+    /*
+    public function testGetColumnsArray() {
+        $this->assertEquals(
+            array("id", "created", "updated", "myVariable", "anotherVariable"),
+            $this->object->getColumnsArray()
+        );
+    }
+    */
 }
