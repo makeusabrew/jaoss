@@ -1,5 +1,5 @@
 <?php
-class Db extends PDO {
+abstract class Db {
 
     /**
     * @var Db Singleton instances
@@ -12,7 +12,7 @@ class Db extends PDO {
     */
     public static function getInstance($class = null) {
         if ($class === null) {
-            $class = Settings::getValue("db", "handler", "Db");
+            $class = Settings::getValue("db", "handler", "PDO");
         }
 
         if (!isset(self::$instances[$class])) {
@@ -29,6 +29,10 @@ class Db extends PDO {
                 $dsn .=";port=".$port;
             }
             Log::verbose("Instantiating db dsn [".$dsn."] user [".Settings::getValue("db", "user")."]");
+
+            if ($class !== 'PDO') {
+                require_once("library/db/".strtolower($class).".php");
+            }
 
             self::$instances[$class] = new $class(
                 $dsn,

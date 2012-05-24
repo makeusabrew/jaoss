@@ -1,6 +1,6 @@
 <?php
 
-class ProfileDb extends Db {
+class ProfileDb extends PDO {
     protected static $queries = array();
 
     public function prepare($statement, $options = array()) {
