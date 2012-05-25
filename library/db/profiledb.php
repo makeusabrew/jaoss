@@ -39,7 +39,7 @@ class ProfileStatement {
         $this->pdoStatement = $statement;
     }
 
-    public function execute($input_parameters) {
+    public function execute($input_parameters = null) {
         // time the actual method call
         $start = microtime(true);
         $result = $this->pdoStatement->execute($input_parameters);
