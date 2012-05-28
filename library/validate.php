@@ -84,11 +84,24 @@ class Validate {
     }
 
     public static function date($value, $settings = null) {
-        return preg_match("#^\d{2}/\d{2}/(\d{2}|\d{4})$#", $value) > 0;
+        if (preg_match("#^(\d{2})/(\d{2})/(\d{2}|\d{4})$#", $value, $matches)) {
+            return self::dateInternal($matches);
+        }
+        return false;
     }
 
     public static function dateTime($value, $settings = null) {
-        return preg_match("#^\d{2}/\d{2}/\d{2,4}\s\d{2}:\d{2}(:\d{2}|)$#", $value) > 0;
+        if (preg_match("#^(\d{2})/(\d{2})/(\d{2}|\d{4})\s\d{2}:\d{2}(:\d{2}|)$#", $value, $matches)) {
+            return self::dateInternal($matches);
+        }
+        return false;
+    }
+
+    protected static function dateInternal($matches) {
+        if (strlen($matches[3]) == 2) {
+            $matches[3] = "20".$matches[3];
+        }
+        return checkdate($matches[2], $matches[1], $matches[3]);
     }
 
     public static function minAge($value, $settings = array()) {

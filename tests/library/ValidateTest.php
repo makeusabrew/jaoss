@@ -262,4 +262,32 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
             Validate::getMessage('unsigned', array('title' => 'foo'), null)
         );
     }
+
+    public function testDateWithValidFormatButInvalidActualDate() {
+        // blatant
+        $this->assertFalse(Validate::date("99/04/10"));
+        $this->assertFalse(Validate::date("10/13/10"));
+
+        // more subtle
+        $this->assertFalse(Validate::date("31/09/10"));
+    }
+
+    public function testDateWithLeapYears() {
+        // non leap year
+        $this->assertFalse(Validate::date("29/02/10"));
+        // leap year
+        $this->assertTrue(Validate::date("29/02/12"));
+    }
+
+    public function testDateTimeWithValidFormatButInvalidActualDate() {
+        // blatant
+        $this->assertFalse(Validate::dateTime("99/04/10 10:00"));
+        $this->assertFalse(Validate::dateTime("10/13/10 12:34:56"));
+
+        // more subtle
+        $this->assertFalse(Validate::dateTime("31/09/10 09:00:00"));
+
+        // non leap year
+        $this->assertFalse(Validate::dateTime("29/02/10 09:00:00"));
+    }
 }
