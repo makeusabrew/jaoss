@@ -152,9 +152,9 @@ class Validate {
             case "numbers":
                 return "{$title} must contain only numbers";
             case "date":
-                return "{$title} must be in the format dd/mm/yyyy"; 
+                return "{$title} must be a valid date in the format dd/mm/yyyy"; 
             case "dateTime":
-                return "{$title} must be in the format dd/mm/yyyy hh:mm:ss";
+                return "{$title} must be a valid date in the format dd/mm/yyyy hh:mm:ss";
             case "minAge":
                 return "{$title} does not meet the minimum age requirement of {$settings["age"]}";
             case "postcode":

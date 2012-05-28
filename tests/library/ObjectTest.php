@@ -217,7 +217,7 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals(array(
             'email' => 'email is not a valid email address',
-            'date' => 'date must be in the format dd/mm/yyyy',
+            'date' => 'date must be a valid date in the format dd/mm/yyyy',
         ), $this->object->getErrors());
     }
 
@@ -323,7 +323,7 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
         ));
 
         $this->assertEquals(array(
-            'start' => 'start must be in the format dd/mm/yyyy hh:mm:ss',
+            'start' => 'start must be a valid date in the format dd/mm/yyyy hh:mm:ss',
         ), $this->object->getErrors());
 
         $this->object->setValues(array(

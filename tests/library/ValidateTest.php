@@ -223,12 +223,12 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
         );
 
         $this->assertEquals(
-            'foo must be in the format dd/mm/yyyy',
+            'foo must be a valid date in the format dd/mm/yyyy',
             Validate::getMessage('date', array('title' => 'foo'), null)
         );
 
         $this->assertEquals(
-            'foo must be in the format dd/mm/yyyy hh:mm:ss',
+            'foo must be a valid date in the format dd/mm/yyyy hh:mm:ss',
             Validate::getMessage('dateTime', array('title' => 'foo'), null)
         );
 
