@@ -157,6 +157,11 @@ class RequestTest extends PHPUnit_Framework_TestCase {
     public function testGetQueryString() {
         $request = new JaossRequest($this->reqData);
         $this->assertEquals("foo=bar", $request->getQueryString());
+
+        unset($this->reqData["QUERY_STRING"]);
+
+        $request = new JaossRequest($this->reqData);
+        $this->assertEquals(null, $request->getQueryString());
     }
 
     public function testCacheDisabled() {
@@ -220,5 +225,10 @@ class RequestTest extends PHPUnit_Framework_TestCase {
         $this->reqData['SERVER_PORT'] = '4444';
         $request = new JaossRequest($this->reqData);
         $this->assertEquals('https://myproject.build:4444/', $request->getBaseHref());
+    }
+
+    public function testGetFullUrl() {
+        $request = new JaossRequest($this->reqData);
+        $this->assertEquals("http://myproject.build/my/url", $request->getFullUrl());
     }
 }

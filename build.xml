@@ -2,6 +2,7 @@
 <project name="Jaoss Library" default="build">
     <property name="tests.dir" value="tests" />
     <property name="reports.dir" value="reports" />
+    <property name="coverage.dir" value="coverage" />
 
     <target name="test" description="Test">
         <exec dir="${tests.dir}" checkreturn="true" passthru="true" command="phpunit" />
@@ -9,7 +10,8 @@
 
     <target name="build" description="Build">
         <exec dir="${tests.dir}" checkreturn="true" passthru="true" command="phpunit --log-junit ${reports.dir}/test-results.xml 
-        --coverage-clover ${reports.dir}/phpunit.coverage.xml" />
+        --coverage-clover ${reports.dir}/phpunit.coverage.xml
+        --coverage-html ${reports.dir}/${coverage.dir}" />
     </target>
 
 </project>

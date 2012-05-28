@@ -378,7 +378,7 @@ abstract class Controller {
         return $this->errors;
     }
 
-    protected function filterRequest() {
+    public function filterRequest() {
         $final = array();
         foreach (func_get_args() as $key) {
             if ($this->request->getVar($key) !== null) {
@@ -388,7 +388,7 @@ abstract class Controller {
         return $final;
     }
 
-    protected function filterRequestStrict() {
+    public function filterRequestStrict() {
         $final = array();
         foreach (func_get_args() as $key) {
             $final[$key] = $this->request->getVar($key);

@@ -39,5 +39,6 @@ class AppManager {
 
     public static function reset() {
         self::$installed_apps = array();
+        self::$appFolders = array();
     }
 }

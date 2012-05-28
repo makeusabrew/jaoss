@@ -5,6 +5,7 @@
     <filter>
         <blacklist>
             <directory suffix=".php">../library/Smarty</directory>
+            <directory suffix=".php">../library/test</directory>
         </blacklist>
     </filter>
 </phpunit>

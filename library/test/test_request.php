@@ -14,7 +14,7 @@ class TestRequest extends JaossRequest {
             Log::debug("attempting to set request properties via non CLI server API!");
             return false;
         }
-        $allowed_params = array("folder_base", "base_href", "url", "query_string", "method", "ajax", "referer");
+        $allowed_params = array("folder_base", "base_href", "url", "query_string", "method", "ajax", "pjax", "referer");
         foreach ($allowed_params as $param) {
             if (isset($params[$param])) {
                 $this->$param = $params[$param];

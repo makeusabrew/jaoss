@@ -262,18 +262,198 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals("http://localhost/my/subfolder/foo", $response->getRedirectUrl());
     }
+
+    public function testRedirectToInternalUrlForAjaxRequestAssignsUrlToBody() {
+        $this->stub = new ConcreteController(array(
+            'ajax' => true,
+        ));
+
+
+        $this->stub->redirect("/foo");
+        $body = $this->stub->getResponse()->getBody();
+        $data = json_decode($body, true);
+
+        $this->assertEquals("/foo", $data["redirect"]);
+    }
+
+    public function testRedirectToInternalUrlForAjaxRequestAssignsMessageToBody() {
+        $this->stub = new ConcreteController(array(
+            'ajax' => true,
+        ));
+
+
+        $this->stub->redirect("/foo", "Test Redirect");
+        $body = $this->stub->getResponse()->getBody();
+        $data = json_decode($body, true);
+
+        $this->assertEquals("Test Redirect", $data["message"]);
+    }
+
+    public function testRenderTemplateAddsHtmlContentTypeIfNotSet() {
+        //
+        $stub = $this->getMock("ConcreteController", array("fetchTemplate"));
+        $stub->expects($this->any())
+             ->method('fetchTemplate')
+             ->will($this->returnValue("FooBar"));
+
+        $response = $stub->getResponse();
+
+        $this->assertEquals(null, $response->getHeader("Content-Type"));
+
+        $stub->renderTemplate("foo");
+
+        $this->assertEquals("text/html; charset=utf-8", $response->getHeader("Content-Type"));
+    }
+
+    public function testRenderTemplateDoesNotAlterContentTypeIfNotSet() {
+        //
+        $stub = $this->getMock("ConcreteController", array("fetchTemplate"));
+        $stub->expects($this->any())
+             ->method('fetchTemplate')
+             ->will($this->returnValue("FooBar"));
+
+        $response = $stub->getResponse();
+
+        $response->addHeader("Content-Type", "foo/bar");
+
+        $stub->renderTemplate("foo");
+
+        $this->assertEquals("foo/bar", $response->getHeader("Content-Type"));
+    }
+
+    public function testFilterRequest() {
+        $stub = new ConcreteController(array(), array(
+            "foo" => "bar",
+            "baz" => "test",
+            "invalid" => "invalid",
+            "ignore" => "ignore",
+        ));
+
+        $this->assertEquals(array(
+            "foo" => "bar",
+            "baz" => "test",
+        ), $stub->filterRequest("foo", "baz", "notfound"));
+    }
+
+    public function testFilterRequestStrict() {
+        $stub = new ConcreteController(array(), array(
+            "foo" => "bar",
+            "baz" => "test",
+            "invalid" => "invalid",
+            "ignore" => "ignore",
+        ));
+
+        $this->assertEquals(array(
+            "foo" => "bar",
+            "baz" => "test",
+            "notfound" => null,
+        ), $stub->filterRequestStrict("foo", "baz", "notfound"));
+    }
+
+    public function testRenderPjaxAssignsPjaxVariable() {
+        $stub = $this->getMock("ConcreteController", array("renderTemplate"));
+        $stub->expects($this->any())
+             ->method('renderTemplate')
+             ->will($this->returnValue("FooBar"));
+
+        $stub->renderPjax("fooBar");
+
+        $this->assertTrue($stub->getAssignVar("_pjax"));
+    }
+
+    public function testUnassignAllEmptiesVarStack() {
+        $this->stub->assign("foo", "bar");
+        $this->stub->assign("baz", "test");
+
+        $this->assertEquals(2, count($this->stub->getVarStack()));
+
+        $this->stub->unassignAll();
+
+        $this->assertEquals(0, count($this->stub->getVarStack()));
+    }
+
+    public function testRenderCallsRenderTemplateForNormalRequest() {
+        $stub = $this->getMock("ConcreteController", array("renderTemplate"));
+        $stub->expects($this->any())
+             ->method('renderTemplate')
+             ->will($this->returnArgument(0));
+
+        $result = $stub->render("mock string");
+
+        $this->assertEquals("mock string", $result);
+    }
+
+    public function testRenderAssignsErrorsVarIfAnyPresent() {
+        $stub = $this->getMock("ConcreteController", array("renderTemplate"));
+        $stub->expects($this->any())
+             ->method('renderTemplate')
+             ->will($this->returnArgument(0));
+
+        $stub->setErrors(array(
+            "foo" => "bar",
+        ));
+
+        $stub->render("mock string");
+
+        $this->assertEquals(array(
+            "foo" => "bar",
+        ), $stub->getAssignVar("_errors"));
+    }
+
+    public function testRenderCallsRenderPjaxForPjaxRequest() {
+        $stub = $this->getMock("ConcreteController", array("renderPjax"));
+        $stub->expects($this->any())
+             ->method('renderPjax')
+             ->will($this->returnArgument(0));
+
+        $stub->setRequestProperties(array(
+            "pjax" => true,
+        ));
+
+        $result = $stub->render("mock string");
+
+        $this->assertEquals("mock string", $result);
+    }
+
+    public function testRenderCallsRenderJsonForajaxRequest() {
+        $this->stub->setRequestProperties(array(
+            "ajax" => true,
+        ));
+
+        $this->stub->assign("foo", "bar");
+
+        $this->stub->render("dummy");
+
+        $result = $this->stub->getResponse()->getBody();
+
+        $this->assertEquals('{"foo":"bar","msg":"OK"}', $result);
+    }
 }
 
 // I'd much rather use a mock here but for some reason code coverage doesn't
 // seem to work properly. Look at fixing this later.
 class ConcreteController extends Controller {
-    public function __construct($properties = array()) {
+    public function __construct($properties = array(), $params = array()) {
         // don't want abstract controller construct firing cos it throws an exception
         // could look at moving stuff out of construct?
         $this->request = new TestRequest();
-        $this->request->setProperties($properties);
+
+        $this->setRequestProperties($properties);
+        $this->request->setParams($params);
 
         $this->response = new JaossResponse();
         $this->session = Session::getInstance();
+    }
+
+    public function getAssignVar($key) {
+        return $this->var_stack[$key];
+    }
+
+    public function getVarStack() {
+        return $this->var_stack;
+    }
+
+    public function setRequestProperties($properties) {
+        $this->request->setProperties($properties);
     }
 }

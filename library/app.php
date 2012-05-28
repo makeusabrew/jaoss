@@ -36,10 +36,6 @@ class App {
     }
 	
 	public function loadPaths() {
-		if ($this->getLoaded()) {
-			return false;
-		}
-		
         $path = $this->paths_file;
         Log::verbose("Looking for [".$path."]");
 		if (file_exists($path)) {
