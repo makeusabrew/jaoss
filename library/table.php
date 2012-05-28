@@ -49,9 +49,13 @@ class Table {
         );
     }
     
+    protected function getClassName() {
+        return get_class($this);
+    }
+
     public function getObjectName() {
         if (!isset($this->object_name)) {
-            $name = get_class($this);
+            $name = $this->getClassName();
             $this->object_name = substr($name, 0, -1);
         }
         if (!class_exists($this->object_name)) {
@@ -62,7 +66,7 @@ class Table {
     
     public function getTable() {
         if (!isset($this->table)) {
-            $table = Utils::fromCamelCase(get_class($this));
+            $table = Utils::fromCamelCase($this->getClassName());
             $this->table = "{$table}";
         }
         return $this->table;

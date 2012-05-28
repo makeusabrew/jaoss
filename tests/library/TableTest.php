@@ -125,4 +125,29 @@ class TableTest extends PHPUnit_Framework_TestCase {
             $this->table->getColumnsArray()
         );
     }
+
+    public function testGetObjectNameThrowsExceptionIfObjectDoesNotExist() {
+        $this->table = $this->getMockForAbstractClass('Table', array(), '', true, true, true, array('getClassName'));
+        $this->table->expects($this->any())
+             ->method('getClassName')
+             ->will($this->returnValue("SomeObjects"));
+
+        try {
+            $this->table->getObjectName();
+        } catch (CoreException $e) {
+            $this->assertEquals("Object class does not exist: SomeObject", $e->getMessage());
+            return;
+        }
+
+        $this->fail("Expected exception not raised");
+    }
+
+    public function testGetTable() {
+        $this->table = $this->getMockForAbstractClass('Table', array(), '', true, true, true, array('getClassName'));
+        $this->table->expects($this->any())
+             ->method('getClassName')
+             ->will($this->returnValue("SomeObjects"));
+
+        $this->assertEquals("some_objects", $this->table->getTable());
+    }
 }
