@@ -1,6 +1,8 @@
 jaoss (pronounced jay-oss)
 ==========================
 
+[![Build Status](https://secure.travis-ci.org/makeusabrew/jaoss.png?branch=master)](http://travis-ci.org/makeusabrew/jaoss)
+
 JAOSS (which once upon a time I think stood for Just Another Open Source System)
 is a lightweight, fast, object oriented, PHP5, MVC framework.
 
