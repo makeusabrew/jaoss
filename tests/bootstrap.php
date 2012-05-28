@@ -83,5 +83,4 @@ try {
 }
 
 require_once("library/test/phpunit_test_controller.php");
-require_once("library/test/selenium_test_controller.php");
 require_once("library/test/test_request.php");
