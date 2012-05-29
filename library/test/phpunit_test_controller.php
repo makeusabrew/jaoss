@@ -42,6 +42,7 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
         $this->bodyPositionOffset = 0;
         PathManager::reloadPaths();
         JaossRequest::destroyInstance();
+        Utils::reset();
     }
 
     public function assertController($controller) {
