@@ -21,7 +21,7 @@ class Cli_Table extends Cli {
         $this->writeLine("The following SQL will create the table [".Colours::cyan(Settings::getValue("db", "dbname").".".$class->getTable())."]:");
         $this->writeLine(Colours::yellow($sql));
 
-        $result = $this->prompt("Do you wish to commit these changes? [y/n]");
+        $result = $this->prompt("Do you wish to commit these changes? [y/n]", "y");
         if ($result !== 'y') {
             $this->writeLine("Aborting.");
             return;
@@ -58,25 +58,54 @@ class Cli_Table extends Cli {
             $fields[$row['Field']] = $row;
         }
 
-        $sql = "ALTER TABLE ".$class->getTable()."\n";
-        $modified = false;
+        $additions = array();
+        $deletions = array();
+
+        // additions first
         foreach ($columns as $field => $column) {
             if (!isset($fields[$field])) {
+                $additions[$field] = $column;
                 $modified = true;
-                $sql .= "ADD `".$field."` ".$this->getSqlForColumn($column).",\n";
             }
         }
-        if ($modified === false) {
+
+        // now deletions
+        $allColumns = $class->getColumnsArray();
+        foreach ($fields as $field => $column) {
+            if (!in_array($field, $allColumns)) {
+                $deletions[$field] = $column;
+            }
+        }
+
+        if (empty($additions) && empty($deletions)) {
             $this->writeLine("No DB changes required.");
             return;
         }
 
+        $sql = "ALTER TABLE ".$class->getTable()."\n";
+        $displaySql = $sql;
+
+        foreach ($additions as $field => $column) {
+            $line = "ADD `".$field."` ".$this->getSqlForColumn($column).",";
+            $sql .= $line."\n";
+            $displaySql .= Colours::green($line)."\n";
+        }
+
+        foreach ($deletions as $field => $column) {
+            $line = "DROP `".$field."`,";
+            $sql .= $line."\n";
+            $displaySql .= Colours::red($line)."\n";
+        }
+
         $sql = substr($sql, 0, -2);
 
-        $this->writeLine("The following changes will be made to the table [".Colours::cyan(Settings::getValue("db", "dbname").".".$class->getTable())."]:");
-        $this->writeLine(Colours::yellow($sql));
+        $this->writeLine("The following changes will be made to the table [".Colours::cyan(Settings::getValue("db", "dbname").".".$class->getTable())."]:\n");
+        $this->writeLine($displaySql);
+        $this->write("\n");
+        $this->writeLine("(".Colours::green(count($additions))." additions, ".Colours::red(count($deletions))." deletions)");
+        $this->write("\n");
 
-        $result = $this->prompt("Do you wish to commit these changes? [y/n]");
+        $result = $this->prompt("Do you wish to commit these changes? [y/n]", "y");
         if ($result !== 'y') {
             $this->writeLine("Aborting.");
             return;
