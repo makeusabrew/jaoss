@@ -85,19 +85,27 @@ class Cli_Table extends Cli {
         $sql = "ALTER TABLE ".$class->getTable()."\n";
         $displaySql = $sql;
 
-        foreach ($additions as $field => $column) {
-            $line = "ADD `".$field."` ".$this->getSqlForColumn($column).",";
-            $sql .= $line."\n";
-            $displaySql .= Colours::green($line)."\n";
+        if (count($additions)) {
+            foreach ($additions as $field => $column) {
+                $line = "ADD `".$field."` ".$this->getSqlForColumn($column);
+                $sql .= $line.",\n";
+                $displaySql .= Colours::green($line).",\n";
+            }
+
+            $sql = substr($sql, 0, -2);
+            $displaySql = substr($displaySql, 0, -2);
         }
 
-        foreach ($deletions as $field => $column) {
-            $line = "DROP `".$field."`,";
-            $sql .= $line."\n";
-            $displaySql .= Colours::red($line)."\n";
-        }
+        if (count($deletions)) {
+            foreach ($deletions as $field => $column) {
+                $line = "DROP `".$field;
+                $sql .= $line.",\n";
+                $displaySql .= Colours::red($line).",\n";
+            }
 
-        $sql = substr($sql, 0, -2);
+            $sql = substr($sql, 0, -2);
+            $displaySql = substr($displaySql, 0, -2);
+        }
 
         $this->writeLine("The following changes will be made to the table [".Colours::cyan(Settings::getValue("db", "dbname").".".$class->getTable())."]:\n");
         $this->writeLine($displaySql);
