@@ -148,10 +148,20 @@ class Email {
         );
         
     }
+
+    public function getHandlerName() {
+        return $this->handler->getName();
+    }
+
+    public function getLastIdentifier() {
+        return $this->handler->getLastIdentifier();
+    }
 }
 
 interface IEmailHandler {
     public function send($to, $subject, $body, $headers, $from);
+    public function getName();
+    public function getLastIdentifier();
 }
 
 abstract class EmailHandler {
@@ -179,6 +189,14 @@ class DefaultEmailHandler implements IEmailHandler {
     public function send($to, $subject, $body, $headers, $from) {
         return mail($to, $subject, $body, $headers);
     }
+
+    public function getName() {
+        return "Default";
+    }
+
+    public function getLastIdentifier() {
+        return null;
+    }
 }
 
 class TestEmailHandler implements IEmailHandler {
@@ -204,15 +222,24 @@ class TestEmailHandler implements IEmailHandler {
         self::$sentEmails[] = $email;
         return true;
     }
+
+    public function getName() {
+        return "TestStatic";
+    }
+
+    public function getLastIdentifier() {
+        return count(self::$sentEmails);
+    }
 }
 
 class DbEmailHandler implements IEmailHandler {
-    protected static $lastId = null;
+    protected static $sinceId = null;
+    protected static $lastIdentifier = null;
 
     public static function resetSentEmails() {
         $db = Db::getInstance();
         $result = $db->query("SELECT `id` FROM `test_emails` ORDER BY `id` DESC LIMIT 1")->fetch();
-        self::$lastId = $result[0];
+        self::$sinceId = $result[0];
     }
 
     public function send($to, $subject, $body, $headers, $from) {
@@ -229,20 +256,32 @@ class DbEmailHandler implements IEmailHandler {
             PRIMARY KEY(`id`))");
         */
         $sth = $db->prepare("INSERT INTO test_emails (`to`,`subject`,`body`,`headers`,`from`, `created`) VALUES(?, ?, ?, ?, ?, ?)");
-        return $sth->execute(array($to, $subject, $body, $headers, $from, Utils::getDate("Y-m-d H:i:s")));
+        $result = $sth->execute(array($to, $subject, $body, $headers, $from, Utils::getDate("Y-m-d H:i:s")));
+
+        self::$lastIdentifier = $db->lastInsertId();
+
+        return $result;
     }
 
     public static function getSentEmails() {
         $db = Db::getInstance();
         $params = array();
         $query = "SELECT * FROM `test_emails`";
-        if (self::$lastId !== null) {
+        if (self::$sinceId !== null) {
             $query .= " WHERE `id` > ?";
-            $params[] = self::$lastId;
+            $params[] = self::$sinceId;
         }
         $query .= " ORDER BY `id` ASC";
         $sth = $db->prepare($query);
         $sth->execute($params);
         return $sth->fetchAll();
+    }
+
+    public function getName() {
+        return "TestDb";
+    }
+
+    public function getLastIdentifier() {
+        return self::$lastIdentifier;
     }
 }
