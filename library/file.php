@@ -31,6 +31,8 @@ class File {
         switch ($this->error) {
             case UPLOAD_ERR_OK:
                 return "The file was uploaded successfully";
+            case UPLOAD_ERR_INI_SIZE:
+                return "The uploaded file is too large";
             case File::ERR_NO_FILE:
                 return "No file uploaded";
             default:

@@ -44,4 +44,10 @@ class FileTest extends PHPUnit_Framework_TestCase {
         $file = new File($this->fileData);
         $this->assertEquals("Unknown error", $file->getMessage());
     }
+
+    public function testGetMessageErrIniSize() {
+        $this->fileData['error'] = UPLOAD_ERR_INI_SIZE;
+        $file = new File($this->fileData);
+        $this->assertEquals("The uploaded file is too large", $file->getMessage());
+    }
 }
