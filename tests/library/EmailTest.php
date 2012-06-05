@@ -64,17 +64,6 @@ class EmailTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("MIME-Version: 1.0\r\nContent-type: text/html; charset=UTF-8", $email->getHeadersAsString());
     }
 
-    public function testTemplateNotFoundExceptionThrownWithInvalidBodyTemplate() {
-        $email = Email::factory();
-        try {
-            $email->setBodyFromTemplate("invalidTplPath");
-        } catch (CoreException $e) {
-            $this->assertEquals(CoreException::TPL_NOT_FOUND, $e->getCode());
-            return;
-        }
-        $this->fail("Expected exception not raised");
-    }
-
     public function testSendReturnValue() {
         $email = Email::factory();
         $this->assertFalse($email->send());
