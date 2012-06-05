@@ -79,20 +79,25 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testRenderJsonAssignsMsgVariableToOkIfNotSet() {
-        $this->stub->renderJson();
+        $response = $this->stub->renderJson();
+
+        $this->assertTrue($response instanceof JaossResponse);
 
         $data = json_decode(
-            $this->stub->getResponse()->getBody()
+            $response->getBody()
         );
         $this->assertEquals('OK', $data->msg);
     }
 
     public function testRenderJsonDoesNotAssignMsgVariableIfSet() {
         $this->stub->assign('msg', 'ERROR');
-        $this->stub->renderJson();
+
+        $response = $this->stub->renderJson();
+
+        $this->assertTrue($response instanceof JaossResponse);
 
         $data = json_decode(
-            $this->stub->getResponse()->getBody()
+            $response->getBody()
         );
         $this->assertEquals('ERROR', $data->msg);
     }
@@ -109,9 +114,12 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testRedirectWithString() {
-        $this->assertTrue($this->stub->redirect("/"));
-        $this->assertEquals(303, $this->stub->getResponse()->getResponseCode());
-        $this->assertEquals("/", $this->stub->getResponse()->getRedirectUrl());
+        $response = $this->stub->redirect("/");
+
+        $this->assertTrue($response instanceof JaossResponse);
+
+        $this->assertEquals(303, $response->getResponseCode());
+        $this->assertEquals("/", $response->getRedirectUrl());
     }
 
     public function testRedirectWithValidArrayOptions() {
@@ -121,12 +129,14 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
         list($path) = PathManager::getPaths();
         $this->stub->setPath($path);
 
-        $this->assertTrue($this->stub->redirect(array(
+        $response = $this->stub->redirect(array(
             "action" => "test",
-        )));
+        ));
 
-        $this->assertEquals(303, $this->stub->getResponse()->getResponseCode());
-        $this->assertEquals("/test", $this->stub->getResponse()->getRedirectUrl());
+        $this->assertTrue($response instanceof JaossResponse);
+
+        $this->assertEquals(303,     $response->getResponseCode());
+        $this->assertEquals("/test", $response->getRedirectUrl());
     }
 
     public function testRedirectWithInvalidArrayOptions() {
@@ -153,23 +163,29 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
         list($path) = PathManager::getPaths();
         $this->stub->setPath($path);
 
-        $this->assertTrue($this->stub->redirectAction("test"));
+        $response = $this->stub->redirectAction("test");
 
-        $this->assertEquals(303, $this->stub->getResponse()->getResponseCode());
-        $this->assertEquals("/test", $this->stub->getResponse()->getRedirectUrl());
+        $this->assertTrue($response instanceof JaossResponse);
+
+        $this->assertEquals(303,     $response->getResponseCode());
+        $this->assertEquals("/test", $response->getRedirectUrl());
     }
 
     public function testRedirectWithFlashMessage() {
         FlashMessenger::reset();
-        $this->assertTrue($this->stub->redirect("/", "A Test Message"));
+        $response = $this->stub->redirect("/", "A Test Message");
+
         $this->assertEquals(array(
             "A Test Message",
         ), FlashMessenger::getMessages());
     }
 
     public function testRedirectRefererRedirectsToHomeWithNoReferer() {
-        $this->assertTrue($this->stub->redirectReferer());
-        $this->assertEquals("/", $this->stub->getResponse()->getRedirectUrl());
+        $response = $this->stub->redirectReferer();
+
+        $this->assertTrue($response instanceof JaossResponse);
+
+        $this->assertEquals("/", $response->getRedirectUrl());
     }
 
     public function testGetFlashReturnsNullByDefault() {
@@ -191,7 +207,11 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
 
     public function testSetResponseCodeUpdatesResponseObject() {
         $this->stub->setResponseCode(403);
-        $this->assertEquals(403, $this->stub->getResponse()->getResponseCode());
+
+        // we don't care about the render type really, we just want the response
+        $response = $this->stub->renderJson();
+
+        $this->assertEquals(403, $response->getResponseCode());
     }
 
     public function testAddErrorWithSingleArgumentAppendsToEndOfArray() {
@@ -224,15 +244,13 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testRedirectToExternalSiteFromRootFolderBase() {
-        $this->stub->redirect("http://foo.com");
-        $response = $this->stub->getResponse();
+        $response = $this->stub->redirect("http://foo.com");
 
         $this->assertEquals("http://foo.com", $response->getRedirectUrl());
     }
 
     public function testRedirectToInternalUrlFromRootFolderBase() {
-        $this->stub->redirect("/foo");
-        $response = $this->stub->getResponse();
+        $response = $this->stub->redirect("/foo");
 
         $this->assertEquals("/foo", $response->getRedirectUrl());
     }
@@ -244,8 +262,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
         ));
 
 
-        $this->stub->redirect("http://foo.com");
-        $response = $this->stub->getResponse();
+        $response = $this->stub->redirect("http://foo.com");
 
         $this->assertEquals("http://foo.com", $response->getRedirectUrl());
     }
@@ -257,8 +274,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
         ));
 
 
-        $this->stub->redirect("/foo");
-        $response = $this->stub->getResponse();
+        $response = $this->stub->redirect("/foo");
 
         $this->assertEquals("http://localhost/my/subfolder/foo", $response->getRedirectUrl());
     }
@@ -269,9 +285,9 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
         ));
 
 
-        $this->stub->redirect("/foo");
-        $body = $this->stub->getResponse()->getBody();
-        $data = json_decode($body, true);
+        $response = $this->stub->redirect("/foo");
+
+        $data = json_decode($response->getBody(), true);
 
         $this->assertEquals("/foo", $data["redirect"]);
     }
@@ -282,9 +298,8 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
         ));
 
 
-        $this->stub->redirect("/foo", "Test Redirect");
-        $body = $this->stub->getResponse()->getBody();
-        $data = json_decode($body, true);
+        $response = $this->stub->redirect("/foo", "Test Redirect");
+        $data = json_decode($response->getBody(), true);
 
         $this->assertEquals("Test Redirect", $data["message"]);
     }
@@ -296,11 +311,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
              ->method('fetchTemplate')
              ->will($this->returnValue("FooBar"));
 
-        $response = $stub->getResponse();
-
-        $this->assertEquals(null, $response->getHeader("Content-Type"));
-
-        $stub->renderTemplate("foo");
+        $response = $stub->renderTemplate("foo");
 
         $this->assertEquals("text/html; charset=utf-8", $response->getHeader("Content-Type"));
     }
@@ -312,11 +323,9 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
              ->method('fetchTemplate')
              ->will($this->returnValue("FooBar"));
 
-        $response = $stub->getResponse();
+        $stub->addHeader("Content-Type", "foo/bar");
 
-        $response->addHeader("Content-Type", "foo/bar");
-
-        $stub->renderTemplate("foo");
+        $response = $stub->renderTemplate("foo");
 
         $this->assertEquals("foo/bar", $response->getHeader("Content-Type"));
     }
@@ -422,9 +431,9 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
 
         $this->stub->assign("foo", "bar");
 
-        $this->stub->render("dummy");
+        $response = $this->stub->render("dummy");
 
-        $result = $this->stub->getResponse()->getBody();
+        $result = $response->getBody();
 
         $this->assertEquals('{"foo":"bar","msg":"OK"}', $result);
     }
@@ -455,5 +464,9 @@ class ConcreteController extends Controller {
 
     public function setRequestProperties($properties) {
         $this->request->setProperties($properties);
+    }
+
+    public function addHeader($key, $val) {
+        return $this->response->addHeader($key, $val);
     }
 }

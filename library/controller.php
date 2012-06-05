@@ -1,16 +1,17 @@
 <?php
 abstract class Controller {
-    protected $smarty = NULL;
-    protected $path = NULL;
-    protected $adminUser = NULL;
-    protected $session = NULL;
-    protected $request = NULL;
-    protected $response = NULL;
-    protected $errors = array();
-    
+    protected $smarty    = null;
+    protected $path      = null;
+    protected $adminUser = null;
+    protected $session   = null;
+    protected $request   = null;
+    protected $response  = null;
+    protected $errors    = array();
     protected $var_stack = array();
 
     public function init() {
+        // this method can be overridden - we don't want to declare it
+        // abstract since it doesn't *have* to be, so it's left empty
     }
 
     public function __construct($request = NULL) {
@@ -46,7 +47,9 @@ abstract class Controller {
 	
     public function setPath($path) {
         $this->path = $path;
-        if (isset($this->smarty)) {
+        $this->response->setPath($path);
+
+        if ($this->smarty !== null) {
             $this->smarty->setTemplateDir(array_merge(
                 array(PROJECT_ROOT."apps/".$this->path->getApp()."/views/"),
                 $this->smarty->getTemplateDir()
@@ -145,7 +148,7 @@ abstract class Controller {
                 $url = substr($this->request->getBaseHref(), 0, -1).$url;
             }
             $this->response->setRedirect($url, 303);
-            return true;
+            return $this->response;
         }
     }
 
@@ -189,7 +192,7 @@ abstract class Controller {
     public function renderJson($extra = array()) {
         $this->response->addHeader('Content-Type', 'application/json');
         $this->response->setBody($this->fetchJson($extra));
-        return true;
+        return $this->response;
     }
 
     public function renderTemplate($template) {
@@ -199,7 +202,7 @@ abstract class Controller {
         $this->response->setBody(
             $this->fetchTemplate($template)
         );
-        return true;
+        return $this->response;
     }
 
     /**
@@ -339,11 +342,6 @@ abstract class Controller {
 
     public function getFlash($flash) {
        return $this->session->getFlash($flash);
-    }
-    
-    public function getResponse() {
-        $this->response->setPath($this->path);
-        return $this->response;
     }
     
     public function setResponseCode($code) {
