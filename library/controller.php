@@ -376,6 +376,10 @@ abstract class Controller {
         return $this->errors;
     }
 
+    public function getResponse() {
+        return $this->response;
+    }
+
     public function filterRequest() {
         $final = array();
         foreach (func_get_args() as $key) {

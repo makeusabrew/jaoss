@@ -27,10 +27,14 @@ class JaossPath {
 
                 Log::debug("Start [".$this->controller."Controller->".$this->action."]");
                 $response = call_user_func(array($controller, $this->action));
+
                 if ($response === null) {
-                    // @todo this isn't very helpful; instead we should check to see if the response has been initialised
-                    // at all such as any headers or body - anything really. If so, don't alter it, if not, do the below
-                    $response = $controller->render($this->action);
+
+                    $response = $controller->getResponse();
+
+                    if (!$response->isInitialised()) {
+                        $response = $controller->render($this->action);
+                    }
                 }
                 Log::debug("End   [".$this->controller."Controller->".$this->action."] - status code [".$response->getResponseCode()."]");
                 return $response;

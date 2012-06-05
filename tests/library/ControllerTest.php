@@ -208,10 +208,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
     public function testSetResponseCodeUpdatesResponseObject() {
         $this->stub->setResponseCode(403);
 
-        // we don't care about the render type really, we just want the response
-        $response = $this->stub->renderJson();
-
-        $this->assertEquals(403, $response->getResponseCode());
+        $this->assertEquals(403, $this->stub->getResponse()->getResponseCode());
     }
 
     public function testAddErrorWithSingleArgumentAppendsToEndOfArray() {
