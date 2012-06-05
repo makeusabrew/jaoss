@@ -20,7 +20,7 @@ abstract class Controller {
 		
         $plugin_dirs = array(
             JAOSS_ROOT."library/Smarty/libs/plugins",  // default smarty dir
-            JAOSS_ROOT."library/Smarty/custom_plugins",
+            JAOSS_ROOT."library/smarty_plugins",       // our own library extensions
         );
 
         // allow site specific plugin dirs - these should take precedence if present
