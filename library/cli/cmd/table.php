@@ -60,6 +60,7 @@ class Cli_Table extends Cli {
 
         $additions = array();
         $deletions = array();
+        $modifications = array();
 
         // additions first
         foreach ($columns as $field => $column) {
@@ -77,7 +78,17 @@ class Cli_Table extends Cli {
             }
         }
 
-        if (empty($additions) && empty($deletions)) {
+        // finally, modifications
+        foreach ($columns as $field => $column) {
+            if (isset($fields[$field])) {
+                $newType = $column['type'];
+                if ($this->columnDiffersToSchema($newType, $fields[$field])) {
+                    $modifications[$field] = $column;
+                }
+            }
+        }
+
+        if (empty($additions) && empty($deletions) && empty($modifications)) {
             $this->writeLine("No DB changes required.");
             return;
         }
@@ -107,10 +118,21 @@ class Cli_Table extends Cli {
             $displaySql = substr($displaySql, 0, -2);
         }
 
+        if (count($modifications)) {
+            foreach ($modifications as $field => $column) {
+                $line = "CHANGE `".$field."` `".$field."` ".$this->getSqlForColumn($column);
+                $sql .= $line.",\n";
+                $displaySql .= Colours::yellow($line).",\n";
+            }
+
+            $sql = substr($sql, 0, -2);
+            $displaySql = substr($displaySql, 0, -2);
+        }
+
         $this->writeLine("The following changes will be made to the table [".Colours::cyan(Settings::getValue("db", "dbname").".".$class->getTable())."]:\n");
         $this->writeLine($displaySql);
         $this->write("\n");
-        $this->writeLine("(".Colours::green(count($additions))." additions, ".Colours::red(count($deletions))." deletions)");
+        $this->writeLine("(".Colours::green(count($additions))." additions, ".Colours::red(count($deletions))." deletions, ".Colours::yellow(count($modifications))." modifications)");
         $this->write("\n");
 
         $result = $this->prompt("Do you wish to commit these changes? [y/n]", "y");
@@ -239,5 +261,17 @@ class Cli_Table extends Cli {
                 break;
         }
         return $sql;
+    }
+
+    // @todo consolidate this with the above method, absolutely no need for two
+    public function columnDiffersToSchema($type, $field) {
+        $schemaType = strtolower($field['Type']);
+        switch ($type) {
+            case "textarea":
+                return $schemaType !== "text";
+            default:
+                Log::debug("Unhandled column type: [".$schemaType."]");
+                return false;
+        }
     }
 }
