@@ -6,10 +6,16 @@ class JaossImage {
      * every public method should eventually defer to this method
      */
     protected static function doResize($oldPath, $path, $x, $y, $width, $height, $scaleWidth, $scaleHeight) {
+        $width  = intval($width);
+        $height = intval($height);
 
         list($oldWidth, $oldHeight, $mime) = self::getFileInfo($oldPath);
 
         Log::debug('resizing image of type ['.$mime.'] and dimensions ['.$oldWidth.'x'.$oldHeight.'] to ['.$width.'x'.$height.']');
+        if ($width === 0 || $height === 0) {
+            Log::warn("Not resizing due to zero value target dimension, failing");
+            return false;
+        }
 
         $oldHandle = null;
         $newHandle = imagecreatetruecolor($width, $height);
