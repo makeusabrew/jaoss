@@ -17,7 +17,8 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 });
 
 include("library/Smarty/libs/Smarty.class.php");
-include("library/core_exception.php");
+include("library/exception/core.php");
+include("library/exception/init.php");
 include("library/email.php");
 include("library/file.php");
 include("library/validate.php");

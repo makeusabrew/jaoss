@@ -34,7 +34,8 @@ include("library/cli/colours.php");
 include("library/cli/exception.php");
 
 include("library/Smarty/libs/Smarty.class.php");
-include("library/core_exception.php");
+include("library/exception/core.php");
+include("library/exception/init.php");
 include("library/email.php");
 include("library/file.php");
 include("library/validate.php");

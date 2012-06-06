@@ -2,9 +2,9 @@
 
 class JaossResponse {
     
-    protected $body = NULL;
+    protected $body = null;
     protected $isRedirect = false;
-    protected $redirectUrl = "";
+    protected $redirectUrl = null;
     protected $responseCode = 200;
     protected $path = NULL;
     protected $headers = array();
@@ -109,5 +109,9 @@ class JaossResponse {
         $headers = implode("|", $this->getHeaders());
         $body = $this->getBody();
         return '"'.sha1($headers."_".$body).'"';
+    }
+
+    public function isInitialised() {
+        return $this->body !== null || count($this->headers) || $this->redirectUrl !== null;
     }
 }

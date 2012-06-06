@@ -76,4 +76,26 @@ class ResponseTest extends PHPUnit_Framework_TestCase {
             $this->response->getETag()
         );
     }
+
+    public function testInitialisedWithNewResponse() {
+        $this->assertFalse($this->response->isInitialised());
+    }
+
+    public function testInitialisedWithBody() {
+        $this->response->setBody("foo");
+
+        $this->assertTrue($this->response->isInitialised());
+    }
+
+    public function testInitialisedWithRedirectUrl() {
+        $this->response->setRedirect("/");
+
+        $this->assertTrue($this->response->isInitialised());
+    }
+
+    public function testInitialisedWithHeadersArray() {
+        $this->response->addHeader("foo", "bar");
+
+        $this->assertTrue($this->response->isInitialised());
+    }
 }

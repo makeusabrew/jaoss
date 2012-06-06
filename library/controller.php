@@ -1,16 +1,17 @@
 <?php
 abstract class Controller {
-    protected $smarty = NULL;
-    protected $path = NULL;
-    protected $adminUser = NULL;
-    protected $session = NULL;
-    protected $request = NULL;
-    protected $response = NULL;
-    protected $errors = array();
-    
+    protected $smarty    = null;
+    protected $path      = null;
+    protected $adminUser = null;
+    protected $session   = null;
+    protected $request   = null;
+    protected $response  = null;
+    protected $errors    = array();
     protected $var_stack = array();
 
     public function init() {
+        // this method can be overridden - we don't want to declare it
+        // abstract since it doesn't *have* to be, so it's left empty
     }
 
     public function __construct($request = NULL) {
@@ -46,7 +47,9 @@ abstract class Controller {
 	
     public function setPath($path) {
         $this->path = $path;
-        if (isset($this->smarty)) {
+        $this->response->setPath($path);
+
+        if ($this->smarty !== null) {
             $this->smarty->setTemplateDir(array_merge(
                 array(PROJECT_ROOT."apps/".$this->path->getApp()."/views/"),
                 $this->smarty->getTemplateDir()
@@ -65,16 +68,11 @@ abstract class Controller {
         if (!class_exists($c_class)) {
             // can force a path if required
             if ($app_path !== NULL) {
-                $path = PROJECT_ROOT."apps/{$app_path}/controllers/".strtolower($controller).".php";
-                if (file_exists($path)) {
-                    include($path);
-                }
+                self::includeController($app_path, $controller);
             } else {
                 $apps = AppManager::getAppPaths();
                 foreach ($apps as $app) {
-                    $path = PROJECT_ROOT."apps/{$app}/controllers/".strtolower($controller).".php";
-                    if (file_exists($path)) {
-                        include($path);
+                    if (self::includeController($app, $controller)) {
                         break;
                     }
                 }
@@ -90,11 +88,20 @@ abstract class Controller {
             CoreException::CONTROLLER_CLASS_NOT_FOUND,
             array(
                 "controller" => $controller,
-                "class" => $c_class,
-                "path" => isset($app_path) ? $path : null,
-                "apps" => isset($apps) ? $apps : null,
+                "class"      => $c_class,
+                "path"       => isset($app_path) ? $app_path : null,
+                "apps"       => isset($apps) ? $apps : null,
             )
         );
+    }
+
+    protected static function includeController($app, $controller) {
+        $path = PROJECT_ROOT."apps/{$app}/controllers/".Utils::fromCamelCase($controller).".php";
+        if (file_exists($path)) {
+            include($path);
+            return true;
+        }
+        return false;
     }
 	
     public function getMatch($match, $default=NULL) {
@@ -145,7 +152,7 @@ abstract class Controller {
                 $url = substr($this->request->getBaseHref(), 0, -1).$url;
             }
             $this->response->setRedirect($url, 303);
-            return true;
+            return $this->response;
         }
     }
 
@@ -189,7 +196,7 @@ abstract class Controller {
     public function renderJson($extra = array()) {
         $this->response->addHeader('Content-Type', 'application/json');
         $this->response->setBody($this->fetchJson($extra));
-        return true;
+        return $this->response;
     }
 
     public function renderTemplate($template) {
@@ -199,7 +206,7 @@ abstract class Controller {
         $this->response->setBody(
             $this->fetchTemplate($template)
         );
-        return true;
+        return $this->response;
     }
 
     /**
@@ -341,11 +348,6 @@ abstract class Controller {
        return $this->session->getFlash($flash);
     }
     
-    public function getResponse() {
-        $this->response->setPath($this->path);
-        return $this->response;
-    }
-    
     public function setResponseCode($code) {
         $this->response->setResponseCode($code);
     }
@@ -376,6 +378,10 @@ abstract class Controller {
 
     public function getErrors() {
         return $this->errors;
+    }
+
+    public function getResponse() {
+        return $this->response;
     }
 
     public function filterRequest() {

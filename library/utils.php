@@ -42,6 +42,15 @@ class Utils {
 		return preg_replace_callback('/([A-Z])/', $func, $str);
 	}
 
+    public static function toCamelCase($str, $delim = "_") {
+        $words = explode($delim, $str);
+        $final = "";
+        foreach ($words as $word) {
+            $final .= ucfirst($word);
+        }
+        return $final;
+    }
+
     /* borrowed with thanks from http://wiki.jumba.com.au/wiki/PHP_Generate_random_password */
     public static function generatePassword($length) {
         $chars = "234567890abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";

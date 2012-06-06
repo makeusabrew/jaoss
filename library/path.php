@@ -20,21 +20,24 @@ class JaossPath {
                 try {
                     Log::debug("Init  [".$this->controller."Controller->".$this->action."]");
                     $controller->init();
-                } catch (CoreException $e) {
+                } catch (InitException $e) {
                     Log::debug($this->controller."Controller->init() failed with message [".$e->getMessage()."]");
-                    if ($e->getCode() == CoreException::PATH_REJECTED) {
-                        throw $e;
-                    }
-                    return $controller->getResponse();
+                    return $e->getResponse();
                 }
 
                 Log::debug("Start [".$this->controller."Controller->".$this->action."]");
-                $result = call_user_func(array($controller, $this->action));
-                if ($result === NULL) {
-                    $controller->render($this->action);
+                $response = call_user_func(array($controller, $this->action));
+
+                if ($response === null) {
+
+                    $response = $controller->getResponse();
+
+                    if (!$response->isInitialised()) {
+                        $response = $controller->render($this->action);
+                    }
                 }
-                Log::debug("End   [".$this->controller."Controller->".$this->action."] - status code [".$controller->getResponse()->getResponseCode()."]");
-                return $controller->getResponse();
+                Log::debug("End   [".$this->controller."Controller->".$this->action."] - status code [".$response->getResponseCode()."]");
+                return $response;
             } else {
                 throw new CoreException("Controller action is not callable");
             }
