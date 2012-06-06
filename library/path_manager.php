@@ -18,7 +18,7 @@ class PathManager {
             $location = self::getLocationFromTrace();
         }
         if (!isset($controller)) {
-            $controller = ucwords($location);
+            $controller = Utils::toCamelCase($location);
         }
 
         if (isset(self::$defaultPrefix[$location])) {

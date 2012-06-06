@@ -68,16 +68,11 @@ abstract class Controller {
         if (!class_exists($c_class)) {
             // can force a path if required
             if ($app_path !== NULL) {
-                $path = PROJECT_ROOT."apps/{$app_path}/controllers/".strtolower($controller).".php";
-                if (file_exists($path)) {
-                    include($path);
-                }
+                self::includeController($app_path, $controller);
             } else {
                 $apps = AppManager::getAppPaths();
                 foreach ($apps as $app) {
-                    $path = PROJECT_ROOT."apps/{$app}/controllers/".strtolower($controller).".php";
-                    if (file_exists($path)) {
-                        include($path);
+                    if (self::includeController($app, $controller)) {
                         break;
                     }
                 }
@@ -93,11 +88,20 @@ abstract class Controller {
             CoreException::CONTROLLER_CLASS_NOT_FOUND,
             array(
                 "controller" => $controller,
-                "class" => $c_class,
-                "path" => isset($app_path) ? $path : null,
-                "apps" => isset($apps) ? $apps : null,
+                "class"      => $c_class,
+                "path"       => isset($app_path) ? $app_path : null,
+                "apps"       => isset($apps) ? $apps : null,
             )
         );
+    }
+
+    protected static function includeController($app, $controller) {
+        $path = PROJECT_ROOT."apps/{$app}/controllers/".Utils::fromCamelCase($controller).".php";
+        if (file_exists($path)) {
+            include($path);
+            return true;
+        }
+        return false;
     }
 	
     public function getMatch($match, $default=NULL) {
