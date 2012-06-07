@@ -103,19 +103,23 @@ class Cli_Table extends Cli {
                 $displaySql .= Colours::green($line).",\n";
             }
 
-            $sql = substr($sql, 0, -2);
-            $displaySql = substr($displaySql, 0, -2);
+            if (!count($deletions)) {
+                $sql = substr($sql, 0, -2);
+                $displaySql = substr($displaySql, 0, -2);
+            }
         }
 
         if (count($deletions)) {
             foreach ($deletions as $field => $column) {
-                $line = "DROP `".$field;
+                $line = "DROP `".$field."`";
                 $sql .= $line.",\n";
                 $displaySql .= Colours::red($line).",\n";
             }
 
-            $sql = substr($sql, 0, -2);
-            $displaySql = substr($displaySql, 0, -2);
+            if (!count($modifications)) {
+                $sql = substr($sql, 0, -2);
+                $displaySql = substr($displaySql, 0, -2);
+            }
         }
 
         if (count($modifications)) {
