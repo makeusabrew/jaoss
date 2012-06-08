@@ -261,6 +261,11 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
             'foo must be zero or greater',
             Validate::getMessage('unsigned', array('title' => 'foo'), null)
         );
+
+        $this->assertEquals(
+            'foo is not a valid URL segment',
+            Validate::getMessage('slug', array('title' => 'foo'), null)
+        );
     }
 
     public function testDateWithValidFormatButInvalidActualDate() {
@@ -289,5 +294,15 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
 
         // non leap year
         $this->assertFalse(Validate::dateTime("29/02/10 09:00:00"));
+    }
+
+    public function testSlug() {
+        $this->assertTrue(Validate::slug("FooBar"));
+        $this->assertTrue(Validate::slug("foo_bar"));
+        $this->assertTrue(Validate::slug("foo-bar"));
+
+        $this->assertFalse(Validate::slug("Foo Bar"));
+        $this->assertFalse(Validate::slug("Foo/Bar"));
+        $this->assertFalse(Validate::slug(""));
     }
 }

@@ -117,6 +117,10 @@ class Validate {
         $diff = $target->diff($date);
         return ($diff->y >= $settings['age']);
     }
+
+    public static function slug($value, $settings = null) {
+        return preg_match("#^[\w-]+$#i", $value) > 0;
+    }
     
     public static function getMessage($function, $settings, $value = null) {
         $title = $settings["title"];
@@ -165,6 +169,8 @@ class Validate {
                 return "one or more of the options chosen for {$title} are not valid";
             case "unsigned":
                 return "{$title} must be zero or greater";
+            case "slug":
+                return "{$title} is not a valid URL segment";
             default:
                 return "{$title} is not valid";
         }
