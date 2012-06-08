@@ -238,7 +238,7 @@ class Table {
         $final = array();
         $rows = $this->findAll();
         foreach ($rows as $row) {
-            $final[$row->getId()] = $row->title;
+            $final[$row->getId()] = $row->getTitle();
         }
         return $final;
     }

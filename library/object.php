@@ -365,4 +365,9 @@ abstract class Object {
     public function getChildren() {
         return array();
     }
+
+    // a generic way of giving a human readable title to an object
+    public function getTitle() {
+        return $this->title;
+    }
 }
