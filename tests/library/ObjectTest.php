@@ -333,6 +333,31 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(array(), $this->object->getErrors());
     }
 
+    public function testSetValuesValidatesSlugFieldType() {
+        $this->object = $this->getMockForAbstractClass('Object', array(), '', true, true, true, array('getColumns'));
+        $this->object->expects($this->any())
+             ->method('getColumns')
+             ->will($this->returnValue(array(
+                'url' => array(
+                    'type' => 'slug',
+                ),
+            )));
+
+        $this->object->setValues(array(
+            'url' => 'Foo Bar',
+        ));
+
+        $this->assertEquals(array(
+            'url' => 'url is not a valid URL segment',
+        ), $this->object->getErrors());
+
+        $this->object->setValues(array(
+            'url' => 'FooBar',
+        ));
+
+        $this->assertEquals(array(), $this->object->getErrors());
+    }
+
     public function testValidateArrayIsMergedCorrectlyWithOtherValidation() {
         $this->object = $this->getMockForAbstractClass('Object', array(), '', true, true, true, array('getColumns'));
         $this->object->expects($this->any())

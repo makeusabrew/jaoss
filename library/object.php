@@ -278,6 +278,10 @@ abstract class Object {
             $validation[] = "matchCheckboxOptions";
         }
 
+        if ($settings["type"] == "slug") {
+            $validation[] = "slug";
+        }
+
         if (isset($settings["validation"])) {
             if (!is_array($settings["validation"])) {
                 $settings["validation"] = array($settings["validation"]);
