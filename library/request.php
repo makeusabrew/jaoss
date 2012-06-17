@@ -38,8 +38,8 @@ class JaossRequest {
     public static function destroyInstance() {
         self::$instance = null;
     }
-	
-	public function __construct(array $reqData = array()) {
+    
+    public function __construct(array $reqData = array()) {
         $this->sapi = php_sapi_name();
         $basePath = basename($reqData["PHP_SELF"]);  // should be index.php or xhprof.php
         // we now support subfolders, conditionally anyway
@@ -47,7 +47,7 @@ class JaossRequest {
             // we're probably running off http://localhost/foo/bar, so adjust base path
             $basePath = "public/".$basePath;
         }
-		$this->folder_base = substr($reqData["PHP_SELF"], 0, strpos($reqData["PHP_SELF"], $basePath));
+        $this->folder_base = substr($reqData["PHP_SELF"], 0, strpos($reqData["PHP_SELF"], $basePath));
         if (isset($reqData["SERVER_NAME"])) {
             $this->protocol  = (isset($reqData['SSL']) && $reqData['SSL'] == 'on') ? 'https' : 'http';
             $this->port      = $reqData['SERVER_PORT'];
@@ -103,26 +103,26 @@ class JaossRequest {
             $this->headers = $reqData["_headers"];
         }
             
-	}
+    }
 
-	public function setUrl($url) {
-		$this->url = $url;
+    public function setUrl($url) {
+        $this->url = $url;
         $this->full_url = substr($this->getBaseHref(), 0, -1).$url;
-	}
+    }
 
     public function isCacheable() {
         return $this->isGet();
     }
-	
-	public function dispatch($url = null) {
+    
+    public function dispatch($url = null) {
         if ($url !== null) {
             $this->setUrl($url);
         }
-		if ($this->url === NULL) {
-			throw new CoreException("No URL to dispatch");
-		}
+        if ($this->url === NULL) {
+            throw new CoreException("No URL to dispatch");
+        }
 
-		$path = PathManager::matchUrl($this->url);
+        $path = PathManager::matchUrl($this->url);
 
         if ($path->isCacheable() &&
             $this->isCacheable() &&
@@ -174,7 +174,7 @@ class JaossRequest {
             }
         }
         return $this->response;
-	}
+    }
 
     public function getResponse() {
         return $this->response;
@@ -195,13 +195,13 @@ class JaossRequest {
     public function getUrl() {
         return $this->url;
     }
-	
-	public function getReferer(){
-		return $this->referer;	
-	}
+
+    public function getReferer(){
+        return $this->referer;
+    }
     
     public function getQueryString() {
-    	return $this->query_string;
+        return $this->query_string;
     }
 
     public function isGet() {
@@ -230,16 +230,16 @@ class JaossRequest {
     }
     
     public function isAjax() {
-    	return $this->ajax;
+        return $this->ajax;
     }
 
     public function isPjax() {
         return $this->pjax;
     }
-	
-	public function disableAjax() {
-		$this->ajax = false;
-	}
+    
+    public function disableAjax() {
+        $this->ajax = false;
+    }
     
     public function getIp() {
        return $this->ip;
