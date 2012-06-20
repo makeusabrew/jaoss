@@ -1,6 +1,7 @@
 <?php
 class RequestTest extends PHPUnit_Framework_TestCase {
     protected $reqData = array();
+    protected $request = null;
 
     public function setUp() {
         $this->reqData = array (
@@ -28,39 +29,44 @@ class RequestTest extends PHPUnit_Framework_TestCase {
                 'foo' => 'bar',
             ),
         );
+
+        $this->populateRequest();
     }
 
-    public function tearDown() {
+    protected function populateRequest() {
+        $this->request = new JaossRequest();
+        $this->request->setProperties($this->reqData);
     }
 
     public function testUrlIsSetCorrectlyInVhostMode() {
-        $request = new JaossRequest($this->reqData);
-        $this->assertEquals("/my/url", $request->getUrl());
+        $this->assertEquals("/my/url", $this->request->getUrl());
     }
 
     public function testRequestIsCachableWhenGetAndNoQueryStringSet() {
-        $request = new JaossRequest($this->reqData);
-        $this->assertTrue($request->isCacheable());
+        $this->assertTrue($this->request->isCacheable());
     }
 
     public function testRequestIsCachableWhenGetQueryStringSet() {
         $this->reqData['QUERY_STRING'] = 'foo=bar&baz=test';
         $this->reqData['REQUEST_URI']  = '/my/url?foo=bar&baz=test';
-        $request = new JaossRequest($this->reqData);
-        $this->assertTrue($request->isCacheable());
+
+        $this->populateRequest();
+
+        $this->assertTrue($this->request->isCacheable());
     }
 
     public function testRequestIsNotCachableWhenPostAndNoQueryStringSet() {
         $this->reqData['REQUEST_METHOD'] = 'POST';
-        $request = new JaossRequest($this->reqData);
-        $this->assertFalse($request->isCacheable());
+
+        $this->populateRequest();
+
+        $this->assertFalse($this->request->isCacheable());
     }
 
     public function testDispatchThrowsExceptionWhenPathControllerNotFound() {
         PathManager::loadPath("/my/url", "fake_action", "Fake", "fake");
-        $request = new JaossRequest($this->reqData);
         try {
-            $request->dispatch();
+            $this->request->dispatch();
         } catch (CoreException $e) {
             $this->assertEquals(CoreException::CONTROLLER_CLASS_NOT_FOUND, $e->getCode());
             return;
@@ -69,166 +75,158 @@ class RequestTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testResponseStartsNull() {
-        $request = new JaossRequest($this->reqData);
-        $this->assertNull($request->getResponse());
+        $this->assertNull($this->request->getResponse());
     }
 
     public function testGetMethodIsCorrectWhenRequestIsGet() {
-        $request = new JaossRequest($this->reqData);
-        $this->assertEquals("GET", $request->getMethod());
+        $this->assertEquals("GET", $this->request->getMethod());
     }
 
     public function testGetMethodIsCorrectWhenRequestIsPost() {
         $this->reqData['REQUEST_METHOD'] = "POST";
-        $request = new JaossRequest($this->reqData);
-        $this->assertEquals("POST", $request->getMethod());
+
+        $this->populateRequest();
+
+        $this->assertEquals("POST", $this->request->getMethod());
     }
 
     public function testIsGetWhenRequestIsGet() {
-        $request = new JaossRequest($this->reqData);
-        $this->assertTrue($request->isGet());
+        $this->assertTrue($this->request->isGet());
     }
 
     public function testIsGetWhenRequestIsPost() {
         $this->reqData['REQUEST_METHOD'] = "POST";
-        $request = new JaossRequest($this->reqData);
-        $this->assertTrue($request->isPost());
+        
+        $this->populateRequest();
+
+        $this->assertTrue($this->request->isPost());
     }
 
     public function testGetVarReturnsNullWhenNotFoundByDefault() {
-        $request = new JaossRequest($this->reqData);
-        $this->assertNull($request->getVar("fake"));
+        $this->assertNull($this->request->getVar("fake"));
     }
 
     public function testGetVarReturnsCorrectDefaultValueWhenNotFound() {
-        $request = new JaossRequest($this->reqData);
-        $this->assertEquals("somevar", $request->getVar("fake", "somevar"));
+        $this->assertEquals("somevar", $this->request->getVar("fake", "somevar"));
     }
 
     public function testAjaxIsFalseByDefault() {
-        $request = new JaossRequest($this->reqData);
-        $this->assertFalse($request->isAjax());
+        $this->assertFalse($this->request->isAjax());
     }
 
     public function testXRequestedWithEnablesAjaxMode() {
         $this->reqData['HTTP_X_REQUESTED_WITH'] = "true";
-        $request = new JaossRequest($this->reqData);
-        $this->assertTrue($request->isAjax());
+
+        $this->populateRequest();
+
+        $this->assertTrue($this->request->isAjax());
     }
 
     public function testDisableAjax() {
         $this->reqData['HTTP_X_REQUESTED_WITH'] = "true";
-        $request = new JaossRequest($this->reqData);
-        $this->assertTrue($request->isAjax());
-        $request->disableAjax();
-        $this->assertFalse($request->isAjax());
+
+        $this->populateRequest();
+
+        $this->assertTrue($this->request->isAjax());
+        $this->request->disableAjax();
+        $this->assertFalse($this->request->isAjax());
     }
 
     public function testGetIp() {
-        $request = new JaossRequest($this->reqData);
-        $this->assertEquals("127.0.0.1", $request->getIp());
+        $this->assertEquals("127.0.0.1", $this->request->getIp());
     }
 
     public function testGetHostname() {
-        $request = new JaossRequest($this->reqData);
-        $this->assertEquals("myproject.build", $request->getHostname());
+        $this->assertEquals("myproject.build", $this->request->getHostname());
     }
 
     public function testGetFolderBase() {
-        $request = new JaossRequest($this->reqData);
-        $this->assertEquals("/", $request->getFolderBase());
+        $this->assertEquals("/", $this->request->getFolderBase());
     }
 
     public function testGetUserAgent() {
-        $request = new JaossRequest($this->reqData);
-        $this->assertEquals("A Test Browser", $request->getUserAgent());
+        $this->assertEquals("A Test Browser", $this->request->getUserAgent());
     }
 
     public function testGetTimestamp() {
-        $request = new JaossRequest($this->reqData);
-        $this->assertEquals(1317303304, $request->getTimestamp());
+        $this->assertEquals(1317303304, $this->request->getTimestamp());
     }
 
     public function testGetSapi() {
-        $request = new JaossRequest($this->reqData);
-        $this->assertEquals("cli", $request->getSapi());
+        $this->assertEquals("cli", $this->request->getSapi());
     }
 
     public function testGetQueryString() {
-        $request = new JaossRequest($this->reqData);
-        $this->assertEquals("foo=bar", $request->getQueryString());
+        $this->assertEquals("foo=bar", $this->request->getQueryString());
 
         unset($this->reqData["QUERY_STRING"]);
 
-        $request = new JaossRequest($this->reqData);
-        $this->assertEquals(null, $request->getQueryString());
+        $this->populateRequest();
+
+        $this->assertEquals(null, $this->request->getQueryString());
     }
 
     public function testCacheDisabled() {
-        $request = new JaossRequest($this->reqData);
+        $this->assertFalse($this->request->isCacheDisabled());
 
-        $this->assertFalse($request->isCacheDisabled());
+        $this->request->disableCache();
 
-        $request->disableCache();
-
-        $this->assertTrue($request->isCacheDisabled());
+        $this->assertTrue($this->request->isCacheDisabled());
     }
 
     public function testGetFile() {
-        $request = new JaossRequest($this->reqData);
-
-        $this->assertNull($request->getFile("invalid"));
+        $this->assertNull($this->request->getFile("invalid"));
 
         $_FILES['foo'] = 'bar';
 
-        $this->assertEquals('bar', $request->getFile("foo"));
+        $this->assertEquals('bar', $this->request->getFile("foo"));
 
         unset($_FILES['foo']);
     }
 
     public function testProcessFile() {
-        $request = new JaossRequest($this->reqData);
-
-        $file = $request->processFile("invalid");
+        $file = $this->request->processFile("invalid");
         $this->assertTrue($file instanceof File);
 
         $this->assertEquals(99, $file->getError());
     }
 
     public function testGetHeader() {
-        $request = new JaossRequest($this->reqData);
-
-        $this->assertNull($request->getHeader('invalid'));
-        $this->assertEquals('bar', $request->getHeader('foo'));
+        $this->assertNull($this->request->getHeader('invalid'));
+        $this->assertEquals('bar', $this->request->getHeader('foo'));
     }
 
     public function testGetBaseHref() {
-        $request = new JaossRequest($this->reqData);
-        $this->assertEquals('http://myproject.build/', $request->getBaseHref());
+        $this->assertEquals('http://myproject.build/', $this->request->getBaseHref());
     }
 
     public function testGetBaseHrefHttpNonStandardPort() {
         $this->reqData['SERVER_PORT'] = '8080';
-        $request = new JaossRequest($this->reqData);
-        $this->assertEquals('http://myproject.build:8080/', $request->getBaseHref());
+
+        $this->populateRequest();
+
+        $this->assertEquals('http://myproject.build:8080/', $this->request->getBaseHref());
     }
 
     public function testGetBaseHrefHttps() {
         $this->reqData['SSL'] = 'on';
         $this->reqData['SERVER_PORT'] = '443';
-        $request = new JaossRequest($this->reqData);
-        $this->assertEquals('https://myproject.build/', $request->getBaseHref());
+
+        $this->populateRequest();
+
+        $this->assertEquals('https://myproject.build/', $this->request->getBaseHref());
     }
 
     public function testGetBaseHrefHttpsNonStandardPort() {
         $this->reqData['SSL'] = 'on';
         $this->reqData['SERVER_PORT'] = '4444';
-        $request = new JaossRequest($this->reqData);
-        $this->assertEquals('https://myproject.build:4444/', $request->getBaseHref());
+
+        $this->populateRequest();
+
+        $this->assertEquals('https://myproject.build:4444/', $this->request->getBaseHref());
     }
 
     public function testGetFullUrl() {
-        $request = new JaossRequest($this->reqData);
-        $this->assertEquals("http://myproject.build/my/url", $request->getFullUrl());
+        $this->assertEquals("http://myproject.build/my/url", $this->request->getFullUrl());
     }
 }

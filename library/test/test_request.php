@@ -9,7 +9,7 @@ class TestRequest extends JaossRequest {
         $this->method = 'GET';  // assume get by default
     }
 
-    public function setProperties($params = array()) {
+    public function setProperties(array $params = array()) {
         if ($this->sapi != "cli") {
             Log::debug("attempting to set request properties via non CLI server API!");
             return false;

@@ -29,7 +29,8 @@ class JaossRequest {
             if (Settings::getValue("request", "handler", false) == "test" && php_sapi_name() === "cli") {
                 self::$instance = new TestRequest();
             } else {
-                self::$instance = new JaossRequest($_SERVER);
+                self::$instance = new JaossRequest();
+                self::$instance->setProperties($_SERVER);
             }
         }
         return self::$instance;
@@ -39,15 +40,20 @@ class JaossRequest {
         self::$instance = null;
     }
     
-    public function __construct(array $reqData = array()) {
+    public function __construct() {
         $this->sapi = php_sapi_name();
-        $basePath = basename($reqData["PHP_SELF"]);  // should be index.php or xhprof.php
-        // we now support subfolders, conditionally anyway
+    }
+
+    public function setProperties(array $reqData = array()) {
+        $basePath = basename($reqData["PHP_SELF"]);  // this is whatever the front controller script is, e.g. index.php
+
         if (strpos($reqData["PHP_SELF"], "public/".$basePath) !== false) {
             // we're probably running off http://localhost/foo/bar, so adjust base path
             $basePath = "public/".$basePath;
         }
+
         $this->folder_base = substr($reqData["PHP_SELF"], 0, strpos($reqData["PHP_SELF"], $basePath));
+
         if (isset($reqData["SERVER_NAME"])) {
             $this->protocol  = (isset($reqData['SSL']) && $reqData['SSL'] == 'on') ? 'https' : 'http';
             $this->port      = $reqData['SERVER_PORT'];
@@ -74,6 +80,7 @@ class JaossRequest {
                 )
             );
         }
+
         if (isset($reqData['QUERY_STRING']) && $reqData['QUERY_STRING'] != '') {
             $this->query_string = $reqData['QUERY_STRING'];
             $this->setUrl(substr(
@@ -102,7 +109,6 @@ class JaossRequest {
         } else if (isset($reqData["_headers"])) {
             $this->headers = $reqData["_headers"];
         }
-            
     }
 
     public function setUrl($url) {
@@ -199,7 +205,7 @@ class JaossRequest {
     public function getReferer(){
         return $this->referer;
     }
-    
+
     public function getQueryString() {
         return $this->query_string;
     }
