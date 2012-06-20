@@ -185,6 +185,26 @@ class Table {
         return $this->meta["columns"];
     }
 
+    public function getFullColumns() {
+        $columns = array(
+            $this->primary_key => array(
+                "type" => "primary_key",
+            ),
+        );
+
+        if ($this->shouldStoreCreated() === true) {
+            $columns["created"] = array(
+                "type" => "datetime",
+            );
+        }
+        if ($this->shouldStoreUpdated() === true) {
+            $columns["updated"] = array(
+                "type" => "datetime",
+            );
+        }
+        return array_merge($columns, $this->getColumns());
+    }
+
     public function shouldStoreCreated() {
         return $this->storeCreated;
     }
@@ -244,15 +264,6 @@ class Table {
     }
 
     public function getColumnsArray() {
-        $cols = $this->getColumns();
-        $cols = array_keys($cols);
-        array_unshift($cols, $this->primary_key);
-        if ($this->shouldStoreCreated() === true) {
-            $cols[] = "created";
-        }
-        if ($this->shouldStoreUpdated() === true) {
-            $cols[] = "updated";
-        }
-        return $cols;
+        return array_keys($this->getFullColumns());
     }
 }
