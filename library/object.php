@@ -4,7 +4,6 @@ abstract class Object {
     protected $id = NULL;
     protected $created = NULL;
     protected $updated = NULL;
-    protected $table = NULL;
     protected $table_name = NULL;
     
     protected $values = array();
@@ -23,11 +22,7 @@ abstract class Object {
     }
 
     public function getTable() {
-        if (!isset($this->table)) {
-            $table = Utils::fromCamelCase(get_class($this));
-            $this->table = "{$table}s";
-        }
-        return $this->table;
+        return Table::factory($this->getTableName())->getTable();
     }
 
     public function __get($var) {
