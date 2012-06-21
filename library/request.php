@@ -55,7 +55,16 @@ class JaossRequest {
         $this->folder_base = substr($reqData["PHP_SELF"], 0, strpos($reqData["PHP_SELF"], $basePath));
 
         if (isset($reqData["SERVER_NAME"])) {
-            $this->protocol  = (isset($reqData['SSL']) && $reqData['SSL'] == 'on') ? 'https' : 'http';
+
+            if ((isset($reqData['SSL'])   && $reqData['SSL'] == 'on') ||
+                (isset($reqData['HTTPS']) && $reqData['HTTPS'] != 'off')) {
+
+                $this->protocol = 'https';
+
+            } else {
+                $this->protocol = 'http';
+            }
+
             $this->port      = $reqData['SERVER_PORT'];
 
             $this->base_href = $this->protocol."://".$reqData["SERVER_NAME"];
