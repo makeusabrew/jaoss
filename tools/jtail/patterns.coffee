@@ -3,16 +3,6 @@
 ###
 module.exports = [
     {
-        regex: /^(Init  |Start )(\[)(.+)(\])$/,
-        colors: {
-            "3": "blue"
-        }
-    }, {
-        regex: /^(End   )(\[)([^\]]+)(\])(.*)$/,
-        colors: {
-            "3": "blue"
-        }
-    }, {
         regex: /^(Response Code: 2\d{2})$/,
         colors: {
             "1": "green"
@@ -48,14 +38,14 @@ module.exports = [
             "2": "red"
         }
     }, {
-        regex: /^(GET \[[^\]]+\])(.+)$/,
+        regex: /^(GET|POST)( \[)([^\]]+)(\] matches \[)(.+)(\] => \[)([\w\/]+\/)(\w+)(::)([\w-]+)(\])$/,
         colors: {
-            "1": "bold"
-        }
-    }, {
-        regex: /^(POST \[[^\]]+\])(.+)$/,
-        colors: {
-            "1": "bold"
+            "1": "bold",
+            "3": "cyan",
+            "5": "cyan",
+            "7": "blue",
+            "8": "blue",
+            "10": "blue"
         }
     }
 ]
