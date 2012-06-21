@@ -233,29 +233,37 @@ class RequestTest extends PHPUnit_Framework_TestCase {
     public function testGetBaseHrefHttpsWithHTTPSHeader() {
         $this->reqData['HTTPS'] = 'on';
         $this->reqData['SERVER_PORT'] = '443';
-        $request = new JaossRequest($this->reqData);
-        $this->assertEquals('https://myproject.build/', $request->getBaseHref());
+
+        $this->populateRequest();
+
+        $this->assertEquals('https://myproject.build/', $this->request->getBaseHref());
     }
 
     public function testGetBaseHrefHttpsWithHTTPSHeaderSetToTruthyValue() {
         $this->reqData['HTTPS'] = '1';
         $this->reqData['SERVER_PORT'] = '443';
-        $request = new JaossRequest($this->reqData);
-        $this->assertEquals('https://myproject.build/', $request->getBaseHref());
+
+        $this->populateRequest();
+
+        $this->assertEquals('https://myproject.build/', $this->request->getBaseHref());
     }
 
     public function testGetBaseHrefHttpsWithHTTPSHeaderNonStandardPort() {
         $this->reqData['HTTPS'] = 'on';
         $this->reqData['SERVER_PORT'] = '4444';
-        $request = new JaossRequest($this->reqData);
-        $this->assertEquals('https://myproject.build:4444/', $request->getBaseHref());
+        
+        $this->populateRequest();
+
+        $this->assertEquals('https://myproject.build:4444/', $this->request->getBaseHref());
     }
 
     // IIS sends HTTPS as "off" always, apparently...
     public function testGetBaseHrefHttpsWithHTTPSHeaderSetToOff() {
         $this->reqData['HTTPS'] = 'off';
         $this->reqData['SERVER_PORT'] = '80';
-        $request = new JaossRequest($this->reqData);
-        $this->assertEquals('http://myproject.build/', $request->getBaseHref());
+
+        $this->populateRequest();
+
+        $this->assertEquals('http://myproject.build/', $this->request->getBaseHref());
     }
 }
