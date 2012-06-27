@@ -92,6 +92,17 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
         $path = PathManager::matchUrl("/foo");
         $this->assertEquals("my_path", $path->getName());
     }
+    
+    public function testLoadPathThrowsExceptionWithDuplicateName() {
+        PathManager::loadPath("/foo", "bar", "baz", "test", null, null, "my_path");
+        try {
+            PathManager::loadPath("/foobar", "barfoo", "baztest", "test", null, null, "my_path");
+        } catch (CoreException $e) {
+            $this->assertEquals(CoreException::DUPLICATE_PATH_NAME, $e->getCode());
+            return;
+        }
+        $this->fail("Expected exception not raised");
+    }
 
     public function testLoadPathsSupportsAssociativeNameArgument() {
         PathManager::loadPaths(array(
@@ -113,6 +124,7 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("bar", $path->getAction());
         $this->assertEquals("baz", $path->getController());
         $this->assertEquals("apps/test", $path->getLocation());
+        $this->assertEquals("test:baz:bar", $path->getName());
         $this->assertFalse($path->isCacheable());
     }
 
@@ -123,6 +135,7 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("bar", $path->getAction());
         $this->assertEquals("baz", $path->getController());
         $this->assertEquals("apps/test", $path->getLocation());
+        $this->assertEquals("test:baz:bar", $path->getName());
         $this->assertFalse($path->isCacheable());
     }
 
@@ -138,6 +151,7 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("bar", $path->getAction());
         $this->assertEquals("baz", $path->getController());
         $this->assertEquals("apps/test", $path->getLocation());
+        $this->assertEquals("test:baz:bar", $path->getName());
         $this->assertFalse($path->isCacheable());
     }
 
@@ -233,7 +247,7 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("^/someprefix/foo$", $path->getPattern());
         
         PathManager::clearPrefix();
-        PathManager::loadPath("/foo", "bar", "baz", "test");
+        PathManager::loadPath("/foo", "barbar", "baz", "test");
         $path = PathManager::matchUrl("/foo");
         $this->assertEquals("^/foo$", $path->getPattern());
     }
@@ -281,6 +295,7 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("index", $path->getAction());
         $this->assertEquals("Foo", $path->getController());
         $this->assertEquals("FooApp", $path->getApp());
+        $this->assertEquals("FooApp:Foo:index", $path->getName());
     }
 
     public function testGetUrlForOptionsWithArgumentAndMatch() {
@@ -378,7 +393,10 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
             PathManager::matchUrl("/nomatch");
         } catch (CoreException $e) {
             $this->assertEquals(CoreException::URL_NOT_FOUND, $e->getCode());
-            list($path) = PathManager::getPaths();
+            $paths = PathManager::getPaths();
+            
+            $path = reset($paths);
+
             $this->assertTrue($path->isDiscarded());
             PathManager::reloadPaths();
             $path = PathManager::matchUrl("/foo");

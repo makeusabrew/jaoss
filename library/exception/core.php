@@ -18,6 +18,7 @@ class CoreException extends Exception {
     const EMPTY_CONTROLLER_FACTORY_STRING = 15;
     const PATH_NAME_NOT_FOUND = 16;
     const PATH_NAME_NOT_VALID = 17;
+    const DUPLICATE_PATH_NAME = 18;
 
     protected $args = array();
 
@@ -54,6 +55,10 @@ class CoreException extends Exception {
             self::MODEL_CLASS_NOT_FOUND => 404,
             self::COULD_NOT_ATTACH_COOKIE_JAR => 500,
             self::SETTING_NOT_FOUND => 404,
+            self::EMPTY_CONTROLLER_FACTORY_STRING => 500,
+            self::PATH_NAME_NOT_FOUND => 404,
+            self::PATH_NAME_NOT_VALID => 500,
+            self::DUPLICATE_PATH_NAME => 500,
         );
         return $responseCodes[$this->getCode()];
     }

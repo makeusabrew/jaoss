@@ -128,7 +128,8 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
         // bah, we can't mock static methods, so this gets a bit long winded
         PathManager::reset();
         PathManager::loadPath("/test", "test", "Test", "test");
-        list($path) = PathManager::getPaths();
+        $paths = PathManager::getPaths();
+        $path = array_shift($paths);
         $this->stub->setPath($path);
 
         $response = $this->stub->redirect(array(
@@ -144,7 +145,8 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
     public function testRedirectWithInvalidArrayOptions() {
         PathManager::reset();
         PathManager::loadPath("/test", "test", "Test", "test");
-        list($path) = PathManager::getPaths();
+        $paths = PathManager::getPaths();
+        $path = array_shift($paths);
         $this->stub->setPath($path);
 
         try {
@@ -162,7 +164,8 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
     public function testRedirectActionWithValidValue() {
         PathManager::reset();
         PathManager::loadPath("/test", "test", "Test", "test");
-        list($path) = PathManager::getPaths();
+        $paths = PathManager::getPaths();
+        $path = array_shift($paths);
         $this->stub->setPath($path);
 
         $response = $this->stub->redirectAction("test");
@@ -177,7 +180,8 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
         // bah, we can't mock static methods, so this gets a bit long winded
         PathManager::reset();
         PathManager::loadPath("/test", "test", "Test", "test", null, null, "my_name");
-        list($path) = PathManager::getPaths();
+        $paths = PathManager::getPaths();
+        $path = array_shift($paths);
         $this->stub->setPath($path);
 
         $response = $this->stub->redirect(array(
@@ -193,7 +197,8 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
     public function testRedirectNameWithValidValue() {
         PathManager::reset();
         PathManager::loadPath("/test", "test", "Test", "test", null, null, "my_name");
-        list($path) = PathManager::getPaths();
+        $paths = PathManager::getPaths();
+        $path = array_shift($paths);
         $this->stub->setPath($path);
 
         $response = $this->stub->redirectName("my_name");

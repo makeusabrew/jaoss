@@ -36,6 +36,10 @@ class PathManager {
         $path->setApp($location);
         $path->setController($controller);
         $path->setAction($action);
+
+        if ($name === null) {
+            $name = $location.":".$controller.":".$action;
+        }
         $path->setName($name);
 
         if ($requestMethods !== null) {
@@ -54,7 +58,11 @@ class PathManager {
             $path->setCacheTtl($cacheTtl);
         }
 
-        self::$paths[] = $path;
+        if (isset(self::$paths[$name])) {
+            throw new CoreException("Path name already exists", CoreException::DUPLICATE_PATH_NAME, array("path" => $path));
+        }
+
+        self::$paths[$name] = $path;
         Log::verbose("Loading path: pattern [".$path->getPattern()."] location [".$path->getLocation()."] controller [".$path->getController()."] action [".$path->getAction()."] cacheTtl [".$cacheTtl."]");
     }
 	
@@ -217,17 +225,16 @@ class PathManager {
             );
         }
 
-        foreach (self::$paths as $path) {
-            if ($path->getName() === $name) {
-                return $path;
-            }
+        if (isset(self::$paths[$name])) {
+            return self::$paths[$name];
         }
 
         throw new CoreException(
             "No Path found for name",
             CoreException::PATH_NAME_NOT_FOUND,
             array(
-                'name' => $name,
+                'name'  => $name,
+                'paths' => self::$paths,
             )
         );
     }
