@@ -9,39 +9,39 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
         JaossRequest::destroyInstance();
     }
 
-	public function testPathsStartsEmptyAndIsArray() {
-		$paths = PathManager::getPaths();
-		$this->assertInternalType("array", $paths);
-		$this->assertEquals(0, count($paths));
-	}
-	
-	public function testPathsCountIsZeroAfterPathReset() {
-		$paths = PathManager::getPaths();
-		$this->assertInternalType("array", $paths);
-		$this->assertEquals(0, count($paths));
-	}
-	
-	public function testPathsCountIsOneAfterPathAddedViaLoadPath() {
-		$paths = PathManager::getPaths();
-		$this->assertEquals(0, count($paths));
-		
-		PathManager::loadPath("foo", "bar", "baz", "test");
-		
-		$paths = PathManager::getPaths();
-		$this->assertEquals(1, count($paths));
-	}
-	
-	public function testAddPathsThrowsExceptionWithStringArgument() {
+    public function testPathsStartsEmptyAndIsArray() {
+        $paths = PathManager::getPaths();
+        $this->assertInternalType("array", $paths);
+        $this->assertEquals(0, count($paths));
+    }
+    
+    public function testPathsCountIsZeroAfterPathReset() {
+        $paths = PathManager::getPaths();
+        $this->assertInternalType("array", $paths);
+        $this->assertEquals(0, count($paths));
+    }
+    
+    public function testPathsCountIsOneAfterPathAddedViaLoadPath() {
+        $paths = PathManager::getPaths();
+        $this->assertEquals(0, count($paths));
+        
+        PathManager::loadPath("foo", "bar", "baz", "test");
+        
+        $paths = PathManager::getPaths();
+        $this->assertEquals(1, count($paths));
+    }
+    
+    public function testAddPathsThrowsExceptionWithStringArgument() {
         try {
-            PathManager::loadPaths("foo", "bar", "baz", "test");	// loadPaths expects arrays
+            PathManager::loadPaths("foo", "bar", "baz", "test");    // loadPaths expects arrays
         } catch (CoreException $e) {
             $this->assertEquals(0, $e->getCode());  //@todo change when this exception gets a code!
             return;
         }
         $this->fail("Expected exception not raised");
-	}
-	
-	public function testAddPathsThrowsExceptionWithEmptyArrayArgument() {
+    }
+    
+    public function testAddPathsThrowsExceptionWithEmptyArrayArgument() {
         try {
             PathManager::loadPaths(array());
         } catch (CoreException $e) {
@@ -49,17 +49,17 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
             return;
         }
         $this->fail("Expected exception not raised");
-	}
-	
-	public function testPathsCountIsOneAfterPathAddedViaLoadPaths() {
-		$paths = PathManager::getPaths();
-		$this->assertEquals(0, count($paths));
-		
-		PathManager::loadPaths(array("foo", "bar", "baz", "test"));
-		
-		$paths = PathManager::getPaths();
-		$this->assertEquals(1, count($paths));
-	}
+    }
+    
+    public function testPathsCountIsOneAfterPathAddedViaLoadPaths() {
+        $paths = PathManager::getPaths();
+        $this->assertEquals(0, count($paths));
+        
+        PathManager::loadPaths(array("foo", "bar", "baz", "test"));
+        
+        $paths = PathManager::getPaths();
+        $this->assertEquals(1, count($paths));
+    }
 
     public function testMatchUrlWithNoPathsLoaded() {
         $this->setExpectedException("CoreException");
@@ -67,7 +67,7 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testMatchUrlWithPathsLoadedButNoMatch() {
-		PathManager::loadPath("foo", "bar", "baz", "test");
+        PathManager::loadPath("foo", "bar", "baz", "test");
         try {
             PathManager::matchUrl("/bad/url");
         } catch (CoreException $e) {
@@ -77,8 +77,37 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
         $this->fail("Exception not raised");
     }
 
+    public function testLoadPathsSupportsNameArgument() {
+        PathManager::loadPaths(array(
+            "/foo", "bar", "baz", "test", null, null, "my_path",
+        ));
+        $path = PathManager::matchUrl("/foo");
+
+        $this->assertEquals("my_path", $path->getName());
+    }
+
+    public function testLoadPathSupportsNameArgument() {
+        PathManager::loadPath("/foo", "bar", "baz", "test", null, null, "my_path");
+
+        $path = PathManager::matchUrl("/foo");
+        $this->assertEquals("my_path", $path->getName());
+    }
+
+    public function testLoadPathsSupportsAssociativeNameArgument() {
+        PathManager::loadPaths(array(
+            "pattern" => "/foo",
+            "action" => "bar",
+            "controller" => "baz",
+            "location" => "test",
+            "name" => "my_path",
+        ));
+
+        $path = PathManager::matchUrl("/foo");
+        $this->assertEquals("my_path", $path->getName());
+    }
+
     public function testMatchUrlWithPathsLoadedAndWithMatch() {
-		PathManager::loadPath("^/foo$", "bar", "baz", "test");
+        PathManager::loadPath("^/foo$", "bar", "baz", "test");
         $path = PathManager::matchUrl("/foo");
         $this->assertEquals("^/foo$", $path->getPattern());
         $this->assertEquals("bar", $path->getAction());
@@ -88,7 +117,7 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testMatchUrlWithSimplePathsLoadedAndWithMatch() {
-		PathManager::loadPath("/foo", "bar", "baz", "test");
+        PathManager::loadPath("/foo", "bar", "baz", "test");
         $path = PathManager::matchUrl("/foo");
         $this->assertEquals("^/foo$", $path->getPattern());
         $this->assertEquals("bar", $path->getAction());

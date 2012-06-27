@@ -7,7 +7,7 @@ class PathManager {
     protected static $defaultCacheTtl = array();
     protected static $defaultPrefix = array();
 	
-    public static function loadPath($pattern = NULL, $action = NULL, $controller = NULL, $location = NULL, $requestMethods = NULL, $cacheTtl = NULL) {
+    public static function loadPath($pattern = NULL, $action = NULL, $controller = NULL, $location = NULL, $requestMethods = NULL, $cacheTtl = NULL, $name = NULL) {
         if (!isset($pattern)) {
             throw new CoreException("No pattern passed");
         }
@@ -36,6 +36,7 @@ class PathManager {
         $path->setApp($location);
         $path->setController($controller);
         $path->setAction($action);
+        $path->setName($name);
 
         if ($requestMethods !== null) {
             if (!is_array($requestMethods)) {
@@ -52,6 +53,7 @@ class PathManager {
             $path->setCacheable(true);
             $path->setCacheTtl($cacheTtl);
         }
+
         self::$paths[] = $path;
         Log::verbose("Loading path: pattern [".$path->getPattern()."] location [".$path->getLocation()."] controller [".$path->getController()."] action [".$path->getAction()."] cacheTtl [".$cacheTtl."]");
     }
@@ -72,22 +74,23 @@ class PathManager {
             // do since we don't allow mixing associative / indexed arrays when declaring paths
             if (isset($path[0])) {
                 // array is faster than range()
-                $keys = array(0,1,2,3,4,5);
+                $keys = array(0,1,2,3,4,5,6);
             } else {
                 Log::verbose("Loading path with associative array");
-                $keys = array("pattern", "action", "controller", "location", "method", "cacheTtl");
+                $keys = array("pattern", "action", "controller", "location", "method", "cacheTtl", "name");
             }
-            $pattern = isset($path[$keys[0]]) ? $path[$keys[0]] : NULL;
-            $action = isset($path[$keys[1]]) ? $path[$keys[1]] : NULL;
+            $pattern    = isset($path[$keys[0]]) ? $path[$keys[0]] : NULL;
+            $action     = isset($path[$keys[1]]) ? $path[$keys[1]] : NULL;
             $controller = isset($path[$keys[2]]) ? $path[$keys[2]] : NULL;
             if (!isset($path[$keys[3]])) {
                 $location = self::getLocationFromTrace();
             } else {
                 $location = $path[$keys[3]];
             }
-            $methods = isset($path[$keys[4]]) ? $path[$keys[4]] : NULL;
+            $methods  = isset($path[$keys[4]]) ? $path[$keys[4]] : NULL;
             $cacheTtl = isset($path[$keys[5]]) ? $path[$keys[5]] : NULL;
-            self::loadPath($pattern, $action, $controller, $location, $methods, $cacheTtl);
+            $name     = isset($path[$keys[6]]) ? $path[$keys[6]] : NULL;
+            self::loadPath($pattern, $action, $controller, $location, $methods, $cacheTtl, $name);
         }
     }
 

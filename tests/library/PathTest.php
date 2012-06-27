@@ -34,6 +34,13 @@ class PathTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("^/foo$", $this->path->getPattern());
     }
 
+    public function testSetAndGetName() {
+        $this->path->setName("my_name");
+        $this->assertEquals("my_name", $this->path->getName());
+        $this->path->setName("another_name");
+        $this->assertEquals("another_name", $this->path->getName());
+    }
+
     public function testGetMatchReturnsNullWithNonMatchingIndex() {
         $this->assertNull($this->path->getMatch('fake'));
     }

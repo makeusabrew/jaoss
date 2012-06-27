@@ -5,6 +5,7 @@ class JaossPath {
     protected $app;
     protected $controller;
     protected $action;
+    protected $name;
     protected $matches = array();
     protected $discarded;
     protected $cacheable = false;
@@ -74,6 +75,10 @@ class JaossPath {
         $this->app = $app;
     }
 
+    public function setName($name) {
+        $this->name = $name;
+    }
+
     public function getPattern() {
         return $this->pattern;
     }
@@ -92,6 +97,10 @@ class JaossPath {
 
     public function getApp() {
         return $this->app;
+    }
+
+    public function getName() {
+        return $this->name;
     }
 
     public function setMatches($matches) {
