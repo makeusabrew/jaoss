@@ -342,6 +342,7 @@ abstract class Controller {
     
     public function setFlash($flash, $value = true) {
         $this->session->setFlash($flash, $value);
+        return $this;
     }
 
     public function getFlash($flash) {

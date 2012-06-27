@@ -207,6 +207,10 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("bar", $this->stub->getFlash("foo"));
     }
 
+    public function testSetFlashReturnsControllerObject() {
+        $this->assertSame($this->stub, $this->stub->setFlash("foo"));
+    }
+
     public function testSetResponseCodeUpdatesResponseObject() {
         $this->stub->setResponseCode(403);
 
