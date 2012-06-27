@@ -179,9 +179,14 @@ class PathManager {
     }
     
     public static function getUrlForOptions($options) {
-        $path = self::getPathForOptions($options);
+        if (isset($options['name'])) {
+            Log::debug("Looking for path by name [".$options["name"]."]");
+            $path = self::getPathForName($options['name']);
+        } else {
+            $path = self::getPathForOptions($options);
+        }
         $pattern = $path->getPattern();
-        $args = array_diff_key($options, array("app" => "", "controller" => "", "action" => ""));
+        $args = array_diff_key($options, array("app" => "", "controller" => "", "action" => "", "name" => ""));
         if (count($args)) {
             // got dynamic args. try and sort them out
             foreach ($args as $key => $val) {
@@ -201,6 +206,31 @@ class PathManager {
         return $url;
     }
 
+    public static function getPathForName($name) {
+        if ($name === null || strlen($name) == 0) {
+            throw new CoreException(
+                "Path Name not valid",
+                CoreException::PATH_NAME_NOT_VALID,
+                array(
+                    "name" => $name,
+                )
+            );
+        }
+
+        foreach (self::$paths as $path) {
+            if ($path->getName() === $name) {
+                return $path;
+            }
+        }
+
+        throw new CoreException(
+            "No Path found for name",
+            CoreException::PATH_NAME_NOT_FOUND,
+            array(
+                'name' => $name,
+            )
+        );
+    }
     public static function getPathForOptions($options) {
         foreach (self::$paths as $path) {
             if ($path->getApp() == $options["app"] &&

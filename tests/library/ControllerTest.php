@@ -173,6 +173,37 @@ class ControllerTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("/test", $response->getRedirectUrl());
     }
 
+    public function testRedirectWithValidPathName() {
+        // bah, we can't mock static methods, so this gets a bit long winded
+        PathManager::reset();
+        PathManager::loadPath("/test", "test", "Test", "test", null, null, "my_name");
+        list($path) = PathManager::getPaths();
+        $this->stub->setPath($path);
+
+        $response = $this->stub->redirect(array(
+            "name" => "my_name",
+        ));
+
+        $this->assertTrue($response instanceof JaossResponse);
+
+        $this->assertEquals(303,     $response->getResponseCode());
+        $this->assertEquals("/test", $response->getRedirectUrl());
+    }
+
+    public function testRedirectNameWithValidValue() {
+        PathManager::reset();
+        PathManager::loadPath("/test", "test", "Test", "test", null, null, "my_name");
+        list($path) = PathManager::getPaths();
+        $this->stub->setPath($path);
+
+        $response = $this->stub->redirectName("my_name");
+
+        $this->assertTrue($response instanceof JaossResponse);
+
+        $this->assertEquals(303,     $response->getResponseCode());
+        $this->assertEquals("/test", $response->getRedirectUrl());
+    }
+
     public function testRedirectWithFlashMessage() {
         FlashMessenger::reset();
         $response = $this->stub->redirect("/", "A Test Message");

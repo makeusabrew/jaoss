@@ -317,6 +317,38 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
         $this->fail("Expected exception not raised");
     }
 
+    public function testGetPathForNameWithNoMatch() {
+        try {
+            $path = PathManager::getPathForName("my_path");
+        } catch (CoreException $e) {
+            $this->assertEquals(CoreException::PATH_NAME_NOT_FOUND, $e->getCode());
+            return;
+        }
+        $this->fail("Expected Exception Not Raised");
+    }
+
+    public function testGetPathForNameWithInvalidName() {
+        try {
+            $path = PathManager::getPathForName("");
+        } catch (CoreException $e) {
+            $this->assertEquals(CoreException::PATH_NAME_NOT_VALID, $e->getCode());
+            return;
+        }
+        $this->fail("Expected Exception Not Raised");
+    }
+
+    public function testGetPathForNameWithMatch() {
+        PathManager::loadPath("/foo", "index", "Foo", "FooApp", null, null, "my_path");
+
+        $path = PathManager::getPathForName("my_path");
+
+        $this->assertEquals("/foo", $path->getPattern());
+        $this->assertEquals("index", $path->getAction());
+        $this->assertEquals("Foo", $path->getController());
+        $this->assertEquals("FooApp", $path->getApp());
+        $this->assertEquals("my_path", $path->getName());
+    }
+
     public function testMatchUrlIgnoresDiscardedPaths() {
         PathManager::loadPath("/foo", "index", "Foo", "FooApp");
         PathManager::loadPath("/bar", "bar", "Foo", "FooApp");

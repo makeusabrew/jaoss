@@ -16,6 +16,8 @@ class CoreException extends Exception {
     const COULD_NOT_ATTACH_COOKIE_JAR = 13;
     const SETTING_NOT_FOUND = 14;
     const EMPTY_CONTROLLER_FACTORY_STRING = 15;
+    const PATH_NAME_NOT_FOUND = 16;
+    const PATH_NAME_NOT_VALID = 17;
 
     protected $args = array();
 

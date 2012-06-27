@@ -112,11 +112,13 @@ abstract class Controller {
     }
 
     protected function resolveUrl($args, $full = false) {
-        if (!isset($args["controller"])) {
-            $args["controller"] = $this->path->getController();
-        }
-        if (!isset($args["app"])) {
-            $args["app"] = $this->path->getApp();
+        if (!isset($args["name"])) {
+            if (!isset($args["controller"])) {
+                $args["controller"] = $this->path->getController();
+            }
+            if (!isset($args["app"])) {
+                $args["app"] = $this->path->getApp();
+            }
         }
         $url = PathManager::getUrlForOptions($args);
         if ($full === true) {
@@ -158,6 +160,10 @@ abstract class Controller {
 
     public function redirectAction($action, $message = NULL) {
         return $this->redirect(array("action" => $action), $message);
+    }
+
+    public function redirectName($name, $message = NULL) {
+        return $this->redirect(array("name" => $name), $message);
     }
 
     public function redirectReferer($message = NULL) {
