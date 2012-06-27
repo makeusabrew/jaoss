@@ -16,32 +16,7 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
     throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
 });
 
-include("library/Smarty/libs/Smarty.class.php");
-include("library/exception/core.php");
-include("library/exception/init.php");
-include("library/email.php");
-include("library/file.php");
-include("library/validate.php");
-include("library/error_handler.php");
-include("library/flash_messenger.php");
-include("library/log.php");
-include("library/path.php");
-include("library/path_manager.php");
-include("library/request.php");
-include("library/response.php");
-include("library/controller.php");
-include("library/settings.php");
-include("library/database.php");
-include("library/table.php");
-include("library/object.php");
-include("library/app.php");
-include("library/app_manager.php");
-include("library/cookie_jar.php");
-include("library/session.php");
-include("library/utils.php");
-include("library/image.php");
-include("library/cache.php");
-include("library/statsd.php");
+include("library/init.php");
 
 // set some settings manually
 Settings::setFromArray(array(
