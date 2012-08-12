@@ -37,4 +37,19 @@ class SmartyFunctionUrlTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals("/foo/bar", smarty_function_url($params, null));
     }
+
+    public function testValidNameReturnsCorrectUrlInSubfolderMode() {
+        $this->request = JaossRequest::getInstance();
+        $this->request->setProperties(array(
+            "folder_base" => "/sub/folder/"
+        ));
+
+        PathManager::loadPath("/my/path", "index", "Foo", "FooApp", null, null, "new_path");
+
+        $params = array(
+            "path" => "new_path",
+        );
+
+        $this->assertEquals("/sub/folder/my/path", smarty_function_url($params, null));
+    }
 }

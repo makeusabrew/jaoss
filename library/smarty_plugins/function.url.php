@@ -4,7 +4,11 @@ function smarty_function_url($params, $template) {
         trigger_error("No path name specified");
     }
 
-    return PathManager::getUrlForOptions(array(
+    $url = PathManager::getUrlForOptions(array(
         "name" => $params["path"]
     ));
+
+    $base = JaossRequest::getInstance()->getFolderBase();
+
+    return substr($base, 0, -1).$url;
 }
