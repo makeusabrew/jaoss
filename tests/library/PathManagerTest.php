@@ -364,6 +364,30 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("my_path", $path->getName());
     }
 
+    public function testGetPathForNameWithMatchForDefault() {
+        PathManager::loadPath("/foo", "my_route", "Foo", "FooApp");
+
+        $path = PathManager::getPathForName("FooApp:Foo:my_route");
+
+        $this->assertEquals("/foo", $path->getPattern());
+        $this->assertEquals("my_route", $path->getAction());
+        $this->assertEquals("Foo", $path->getController());
+        $this->assertEquals("FooApp", $path->getApp());
+        $this->assertEquals("FooApp:Foo:my_route", $path->getName());
+    }
+
+    public function testGetPathForNameWithPartialMatchAddsTitleCasedControllerArgument() {
+        PathManager::loadPath("/bar", "action", "App", "app");
+
+        $path = PathManager::getPathForName("app:action");
+
+        $this->assertEquals("/bar", $path->getPattern());
+        $this->assertEquals("action", $path->getAction());
+        $this->assertEquals("App", $path->getController());
+        $this->assertEquals("app", $path->getApp());
+        $this->assertEquals("app:App:action", $path->getName());
+    }
+
     public function testMatchUrlIgnoresDiscardedPaths() {
         PathManager::loadPath("/foo", "index", "Foo", "FooApp");
         PathManager::loadPath("/bar", "bar", "Foo", "FooApp");

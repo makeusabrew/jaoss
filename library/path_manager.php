@@ -229,6 +229,16 @@ class PathManager {
             return self::$paths[$name];
         }
 
+        $parts = explode(":", $name);
+
+        if (count($parts) === 2) {
+            $controller = ucwords(strtolower($parts[0]));
+            $name = $parts[0].":".$controller.":".$parts[1];
+            if (isset(self::$paths[$name])) {
+                return self::$paths[$name];
+            }
+        }
+
         throw new CoreException(
             "No Path found for name",
             CoreException::PATH_NAME_NOT_FOUND,
