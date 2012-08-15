@@ -40,7 +40,6 @@ class JaossResponse {
     }
 
     public function sendHeaders() {
-        Log::debug("Response Code: ".$this->getResponseCode());
         if ($this->isRedirect()) {
             header("Location: ".$this->redirectUrl, true, $this->getResponseCode());
             return false;

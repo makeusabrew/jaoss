@@ -63,6 +63,13 @@ class ErrorHandler {
             $path = "unknown_exception.tpl";
             $this->response->setResponseCode(500);
         }
+
+        try {
+            Log::debug("Response Code: ".$this->response->getResponseCode());
+        } catch (CoreException $e) {
+            // ignore; we could be in here because of a logging error
+        }
+
         if ($displayErrors) {
             $this->smarty->assign("e", $e);
             $this->smarty->assign("request", $this->request);

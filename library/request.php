@@ -188,6 +188,8 @@ class JaossRequest {
                 Log::warn("Response for URL [".$cacheUrl."] could not be cached!");
             }
         }
+
+        Log::debug("Response Code: ".$this->response->getResponseCode());
         return $this->response;
     }
 
