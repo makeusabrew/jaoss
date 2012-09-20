@@ -30,6 +30,8 @@ class Cli_Dispatch extends Cli {
         $this->writeLine("Controller: ".$path->getController());
         $this->writeLine("Action    : ".$path->getAction());
         $this->writeLine("Cacheable : ".($path->isCacheable() ? "Yes" : "No"));
+        $this->writeLine("Name      : ".$path->getName());
+
         if ($path->isCacheable()) {
             $this->writeLine("Cache TTL : ".$path->getCacheTtl());
         }
