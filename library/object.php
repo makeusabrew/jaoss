@@ -385,6 +385,18 @@ abstract class Object {
                 unset($values[$key]);
             }
         }
-        return $values;
+
+        // allow multiple levels of propagation, e.g. namespace_namespace_foo
+        // should bubble up without the first namespace_ on it
+        $newVals = array();
+        foreach ($values as $key => $value) {
+            if (substr($key, 0, strlen($namespace)) === $namespace) {
+                // chop off the namespace of any remaining values
+                $key = substr($key, strlen($namespace));
+            }
+            $newVals[$key] = $value;
+        }
+
+        return $newVals;
     }
 }

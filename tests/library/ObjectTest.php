@@ -573,15 +573,21 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
             'other_bar'     => 5,
         );
 
-        $this->object->setNamespacedValues($values, "namespace_");
-
-        $this->assertEquals(2, $this->object->foo);
+        $filtered = $this->object->setNamespacedValues($values, "namespace_");
 
         // double check no other values were set somehow
         $this->assertEquals(array(
             "id" => null,
             "foo" => 2,
         ), $this->object->getValues());
+
+        // check the value which *was* set is no longer present in the result
+        $this->assertEquals(array(
+            "ignore_foo" => 1,
+            "foo" => 3,
+            "bar" => 4,
+            "other_bar" => 5,
+        ), $filtered);
     }
 
     public function testSetNamespaceCanSetId() {
@@ -599,5 +605,32 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
         $this->object->setNamespacedValues($values, "namespace_");
 
         $this->assertEquals(3, $this->object->getId());
+    }
+
+    public function testSetNamespaceUnnestsWhereAppropriate() {
+        $this->object = $this->getMockForAbstractClass('Object', array(), '', true, true, true, array('getColumnsArray'));
+        $this->object->expects($this->any())
+             ->method('getColumnsArray')
+             ->will($this->returnValue(array('id', 'foo', 'bar', 'baz')));
+
+        // starting array...
+        $values = array(
+            "namespace_id" => 1,
+            "namespace_othernamespace_id" => 2,
+        );
+
+        $values = $this->object->setNamespacedValues($values, "namespace_");
+
+        $this->assertEquals(1, $this->object->getId());
+
+        $this->assertEquals(array(
+            "othernamespace_id" => 2,
+        ), $values);
+
+        $values = $this->object->setNamespacedValues($values, "othernamespace_");
+
+        $this->assertEquals(2, $this->object->getId());
+
+        $this->assertEquals(array(), $values);
     }
 }
