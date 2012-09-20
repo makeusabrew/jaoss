@@ -558,4 +558,46 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
         );
     }
     */
+
+    public function testSetNamespacedValues() {
+        $this->object = $this->getMockForAbstractClass('Object', array(), '', true, true, true, array('getColumnsArray'));
+        $this->object->expects($this->any())
+             ->method('getColumnsArray')
+             ->will($this->returnValue(array('foo', 'bar', 'baz')));
+
+        $values = array(
+            'ignore_foo'    => 1,
+            'namespace_foo' => 2,
+            'foo'           => 3,
+            'bar'           => 4,
+            'other_bar'     => 5,
+        );
+
+        $this->object->setNamespacedValues($values, "namespace_");
+
+        $this->assertEquals(2, $this->object->foo);
+
+        // double check no other values were set somehow
+        $this->assertEquals(array(
+            "id" => null,
+            "foo" => 2,
+        ), $this->object->getValues());
+    }
+
+    public function testSetNamespaceCanSetId() {
+        $this->object = $this->getMockForAbstractClass('Object', array(), '', true, true, true, array('getColumnsArray'));
+        $this->object->expects($this->any())
+             ->method('getColumnsArray')
+             ->will($this->returnValue(array('id', 'foo', 'bar', 'baz')));
+
+        $values = array(
+            "id"           => 1,
+            "ignore_id"    => 2,
+            "namespace_id" => 3,
+        );
+
+        $this->object->setNamespacedValues($values, "namespace_");
+
+        $this->assertEquals(3, $this->object->getId());
+    }
 }

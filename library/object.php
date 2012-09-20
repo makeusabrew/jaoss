@@ -369,4 +369,22 @@ abstract class Object {
     public function getTitle() {
         return $this->title;
     }
+
+    // allow setting of object values (without validation) from
+    // a namespaced array. Useful for augmenting an object
+    // within another object's constructor from a joined DB query
+    public function setNamespacedValues($values, $namespace) {
+        foreach ($this->getColumnsArray() as $field) {
+            $key = $namespace.$field;
+            if (isset($values[$key])) {
+                if ($field === "id") {
+                    $this->setId($values[$key]);
+                } else {
+                    $this->$field = $values[$key];
+                }
+                unset($values[$key]);
+            }
+        }
+        return $values;
+    }
 }
