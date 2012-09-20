@@ -1,26 +1,29 @@
 #!/usr/bin/php
 <?php
+if (php_sapi_name() !== 'cli') {
+    echo "Please use the jaoss tool in CLI mode only\n";
+    exit(1);
+}
+
 define("JAOSS_CLI", true);
 
+// perhaps cheaply, we check if we're in an actual project by looking
+// for build.xml - something we know we can rely on
 if (file_exists("build.xml")) {
     define("PROJECT_ROOT", getcwd().'/');
 } else {
     define("PROJECT_ROOT", null);
 }
 
+// a full project will have already defined this, but let's check just
+// in case
 if (!defined("JAOSS_ROOT")) {
     define("JAOSS_ROOT", realpath(dirname( __FILE__).'/../').'/');
 }
 
 set_include_path(get_include_path() . PATH_SEPARATOR . JAOSS_ROOT);
-if (php_sapi_name() !== 'cli') {
-    echo "Please use the jaoss tool in CLI mode only\n";
-    exit(1);
-}
-
 error_reporting(-1);
 
-// convert errors into exceptions
 set_error_handler(function($errno, $errstr, $errfile, $errline) {
     if (error_reporting() == 0) {
         //Log::info("Surpressed error (".$errno.") caught in handler: [".$errstr."] in [".$errfile."] line [".$errline."]");
@@ -29,39 +32,13 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
     throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
 });
 
-include("library/cli/cli.php");
-include("library/cli/colours.php");
-include("library/cli/exception.php");
+include("library/init.php");
 
-include("library/Smarty/libs/Smarty.class.php");
-include("library/exception/core.php");
-include("library/exception/init.php");
-include("library/email.php");
-include("library/file.php");
-include("library/validate.php");
-include("library/error_handler.php");
-include("library/flash_messenger.php");
-include("library/log.php");
-include("library/path.php");
-include("library/path_manager.php");
-include("library/request.php");
-include("library/response.php");
-include("library/controller.php");
-include("library/settings.php");
-include("library/database.php");
-include("library/table.php");
-include("library/object.php");
-include("library/app.php");
-include("library/app_manager.php");
-include("library/cookie_jar.php");
-include("library/session.php");
-include("library/utils.php");
-include("library/image.php");
-include("library/cache.php");
-include("library/statsd.php");
-
+// additionally load in the test request object in case we want to
+// dispatch URLs
 require_once("library/test/test_request.php");
 
+// check for disable colour switch
 if (($key = array_search("--no-colour", $argv)) !== false) {
     unset($argv[$key]);
     $argv = array_values($argv);
@@ -74,13 +51,16 @@ echo "PROJECT_MODE set to ".Colours::cyan($mode)."\n\n";
 try {
     $init = microtime(true);
     Settings::setMode($mode);
+
     include("library/boot.php");
     include("library/load_apps.php");
+
     $class = Cli::factory($argc, $argv, $mode);
     $class->run();
     $class->clearOutputColour();
     $execTime = microtime(true) - $init;
     echo Colours::green("Done (".round($execTime, 3)." secs)")."\n";
+
 } catch (CliException $e) {
     echo $e->getMessage()."\n";
     exit($e->getCode());
