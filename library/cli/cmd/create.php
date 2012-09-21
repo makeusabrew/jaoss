@@ -69,20 +69,23 @@ class Cli_Create extends Cli {
             throw new CliException("Apps directory is not writable", 1);
         }
 
-        $this->writeLine("Creating apps/".$appName." directory");
-        mkdir($appPath);
-        $this->writeLine("Creating apps/".$appName."/controllers directory");
-        mkdir($appPath."/controllers");
+        $this->mkdir($appPath);
+
+        $this->mkdir($appPath."/controllers");
 
         if (isset($model)) {
-            $this->writeLine("Creating apps/".$appName."/models directory");
-            mkdir($appPath."/models");
+            $this->mkdir($appPath."/models");
         }
 
-        $this->writeLine("Creating apps/".$appName."/views directory");
-        mkdir($appPath."/views");
+        $this->mkdir($appPath."/views");
 
         $this->write("\n");
+
+        $this->mkdir($appPath."/tests");
+        $this->mkdir($appPath."/tests/controllers");
+        if (isset($model)) {
+            $this->mkdir($appPath."/tests/models");
+        }
 
         $this->smarty->assign("pattern", "/".$appName);
         $this->smarty->assign("action", "index");
@@ -93,27 +96,28 @@ class Cli_Create extends Cli {
             $this->smarty->assign("model", $model);
         }
 
-        $this->writeLine("Creating apps/".$appName."/paths.php file");
-        $handle = fopen($appPath."/paths.php", "w");
-        fwrite($handle, $this->smarty->fetch("create/app/paths.php.tpl"));
-        fclose($handle);
-
-        $this->writeLine("Creating apps/".$appName."/controllers/".strtolower($appName).".php controller");
-        $handle = fopen($appPath."/controllers/".strtolower($appName).".php", "w");
-        fwrite($handle, $this->smarty->fetch("create/app/controller.php.tpl"));
-        fclose($handle);
+        $this->writeFile($appPath."/paths.php", "create/app/paths.php");
+        $this->writeFile($appPath."/controllers/".strtolower($appName).".php", "create/app/controller.php");
 
         if (isset($model)) {
-            $this->writeLine("Creating apps/".$appName."/models/".strtolower($model)."s.php model");
-            $handle = fopen($appPath."/models/".strtolower($model)."s.php", "w");
-            fwrite($handle, $this->smarty->fetch("create/app/model.php.tpl"));
-            fclose($handle);
+            $this->writeFile($appPath."/models/".strtolower($model).".php", "create/app/model.php");
         }
 
-        $this->writeLine("Creating apps/".$appName."/views/index.tpl view");
-        $handle = fopen($appPath."/views/index.tpl", "w");
-        fwrite($handle, $this->smarty->fetch("create/app/view.tpl.tpl"));
-        fclose($handle);
+        $this->writeFile($appPath."/views/index.tpl", "create/app/view.tpl");
     }
 
+    protected function mkdir($dir, $friendlyDir = null) {
+        if ($friendlyDir === null) {
+            $friendlyDir = $dir;
+        }
+        $this->writeLine("Creating ".$friendlyDir." directory");
+        mkdir($dir);
+    }
+
+    protected function writeFile($target, $source) {
+        $this->writeLine("Creating ".$target." file");
+        $handle = fopen($target, "w");
+        fwrite($handle, $this->smarty->fetch($source.".tpl"));
+        fclose($handle);
+    }
 }
