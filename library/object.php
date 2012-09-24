@@ -399,4 +399,22 @@ abstract class Object {
 
         return $newVals;
     }
+
+    public function hydrateProperty($property, $table = null, $namespace = null) {
+        if ($this->$property === null) {
+            if ($table === null) {
+                $table = ucfirst($property)."s";
+            }
+            $this->$property = Table::factory($table)->newObject();
+        }
+
+        if ($namespace === null) {
+            $namespace = $property."_";
+        }
+
+        $this->values = $this->$property->setNamespacedValues(
+            $this->values,
+            $namespace
+        );
+    }
 }

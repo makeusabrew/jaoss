@@ -633,4 +633,39 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals(array(), $values);
     }
+
+    /*
+    public function testHydratePropertyWithAutomaticNamespace() {
+        $this->object = $this->getMockForAbstractClass('Object', array(), '', true, true, true, array('getColumnsArray'));
+        $this->object->expects($this->any())
+             ->method('getColumnsArray')
+             ->will($this->returnValue(array('foo', 'bar', 'baz')));
+
+        $nested = $this->getMockForAbstractClass('Object', array(), '', true, true, true, array('getColumnsArray'));
+        $nested->expects($this->any())
+             ->method('getColumnsArray')
+             ->will($this->returnValue(array('foo', 'bar', 'baz')));
+
+        $this->object->nested = $nested;
+
+        $values = array(
+            'foo'        => 1,
+            'bar'        => 2,
+            'nested_foo' => 3,
+            'nested_bar' => 4,
+        );
+
+        $this->object->hydrateProperty("nested");
+
+        $this->assertEquals(array(
+            "foo" => 1,
+            "bar" => 2,
+        ), $this->object->getValues());
+
+        $this->assertEquals(array(
+            "foo" => 3,
+            "bar" => 4,
+        ), $this->object->nested->getValues());
+    }
+    */
 }
