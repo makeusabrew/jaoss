@@ -26,9 +26,19 @@ class PHPUnitTestController extends PHPUnit_Framework_TestCase {
     }
 
     public function setUp() {
+        $baseHref = Settings::getValue("site.base_href");
+        $hostname = null;
+
+        if (Settings::getValue("site.hostname", false)) {
+            $hostname = Settings::getValue("site.hostname");
+        } else if (preg_match("@^https?://(.+?)/?$@", $baseHref, $matches)) {
+            $hostname = $matches[1];
+        }
+
         $this->request = JaossRequest::getInstance(); 
         $this->request->setProperties(array(
-            "base_href" => Settings::getValue("site.base_href")
+            "base_href" => $baseHref,
+            "hostname"  => $hostname,
         ));
 
         $session = Session::getInstance();
