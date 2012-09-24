@@ -14,14 +14,14 @@ tail.stdout.on "data", (chunk) ->
     lines = data.split "\n"
 
     for line in lines
-        matches = line.match(/^(\d{2}\/\d{2}\/\d{4}) (\d{2}:\d{2}:\d{2}) \((\w+)\)(\s+)- (.+)$/)
+        matches = line.match(/^(\d{2}\/\d{2}\/\d{4}) (\d{2}:\d{2}:\d{2}) \((\w+)\)(\s+)- ([\s\S]+)$/)
         if matches
             str = "#{matches[1].cyan} #{matches[2].magenta}"
 
             switch matches[3].toLowerCase()
-                when "verbose", "debug" then color = "green"
-                when "info"             then color = "yellow"
-                when "warn"             then color = "red"
+                when "verbose", "debug", "db" then color = "green"
+                when "info"                   then color = "yellow"
+                when "warn"                   then color = "red"
 
             str += " (#{matches[3][color]})#{matches[4]}- "
 
