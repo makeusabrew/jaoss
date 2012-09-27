@@ -31,6 +31,7 @@ class ErrorHandler {
 
         try {
             Log::warn("Handling error of type [".get_class($e)."] with message [".$e->getMessage()."] and code [".$e->getCode()."]");
+            Log::warn("Error in file [".$e->getFile()."] at line [".$e->getLine()."]");
         } catch (CoreException $ex) {
             // if something goes wrong logging the error then we're probably in all sorts of trouble, so
             // just swallow the exception so the original error can be shown.

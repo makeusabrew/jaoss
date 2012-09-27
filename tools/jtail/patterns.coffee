@@ -28,6 +28,11 @@ module.exports = [
             "1": "red"
         }
     }, {
+        regex: /^(Error in file.+)$/,
+        colors: {
+            "1": "red"
+        }
+    }, {
         regex: /^(Validate.+\[)(OK)(\])$/,
         colors: {
             "2": "green"
