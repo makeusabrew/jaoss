@@ -237,6 +237,9 @@ class Cli_Table extends Cli {
             case "datetime":
                 $sql = "DATETIME NOT NULL";
                 break;
+            case "time":
+                $sql = "TIME NOT NULL";
+                break;
             case "select":
                 $sql = "ENUM(";
                 if (!isset($column["options"])) {

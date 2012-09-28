@@ -66,6 +66,17 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse(Validate::dateTime("01/04/10 00"));
     }
 
+    public function testTime() {
+        $this->assertTrue(Validate::time("9:00"));
+        $this->assertTrue(Validate::time("09:00"));
+        $this->assertTrue(Validate::time("09:00:00"));
+
+        $this->assertFalse(Validate::time("9"));
+        $this->assertFalse(Validate::time("24:00"));
+        $this->assertFalse(Validate::time("10:60"));
+        $this->assertFalse(Validate::time("10:00:60"));
+    }
+
     public function testMinAge() {
         $this->assertTrue(Validate::minAge('02/06/1993', array(
             'age'       => '18',
@@ -225,6 +236,11 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(
             'foo must be a valid date in the format dd/mm/yyyy',
             Validate::getMessage('date', array('title' => 'foo'), null)
+        );
+
+        $this->assertEquals(
+            'foo must be a valid time in the format hh:mm:ss',
+            Validate::getMessage('time', array('title' => 'foo'), null)
         );
 
         $this->assertEquals(

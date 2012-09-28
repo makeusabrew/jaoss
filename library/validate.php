@@ -1,6 +1,14 @@
 <?php
 
 class Validate {
+    protected static $regex = array(
+        'time' => "#^([0-1][0-9]|2[0-3]|[0-9])(:[0-5][0-9])(:[0-5][0-9])?$#",
+    );
+
+    public static function regex($key) {
+        return isset(self::$regex[$key]) ? self::$regex[$key] : null;
+    }
+
     public static function required($value, $settings = null) {
         $type = isset($settings["type"]) ? $settings["type"] : "text";
         switch ($type) {
@@ -90,6 +98,10 @@ class Validate {
         return false;
     }
 
+    public static function time($value, $settings = null) {
+        return preg_match(self::regex('time'), $value, $matches) > 0;
+    }
+
     public static function dateTime($value, $settings = null) {
         if (preg_match("#^(\d{2})/(\d{2})/(\d{2}|\d{4})\s\d{2}:\d{2}(:\d{2}|)$#", $value, $matches)) {
             return self::dateInternal($matches);
@@ -157,6 +169,8 @@ class Validate {
                 return "{$title} must contain only numbers";
             case "date":
                 return "{$title} must be a valid date in the format dd/mm/yyyy"; 
+            case "time":
+                return "{$title} must be a valid time in the format hh:mm:ss";
             case "dateTime":
                 return "{$title} must be a valid date in the format dd/mm/yyyy hh:mm:ss";
             case "minAge":

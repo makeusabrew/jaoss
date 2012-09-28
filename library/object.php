@@ -261,6 +261,10 @@ abstract class Object {
             $validation[] = "date";
         }
 
+        if ($settings["type"] == "time") {
+            $validation[] = "time";
+        }
+
         if ($settings["type"] == "datetime") {
             $validation[] = "dateTime";
         }
@@ -333,6 +337,21 @@ abstract class Object {
                         $matches[3] = "20".$matches[3];
                     }
                     return $matches[3]."-".$matches[2]."-".$matches[1];
+                } else {
+                    return $value;
+                }
+            case "time":
+                if (preg_match(Validate::regex('time'), $value, $matches)) {
+                    $final = null;
+                    // adjust a single leading hour
+                    if (strlen($matches[1]) < 2) {
+                        $matches[1] = "0".$matches[1];
+                    }
+                    // add on seconds if not present
+                    if (!isset($matches[3])) {
+                        $matches[3] = ":00";
+                    }
+                    return $matches[1].$matches[2].$matches[3];
                 } else {
                     return $value;
                 }

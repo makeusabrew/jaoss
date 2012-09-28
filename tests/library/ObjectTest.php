@@ -212,7 +212,7 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
 
         $this->object->setValues(array(
             'email' => 'invalid',
-            'date' => 'invalid',
+            'date'  => 'invalid',
         ));
 
         $this->assertEquals(array(
@@ -356,6 +356,54 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
         ));
 
         $this->assertEquals(array(), $this->object->getErrors());
+    }
+
+    public function testSetValuesValidatesTimeFieldType() {
+        $this->object = $this->getMockForAbstractClass('Object', array(), '', true, true, true, array('getColumns'));
+        $this->object->expects($this->any())
+             ->method('getColumns')
+             ->will($this->returnValue(array(
+                'time' => array(
+                    'type' => 'time',
+                ),
+            )));
+
+        $this->object->setValues(array(
+            'time' => 'invalid',
+        ));
+
+        $this->assertEquals(array(
+            'time' => 'time must be a valid time in the format hh:mm:ss',
+        ), $this->object->getErrors());
+
+        $this->object->setValues(array(
+            'time' => '09:00:00',
+        ));
+
+        $this->assertEquals(array(), $this->object->getErrors());
+    }
+
+    public function testSetValuesProcessesPartialTimeValue() {
+        $this->object = $this->getMockForAbstractClass('Object', array(), '', true, true, true, array('getColumns'));
+        $this->object->expects($this->any())
+             ->method('getColumns')
+             ->will($this->returnValue(array(
+                'time' => array(
+                    'type' => 'time',
+                ),
+            )));
+
+        $this->object->setValues(array(
+            'time' => '9:00',
+        ));
+
+        $this->assertEquals('09:00:00', $this->object->time);
+
+        $this->object->setValues(array(
+            'time' => '09:00',
+        ));
+
+        $this->assertEquals('09:00:00', $this->object->time);
     }
 
     public function testValidateArrayIsMergedCorrectlyWithOtherValidation() {
