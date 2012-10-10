@@ -2,8 +2,8 @@
 
 class Table {
     protected $primary_key = "id";
-    protected $parent_key = "parent_id";
-    protected $order_by = "`created` ASC";
+    protected $parent_key  = "parent_id";
+    protected $order_by    = "`id` ASC";
     
     protected $object_name = NULL;
     protected $table = NULL;
