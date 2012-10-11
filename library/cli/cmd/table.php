@@ -190,8 +190,10 @@ class Cli_Table extends Cli {
 
     public function createSql($class, $columns) {
         $sql = 
-        "CREATE TABLE `".$class->getTable()."` (\n".
-        "`id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,\n";
+        "CREATE TABLE `".$class->getTable()."` (\n";
+        if ($class->shouldAutoIncrement()) {
+            $sql .= "`id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,\n";
+        }
         if ($class->shouldStoreCreated()) {
             $sql .= "`created` DATETIME NOT NULL,\n";
         }

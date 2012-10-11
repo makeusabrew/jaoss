@@ -151,13 +151,17 @@ abstract class Object {
     public function shouldStoreUpdated() {
         return Table::factory($this->getTableName())->shouldStoreUpdated();
     }
+
+    public function shouldAutoIncrement() {
+        return $this->autoIncrement;
+    }
     
     public function save() {
         $sql = "";
         $values = array();
         if ($this->getId()) {
 
-            if ($this->autoIncrement) {
+            if ($this->shouldAutoIncrement()) {
                 // unset PK, just in case
                 unset($this->values[$this->pk]);
             }
@@ -212,7 +216,7 @@ abstract class Object {
         $sth->execute($values);
 
         if (!$this->getId()) {
-            $id = $this->autoIncrement ? $dbh->lastInsertId() : $this->values[$this->pk];
+            $id = $this->shouldAutoIncrement() ? $dbh->lastInsertId() : $this->values[$this->pk];
             $pk = $this->pk;
             $this->$pk = $id;
         }
