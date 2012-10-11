@@ -135,6 +135,12 @@ class Validate {
     }
     
     public static function getMessage($function, $settings, $value = null) {
+        // support rudimentary custom messages
+        // @todo consider adding sprintf style replacement here, if necessary
+        if (isset($settings['messages'][$function])) {
+            return $settings['messages'][$function];
+        }
+
         $title = $settings["title"];
         switch ($function) {
             case "email":

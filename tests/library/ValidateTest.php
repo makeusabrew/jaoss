@@ -328,4 +328,15 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse(Validate::slug("Foo/Bar"));
         $this->assertFalse(Validate::slug(""));
     }
+
+    public function testGetMessageWithCustomErrorMessage() {
+        $this->assertEquals(
+            "My custom error message",
+            Validate::getMessage("email", array(
+                "messages" => array(
+                    "email" => "My custom error message",
+                )
+            ))
+        );
+    }
 }
