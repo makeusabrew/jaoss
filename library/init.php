@@ -7,6 +7,7 @@
 include("library/Smarty/libs/Smarty.class.php");
 include("library/exception/core.php");
 include("library/exception/init.php");
+include("library/exception/rejected.php");
 include("library/email.php");
 include("library/file.php");
 include("library/validate.php");
