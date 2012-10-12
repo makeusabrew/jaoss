@@ -61,7 +61,13 @@ class ProfileStatement {
         }
 
         $qc = ProfileDb::getQueryCount() + 1;
-        Log::db($qc.") Execute [".$query."] => ".round($duration*1000, 3)."ms");
+
+        if ($qc < 10) {
+            $qc = " ".$qc;
+        }
+
+        $durString = round($duration*1000, 3);
+        Log::db($qc.") |".$durString."ms| [".$query."]");
 
         ProfileDb::addQuery($query, $duration);
         return $result;
