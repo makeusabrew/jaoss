@@ -47,6 +47,7 @@ class ProfileStatement {
 
         $query = $this->pdoStatement->queryString;
 
+        $keys = array();
         if (is_array($input_parameters)) {
             // substitute as best we can bound params for actual variables
             foreach ($input_parameters as $key => $param) {
