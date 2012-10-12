@@ -52,5 +52,26 @@ module.exports = [
             "8": "blue",
             "10": "blue"
         }
+    }, {
+        regex: /^(Init)(.+\[)([^\]]+)(\])$/,
+        colors: {
+            "1": "bold"
+        }
+    }, {
+        regex: /^(Start)(.+\[)([^\]]+)(\])$/,
+        colors: {
+            "1": "bold"
+        }
+    }, {
+        regex: /^(End)(.+\[)([^\]]+)(\])$/,
+        colors: {
+            "1": "bold"
+        }
+    }, {
+        regex: /^(Reject)(.+\[)([^\]]+)(\])(.+\[)([^\]]+)(\])$/,
+        colors: {
+            "1": "bold"
+            "6": "red"
+        }
     }
 ]

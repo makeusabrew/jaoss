@@ -167,6 +167,8 @@ class JaossRequest {
         } catch (CoreException $e) {
             if ($e->getCode() == CoreException::PATH_REJECTED) {
                 // right then, mark as discarded and try again...
+                Log::debug("Reject [".$path->getController()."Controller->".$path->getAction()."] - [".$e->getMessage()."]");
+
                 $path->setDiscarded(true);
                 if ($this->cacheKey !== null) {
                     Log::info("Path discarded - discarding cache key");

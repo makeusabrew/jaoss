@@ -19,14 +19,14 @@ class JaossPath {
                 $controller->setPath($this);
 
                 try {
-                    Log::debug("Init  [".$this->controller."Controller->".$this->action."]");
+                    Log::debug("Init   [".$this->controller."Controller->".$this->action."]");
                     $controller->init();
                 } catch (InitException $e) {
                     Log::debug($this->controller."Controller->init() failed with message [".$e->getMessage()."]");
                     return $e->getResponse();
                 }
 
-                Log::debug("Start [".$this->controller."Controller->".$this->action."]");
+                Log::debug("Start  [".$this->controller."Controller->".$this->action."]");
                 $response = call_user_func(array($controller, $this->action));
 
                 if ($response === null) {
@@ -37,7 +37,7 @@ class JaossPath {
                         $response = $controller->render($this->action);
                     }
                 }
-                Log::debug("End   [".$this->controller."Controller->".$this->action."] - status code [".$response->getResponseCode()."]");
+                Log::debug("End    [".$this->controller."Controller->".$this->action."] - status code [".$response->getResponseCode()."]");
                 return $response;
             } else {
                 throw new CoreException("Controller action is not callable");
