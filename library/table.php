@@ -212,6 +212,10 @@ class Table {
     public function shouldStoreUpdated() {
         return $this->storeUpdated;
     }
+
+    public function shouldAutoIncrement() {
+        return $this->newObject()->shouldAutoIncrement();
+    }
     
     public function getColumnString($prefix = NULL, $fieldPrefix = NULL) {
         $cols = $this->getColumnsArray();
