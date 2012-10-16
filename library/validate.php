@@ -2,7 +2,9 @@
 
 class Validate {
     protected static $regex = array(
-        'time' => "#^([0-1][0-9]|2[0-3]|[0-9])(:[0-5][0-9])(:[0-5][0-9])?$#",
+        'time'     => "#^([0-1][0-9]|2[0-3]|[0-9])(:[0-5][0-9])(:[0-5][0-9])?$#",
+        'date'     => "#^(\d{2})/(\d{2})/(\d{2}|\d{4})$#",
+        'datetime' => "#^(\d{2})/(\d{2})/(\d{2}|\d{4})\s\d{2}:\d{2}(:\d{2}|)$#",
     );
 
     public static function regex($key) {
@@ -94,7 +96,7 @@ class Validate {
     }
 
     public static function date($value, $settings = null) {
-        if (preg_match("#^(\d{2})/(\d{2})/(\d{2}|\d{4})$#", $value, $matches)) {
+        if (preg_match(self::regex('date'), $value, $matches)) {
             return self::dateInternal($matches);
         }
         return false;
@@ -105,7 +107,7 @@ class Validate {
     }
 
     public static function dateTime($value, $settings = null) {
-        if (preg_match("#^(\d{2})/(\d{2})/(\d{2}|\d{4})\s\d{2}:\d{2}(:\d{2}|)$#", $value, $matches)) {
+        if (preg_match(self::regex('datetime'), $value, $matches)) {
             return self::dateInternal($matches);
         }
         return false;
