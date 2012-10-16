@@ -9,6 +9,30 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse(Validate::required("   "));
     }
 
+    public function testRequiredWithValidCheckbox() {
+        $this->assertTrue(Validate::required(
+            array("foo" => "bar"),
+            array("type" => "checkbox")
+        ));
+    }
+
+    public function testRequiredWithInvalidCheckbox() {
+        $this->assertFalse(Validate::required(
+            array(),
+            array("type" => "checkbox")
+        ));
+
+        $this->assertFalse(Validate::required(
+            null,
+            array("type" => "checkbox")
+        ));
+
+        $this->assertFalse(Validate::required(
+            "foo",
+            array("type" => "checkbox")
+        ));
+    }
+
     public function testEmail() {
         $this->assertTrue(Validate::email("foo@bar.com"));
         $this->assertTrue(Validate::email("some.address@anotherdomain.com"));

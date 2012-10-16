@@ -12,6 +12,8 @@ class Validate {
     public static function required($value, $settings = null) {
         $type = isset($settings["type"]) ? $settings["type"] : "text";
         switch ($type) {
+            case "checkbox":
+                return is_array($value) && count($value);
             default:
                 return (trim($value) != "");
         }
