@@ -219,21 +219,24 @@ class Table {
     
     public function getColumnString($prefix = NULL, $fieldPrefix = NULL) {
         $cols = $this->getColumnsArray();
-        if ($prefix || $fieldPrefix) {
-            foreach ($cols as &$col) {
-                $str = "";
-                if ($prefix) {
-                    $str .= $prefix.".".$col;
-                } else {
-                    $str .= $col;
-                }
-                if ($fieldPrefix) {
-                    $str .= " AS ".$fieldPrefix.$col;
-                }
-                $col = $str;
+
+        $colStr = "";
+
+        foreach ($cols as $col) {
+            $str = "";
+            if ($prefix) {
+                $str .= "`".$prefix."`.`".$col."`";
+            } else {
+                $str .= "`".$col."`";
             }
+            if ($fieldPrefix) {
+                $str .= " AS `".$fieldPrefix.$col."`";
+            }
+
+            $colStr .= $str.",";
         }
-        return implode($cols, ",");
+
+        return substr($colStr, 0, -1);
     }
 
     public function queryAll($sql, $params = array(), $objectName = NULL) {

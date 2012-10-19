@@ -19,28 +19,28 @@ class TableTest extends PHPUnit_Framework_TestCase {
 
     public function testGetColumnStringNoPrefix() {
         $this->assertEquals(
-            "id,created,updated,myVariable,anotherVariable",
+            "`id`,`created`,`updated`,`myVariable`,`anotherVariable`",
             $this->table->getColumnString()
         );
     }
 
     public function testGetColumnStringWithPrefix() {
         $this->assertEquals(
-            "t.id,t.created,t.updated,t.myVariable,t.anotherVariable",
+            "`t`.`id`,`t`.`created`,`t`.`updated`,`t`.`myVariable`,`t`.`anotherVariable`",
             $this->table->getColumnString("t")
         );
     }
 
     public function testGetColumnStringWithFieldPrefix() {
         $this->assertEquals(
-            "id AS t_id,created AS t_created,updated AS t_updated,myVariable AS t_myVariable,anotherVariable AS t_anotherVariable",
+            "`id` AS `t_id`,`created` AS `t_created`,`updated` AS `t_updated`,`myVariable` AS `t_myVariable`,`anotherVariable` AS `t_anotherVariable`",
             $this->table->getColumnString(null, "t_")
         );
     }
 
     public function testGetColumnStringWithPrefixAndFieldPrefix() {
         $this->assertEquals(
-            "t.id AS t_id,t.created AS t_created,t.updated AS t_updated,t.myVariable AS t_myVariable,t.anotherVariable AS t_anotherVariable",
+            "`t`.`id` AS `t_id`,`t`.`created` AS `t_created`,`t`.`updated` AS `t_updated`,`t`.`myVariable` AS `t_myVariable`,`t`.`anotherVariable` AS `t_anotherVariable`",
             $this->table->getColumnString("t", "t_")
         );
     }
@@ -63,7 +63,7 @@ class TableTest extends PHPUnit_Framework_TestCase {
              ->will($this->returnValue('false'));
 
         $this->assertEquals(
-            "id,updated,myVariable,anotherVariable",
+            "`id`,`updated`,`myVariable`,`anotherVariable`",
             $this->table->getColumnString()
         );
     }
@@ -86,7 +86,7 @@ class TableTest extends PHPUnit_Framework_TestCase {
              ->will($this->returnValue('false'));
 
         $this->assertEquals(
-            "id,created,myVariable,anotherVariable",
+            "`id`,`created`,`myVariable`,`anotherVariable`",
             $this->table->getColumnString()
         );
     }
@@ -114,7 +114,7 @@ class TableTest extends PHPUnit_Framework_TestCase {
              ->will($this->returnValue('false'));
 
         $this->assertEquals(
-            "id,myVariable,anotherVariable",
+            "`id`,`myVariable`,`anotherVariable`",
             $this->table->getColumnString()
         );
     }
