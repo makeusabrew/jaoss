@@ -42,6 +42,7 @@ class CoreExceptionTest extends PHPUnit_Framework_TestCase {
             array(16, 404),
             array(17, 500),
             array(18, 500),
+            array(19, 500),
         );
     }
 }

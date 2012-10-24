@@ -19,11 +19,12 @@ class CoreException extends Exception {
     const PATH_NAME_NOT_FOUND = 16;
     const PATH_NAME_NOT_VALID = 17;
     const DUPLICATE_PATH_NAME = 18;
+    const COMPILED_TPL_NOT_WRITABLE = 19;
 
     protected $args = array();
 
-    public function __construct($msg = "", $code = 0, $args = array()) {
-        parent::__construct($msg, $code);
+    public function __construct($msg = "", $code = 0, $args = array(), Exception $previous = null) {
+        parent::__construct($msg, $code, $previous);
         $this->args = $args;
         if ($code !== CoreException::LOG_FILE_ERROR) {
             Log::verbose("CoreException thrown [".$this->getMessage()."]");
@@ -59,6 +60,7 @@ class CoreException extends Exception {
             self::PATH_NAME_NOT_FOUND => 404,
             self::PATH_NAME_NOT_VALID => 500,
             self::DUPLICATE_PATH_NAME => 500,
+            self::COMPILED_TPL_NOT_WRITABLE => 500,
         );
         return $responseCodes[$this->getCode()];
     }

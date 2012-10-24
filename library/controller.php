@@ -295,9 +295,20 @@ abstract class Controller {
                 ob_end_clean();
             }
 
-            throw $e;
+            switch ($e->getMessage()) {
+                case "touch(): Utime failed: Permission denied":
+                    throw new CoreException(
+                        "Could not update compiled template",
+                        CoreException::COMPILED_TPL_NOT_WRITABLE,
+                        array(
+                            "template" => $template,
+                        ),
+                        $e
+                    );
+                default:
+                    throw $e;
+            }
         }
-
     }
 	
     public function renderStatic($template) {
