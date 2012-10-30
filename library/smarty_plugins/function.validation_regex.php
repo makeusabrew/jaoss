@@ -4,5 +4,11 @@ function smarty_function_validation_regex($params, $template) {
         trigger_error("no type supplied");
     }
     $regex = Validate::regex($params["type"]);
-    return substr($regex, 2, -2);
+
+    $value = substr($regex, 2, -2);
+    if (!isset($params["assign"])) {
+        return $value;
+    } else {
+        $template->assign($params["assign"], $value);
+    }
 }
