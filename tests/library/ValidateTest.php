@@ -313,6 +313,11 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
             'foo is not a valid URL segment',
             Validate::getMessage('slug', array('title' => 'foo'), null)
         );
+
+        $this->assertEquals(
+            'foo is not a valid phone number',
+            Validate::getMessage('phone', array('title' => 'foo'), null)
+        );
     }
 
     public function testDateWithValidFormatButInvalidActualDate() {
@@ -351,6 +356,18 @@ class ValidateTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse(Validate::slug("Foo Bar"));
         $this->assertFalse(Validate::slug("Foo/Bar"));
         $this->assertFalse(Validate::slug(""));
+    }
+
+    public function testPhone() {
+        $this->assertTrue(Validate::phone("01131231234"));
+        $this->assertTrue(Validate::phone("0113 123 1234"));
+        $this->assertTrue(Validate::phone("0113 123 12 34"));
+        $this->assertTrue(Validate::phone("01131 231 234"));
+        $this->assertTrue(Validate::phone("07711 123 123"));
+        $this->assertTrue(Validate::phone("0771 12 31 23"));
+
+        $this->assertFalse(Validate::phone("string"));
+        $this->assertFalse(Validate::phone("0113 a23 1234"));
     }
 
     public function testGetMessageWithCustomErrorMessage() {

@@ -5,6 +5,7 @@ class Validate {
         'time'     => "#^([0-1][0-9]|2[0-3]|[0-9])(:[0-5][0-9])(:[0-5][0-9])?$#",
         'date'     => "#^(\d{2})/(\d{2})/(\d{2}|\d{4})$#",
         'datetime' => "#^(\d{2})/(\d{2})/(\d{2}|\d{4})\s\d{2}:\d{2}(:\d{2}|)$#",
+        'phone'    => "#^\(?0( *\d\)?){9,10}$#",
     );
 
     public static function regex($key) {
@@ -137,6 +138,11 @@ class Validate {
     public static function slug($value, $settings = null) {
         return preg_match("#^[\w-]+$#i", $value) > 0;
     }
+
+    public static function phone($value, $settings = null) {
+        // with thanks to http://stackoverflow.com/questions/32401/validate-a-uk-phone-number
+        return preg_match(self::regex('phone'), $value) > 0;
+    }
     
     public static function getMessage($function, $settings, $value = null) {
         // support rudimentary custom messages
@@ -195,6 +201,8 @@ class Validate {
                 return "{$title} must be zero or greater";
             case "slug":
                 return "{$title} is not a valid URL segment";
+            case "phone":
+                return "{$title} is not a valid phone number";
             default:
                 return "{$title} is not valid";
         }
