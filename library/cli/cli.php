@@ -142,7 +142,7 @@ abstract class Cli {
 
     protected function getArgValue($arg) {
         foreach ($this->args as $_arg) {
-            if (preg_match("#(--[a-z-]+)=([A-z-]+)#", $_arg, $matches)) {
+            if (preg_match("#(--[a-z-]+)=([^\s]+)#", $_arg, $matches)) {
                 return $matches[2];
             }
         }
