@@ -7,12 +7,14 @@ class Email {
     protected $body;
     protected $handler;
 
-    public static function factory() {
+    public static function factory($handler = null) {
         $email = new Email();
-        try {
-            $handler = Settings::getValue("email.handler");
-        } catch (CoreException $e) {
-            $handler = "default";
+        if ($handler === null) {
+            try {
+                $handler = Settings::getValue("email.handler");
+            } catch (CoreException $e) {
+                $handler = "default";
+            }
         }
         $email->handler = EmailHandler::factory($handler);
         return $email;
