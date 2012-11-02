@@ -111,8 +111,7 @@ abstract class Cli {
         return $this->prompt($out, $default, $shortcuts);
     }
 
-    protected function exec($cmd, $desc = null) {
-        $output = array();
+    protected function exec($cmd, $desc = null, &$output = array()) {
         $retVal = null;
         if ($desc !== null) {
             $this->writeLine($desc);
