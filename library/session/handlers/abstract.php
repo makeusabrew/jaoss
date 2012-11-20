@@ -18,4 +18,3 @@ abstract class JaossSessionHandler {
         return null;
     }
 }
-

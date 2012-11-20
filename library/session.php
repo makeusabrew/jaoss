@@ -19,18 +19,14 @@ class Session {
             $namespace = Settings::getValue("site.namespace");
         }
         $this->namespace = $namespace;
-        try {
-            $mode = Settings::getValue("session.handler");
-        } catch (CoreException $e) {
-            // no mode
-            $mode = "default";
-        }
 
-        if ($mode == "autodetect") {
-            if (php_sapi_name() == "cli") {
-                $mode = "test";
+        $mode = Settings::getValue("session", "handler", "default");
+
+        if ($mode === "autodetect") {
+            if (php_sapi_name() === "cli") {
+                $mode = Settings::getValue("session", "cli", "test");
             } else {
-                $mode = "default";
+                $mode = Settings::getValue("session", "web", "default");
             }
         }
 
