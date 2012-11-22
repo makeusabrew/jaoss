@@ -2,7 +2,10 @@
 require_once("library/session/storage/redis.php");
 class RedisSessionHandler extends JaossSessionHandler {
     public function init($namespace) {
-        $config = array();
+        $config = array(
+            "host" => Settings::getValue("redis", "host", "localhost"),
+            "port" => Settings::getValue("redis", "port", "6379"),
+        );
 
         RedisSessionStorage::start($config, $namespace);
     }
