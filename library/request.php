@@ -152,7 +152,6 @@ class JaossRequest {
 
             Log::info("Attempting to retrieve response contents for [".$cacheUrl."] from cache...");
             $this->cacheKey = Settings::getValue("site", "namespace").sha1($cacheUrl);
-            $success = false;
 
             $response = $cache->fetch($this->cacheKey);
             if ($cache->fetchHit()) {

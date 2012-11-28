@@ -30,15 +30,17 @@ if (Cache::isEnabled()) {
     Log::debug("Cache enabled - attempting to fetch paths from cache");
     $pathKey = Settings::getValue("site", "namespace").AppManager::getInstalledAppsHash();
 
-    $success = false;
     $paths = $cache->fetch($pathKey);
+
     if ($cache->fetchHit()) {
         Log::debug("Got [".count($paths)."] paths from cache");
-        PathManager::setPaths($paths);
+
+        PathManager::setPathsFromArray($paths);
     } else {
         Log::debug("Cache path miss - loading paths and storing in cache");
+
         AppManager::loadAppPaths();
-        $cache->store($pathKey, PathManager::getPaths(), 300);
+        $cache->store($pathKey, PathManager::getPathsToArray(), 300);
     }
 } else {
     AppManager::loadAppPaths();

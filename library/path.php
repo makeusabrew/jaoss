@@ -1,7 +1,6 @@
 <?php
 class JaossPath {
     protected $pattern;
-    protected $location;
     protected $app;
     protected $controller;
     protected $action;
@@ -49,7 +48,7 @@ class JaossPath {
                 array(
                     "controller" => get_class($controller),
                     "action" => $this->action,
-                    "path" => $this->location."/controllers",
+                    "path" => "apps/".$this->app."/controllers",
                 )
             );
         }
@@ -57,10 +56,6 @@ class JaossPath {
 
     public function setPattern($pattern) {
         $this->pattern = $pattern;
-    }
-
-    public function setLocation($location) { 
-        $this->location = $location;
     }
 
     public function setAction($action) {
@@ -81,10 +76,6 @@ class JaossPath {
 
     public function getPattern() {
         return $this->pattern;
-    }
-
-    public function getLocation() {
-        return $this->location;
     }
 
     public function getAction() {
@@ -167,5 +158,17 @@ class JaossPath {
 
         // otherwise, actually check the method against our array 
         return in_array($method, $this->getRequestMethods());
+    }
+
+    public function toArray() {
+        return array(
+            "pattern"        => $this->pattern,
+            "app"            => $this->app,
+            "controller"     => $this->controller,
+            "action"         => $this->action,
+            "name"           => $this->name,
+            "cacheTtl"       => $this->cacheTtl,
+            "requestMethods" => $this->requestMethods,
+        );
     }
 }

@@ -32,7 +32,6 @@ class PathManager {
 		
         $path = new JaossPath();
         $path->setPattern($pattern);
-        $path->setLocation("apps/".$location);
         $path->setApp($location);
         $path->setController($controller);
         $path->setAction($action);
@@ -63,7 +62,7 @@ class PathManager {
         }
 
         self::$paths[$name] = $path;
-        Log::verbose("Loading path: pattern [".$path->getPattern()."] location [".$path->getLocation()."] controller [".$path->getController()."] action [".$path->getAction()."] cacheTtl [".$cacheTtl."]");
+        Log::verbose("Loading path: pattern [".$path->getPattern()."] location [apps/".$path->getApp()."] controller [".$path->getController()."] action [".$path->getAction()."] cacheTtl [".$cacheTtl."]");
     }
 	
     public static function loadPaths() {
@@ -166,6 +165,28 @@ class PathManager {
 
     public static function setPaths($paths) {
         self::$paths = $paths;
+    }
+
+    public static function getPathsToArray() {
+        $final = array();
+        foreach (self::getPaths() as $name => $path) {
+            $final[$name] = $path->toArray();
+        }
+        return $final;
+    }
+
+    public static function setPathsFromArray($data) {
+        foreach ($data as $path) {
+            self::loadPath(
+                $path['pattern'],
+                $path['action'],
+                $path['controller'],
+                $path['app'],
+                $path['requestMethods'],
+                $path['cacheTtl'],
+                $path['name']
+            );
+        }
     }
 
     private static function getLocationFromTrace() {
