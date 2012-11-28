@@ -13,7 +13,7 @@ class RedisCacheHandler extends CacheHandler {
     }
 
     public function fetch($key) {
-        $data = $this->redis->get($key."_");
+        $data = $this->redis->get($key);
 
         $success = $data !== null;
 
