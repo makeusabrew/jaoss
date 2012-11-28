@@ -15,6 +15,10 @@ abstract class CacheHandler {
         return null;
     }
 
+    public function init() {
+        // no-op
+    }
+
     public function fetchHit() {
         return $this->fetchHit;
     }

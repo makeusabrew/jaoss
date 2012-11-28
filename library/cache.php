@@ -23,10 +23,12 @@ class Cache {
         if ($this->handler == null) {
             throw new CoreException("Could not attach cache handler");
         }
+
+        $this->handler->init();
     }
 
     public function store($key, $value, $ttl = 0) {
-        return $this->handler->store($key, $value, $ttl);
+        return !!$this->handler->store($key, $value, $ttl);
     }
 
     public function fetch($key) {
