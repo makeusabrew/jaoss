@@ -80,7 +80,7 @@ abstract class Cli {
         fwrite(STDOUT, $data);
     }
 
-    protected function writeLine($data, $colour = null) {
+    protected function writeLine($data = "", $colour = null) {
         $this->write($data."\n", $colour);
     }
 
