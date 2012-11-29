@@ -159,7 +159,7 @@ class JaossRequest {
             if ($cache->fetchHit()) {
                 Log::info("cache hit - found response");
                 $this->response->setFromArray($responseData);
-                return $this->response;
+                return $this->sendResponse();
             }
             Log::info("cache miss - no response found");
         } else {
@@ -197,7 +197,22 @@ class JaossRequest {
             }
         }
 
+        return $this->sendResponse();
+    }
+
+    protected function sendResponse() {
         Log::debug("Response Code: ".$this->response->getResponseCode());
+        if (Settings::getValue("newrelic", "enabled", false) &&
+            extension_loaded("newrelic")) {
+
+            $path = $response->getPath();
+            $transaction = $path->getApp()."/".$path->getController()."/".$path->getAction();
+
+            Log::info("Tracking newrelic web transaction [".$transaction."]");
+
+            newrelic_name_transaction($transaction);
+        }
+
         return $this->response;
     }
 
