@@ -171,4 +171,34 @@ class JaossPath {
             "requestMethods" => $this->requestMethods,
         );
     }
+
+    public function setFromArray(array $data = array()) {
+        if (isset($data['pattern'])) {
+            $this->pattern = $data['pattern'];
+        }
+
+        if (isset($data['app'])) {
+            $this->app = $data['app'];
+        }
+
+        if (isset($data['controller'])) {
+            $this->controller = $data['controller'];
+        }
+
+        if (isset($data['action'])) {
+            $this->action = $data['action'];
+        }
+
+        if (isset($data['name'])) {
+            $this->name = $data['name'];
+        }
+
+        if (isset($data['cacheTtl'])) {
+            $this->cacheTtl = $data['cacheTtl'];
+        }
+
+        if (isset($data['requestMethods'])) {
+            $this->requestMethods = $data['requestMethods'];
+        }
+    }
 }

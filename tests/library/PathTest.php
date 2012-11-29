@@ -116,4 +116,25 @@ class PathTest extends PHPUnit_Framework_TestCase {
         ), $this->path->toArray());
     }
 
+    public function testSetFromArray() {
+
+        $this->path->setFromArray(array(
+            "pattern" => "/foo",
+            "app" => "bar",
+            "controller" => "baz",
+            "action" => "action",
+            "name" => "my:name",
+            "cacheTtl" => 123,
+            "requestMethods" => array("GET"),
+        ));
+
+        $this->assertEquals("/foo", $this->path->getPattern());
+        $this->assertEquals("bar", $this->path->getApp());
+        $this->assertEquals("baz", $this->path->getController());
+        $this->assertEquals("action", $this->path->getAction());
+        $this->assertEquals("my:name", $this->path->getName());
+        $this->assertEquals(123, $this->path->getCacheTtl());
+        $this->assertEquals(array("GET"), $this->path->getRequestMethods());
+    }
+
 }

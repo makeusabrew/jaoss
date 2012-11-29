@@ -165,4 +165,43 @@ class ResponseTest extends PHPUnit_Framework_TestCase {
             "ifNoneMatch"  => null,
         ), $this->response->toArray());
     }
+
+    public function testSetFromArrayWithNoPath() {
+        $this->response->setFromArray(array(
+            "body" => "test",
+            "isRedirect" => false,
+            "responseCode" => 404,
+            "path" => null,
+            "headers" => array(),
+        ));
+
+        $this->assertEquals("test", $this->response->getBody());
+        $this->assertFalse($this->response->isRedirect());
+        $this->assertEquals(404, $this->response->getResponseCode());
+        $this->assertEquals(null, $this->response->getPath());
+    }
+
+    public function testSetFromArrayWithPathData() {
+        $this->response->setFromArray(array(
+            "body" => "test",
+            "isRedirect" => false,
+            "responseCode" => 404,
+            "path" => array(
+                "app" => "foo",
+                "controller" => "bar",
+                "action" => "baz",
+            ),
+            "headers" => array(),
+        ));
+
+        $path = $this->response->getPath();
+
+        $this->assertEquals("test", $this->response->getBody());
+        $this->assertFalse($this->response->isRedirect());
+        $this->assertEquals(404, $this->response->getResponseCode());
+
+        $this->assertEquals("foo", $path->getApp());
+        $this->assertEquals("bar", $path->getController());
+        $this->assertEquals("baz", $path->getAction());
+    }
 }

@@ -129,4 +129,31 @@ class JaossResponse {
             "ifNoneMatch"  => $this->ifNoneMatch,
         );
     }
+
+    public function setFromArray(array $data = array()) {
+        if (isset($data['body'])) {
+            $this->body = $data['body'];
+        }
+        if (isset($data['isRedirect'])) {
+            $this->isRedirect = $data['isRedirect'];
+        }
+        if (isset($data['redirectUrl'])) {
+            $this->redirectUrl = $data['redirectUrl'];
+        }
+        if (isset($data['responseCode'])) {
+            $this->responseCode = $data['responseCode'];
+        }
+        if (isset($data['path']) ) {
+            if (is_array($data['path'])) {
+                $this->path = new JaossPath();
+                $this->path->setFromArray($data['path']);
+            }
+        }
+        if (isset($data['headers'])) {
+            $this->headers = $data['headers'];
+        }
+        if (isset($data['ifNoneMatch'])) {
+            $this->ifNoneMatch = $data['ifNoneMatch'];
+        }
+    }
 }
