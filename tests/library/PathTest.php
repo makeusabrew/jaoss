@@ -19,11 +19,6 @@ class PathTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("anothercontroller", $this->path->getController());
     }
 
-    public function testSetAndGetLocation() {
-        $this->path->setLocation("mylocation");
-        $this->assertEquals("mylocation", $this->path->getLocation());
-    }
-
     public function testSetAndGetApp() {
         $this->path->setApp("app");
         $this->assertEquals("app", $this->path->getApp());
@@ -86,6 +81,60 @@ class PathTest extends PHPUnit_Framework_TestCase {
         }
 
         $this->fail("Expected exception not thrown");
+    }
+
+    public function testToArrayForEmptyPath() {
+        $this->assertEquals(array(
+            "pattern" => null,
+            "app" => null,
+            "controller" => null,
+            "action" => null,
+            "name" => null,
+            "cacheTtl" => null,
+            "requestMethods" => array(),
+        ), $this->path->toArray());
+    }
+
+    public function testToArrayForPopulatedPath() {
+
+        $this->path->setPattern("/foo");
+        $this->path->setApp("bar");
+        $this->path->setController("baz");
+        $this->path->setAction("action");
+        $this->path->setName("my:name");
+        $this->path->setCacheTtl(123);
+        $this->path->setRequestMethods(array("get"));
+
+        $this->assertEquals(array(
+            "pattern" => "/foo",
+            "app" => "bar",
+            "controller" => "baz",
+            "action" => "action",
+            "name" => "my:name",
+            "cacheTtl" => 123,
+            "requestMethods" => array("GET"),
+        ), $this->path->toArray());
+    }
+
+    public function testSetFromArray() {
+
+        $this->path->setFromArray(array(
+            "pattern" => "/foo",
+            "app" => "bar",
+            "controller" => "baz",
+            "action" => "action",
+            "name" => "my:name",
+            "cacheTtl" => 123,
+            "requestMethods" => array("GET"),
+        ));
+
+        $this->assertEquals("/foo", $this->path->getPattern());
+        $this->assertEquals("bar", $this->path->getApp());
+        $this->assertEquals("baz", $this->path->getController());
+        $this->assertEquals("action", $this->path->getAction());
+        $this->assertEquals("my:name", $this->path->getName());
+        $this->assertEquals(123, $this->path->getCacheTtl());
+        $this->assertEquals(array("GET"), $this->path->getRequestMethods());
     }
 
 }

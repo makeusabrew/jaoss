@@ -123,7 +123,6 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("^/foo$", $path->getPattern());
         $this->assertEquals("bar", $path->getAction());
         $this->assertEquals("baz", $path->getController());
-        $this->assertEquals("apps/test", $path->getLocation());
         $this->assertEquals("test:baz:bar", $path->getName());
         $this->assertFalse($path->isCacheable());
     }
@@ -134,7 +133,6 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("^/foo$", $path->getPattern());
         $this->assertEquals("bar", $path->getAction());
         $this->assertEquals("baz", $path->getController());
-        $this->assertEquals("apps/test", $path->getLocation());
         $this->assertEquals("test:baz:bar", $path->getName());
         $this->assertFalse($path->isCacheable());
     }
@@ -150,7 +148,6 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("^/foo$", $path->getPattern());
         $this->assertEquals("bar", $path->getAction());
         $this->assertEquals("baz", $path->getController());
-        $this->assertEquals("apps/test", $path->getLocation());
         $this->assertEquals("test:baz:bar", $path->getName());
         $this->assertFalse($path->isCacheable());
     }
@@ -426,5 +423,51 @@ class PathManagerTest extends PHPUnit_Framework_TestCase {
             $path = PathManager::matchUrl("/foo");
             $this->assertFalse($path->isDiscarded());
         }
+    }
+
+    public function testGetPathsToArray() {
+        PathManager::loadPaths(array("foo", "bar", "baz", "test"));
+
+        $paths = PathManager::getPathsToArray();
+
+        $this->assertEquals(array(
+            "test:baz:bar" => array(
+                "pattern" => "foo",
+                "action" => "bar",
+                "controller" => "baz",
+                "app" => "test",
+                "name" => "test:baz:bar",
+                "cacheTtl" => null,
+                "requestMethods" => array(),
+            ),
+        ), $paths);
+    }
+
+    public function testSetPathsFromArray() {
+        PathManager::setPathsFromArray(array(
+            "test:baz:bar" => array(
+                "pattern" => "foo",
+                "action" => "bar",
+                "controller" => "baz",
+                "app" => "test",
+                "name" => "test:baz:bar",
+                "cacheTtl" => null,
+                "requestMethods" => array(),
+            ),
+        ));
+
+        $paths = PathManager::getPaths();
+
+        $this->assertEquals(1, count($paths));
+
+        $path = $paths["test:baz:bar"];
+
+        $this->assertEquals("foo", $path->getPattern());
+        $this->assertEquals("bar", $path->getAction());
+        $this->assertEquals("baz", $path->getController());
+        $this->assertEquals("test", $path->getApp());
+        $this->assertEquals("test:baz:bar", $path->getName());
+        $this->assertEquals(null, $path->getCacheTtl());
+        $this->assertEquals(array(), $path->getRequestMethods());
     }
 }

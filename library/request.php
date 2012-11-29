@@ -139,9 +139,13 @@ class JaossRequest {
 
         $path = PathManager::matchUrl($this->url);
 
+        $this->response = new JaossResponse();
+
         if ($path->isCacheable() &&
             $this->isCacheable() &&
             Cache::isEnabled()) {
+
+            $cache = Cache::getInstance();
 
             $cacheUrl = $this->url;
             if ($this->query_string != '') {
@@ -150,11 +154,11 @@ class JaossRequest {
 
             Log::info("Attempting to retrieve response contents for [".$cacheUrl."] from cache...");
             $this->cacheKey = Settings::getValue("site", "namespace").sha1($cacheUrl);
-            $success = false;
-            $response = Cache::fetch($this->cacheKey, $success);
-            if ($success === true) {
+
+            $responseData = $cache->fetch($this->cacheKey);
+            if ($cache->fetchHit()) {
                 Log::info("cache hit - found response");
-                $this->response = $response;
+                $this->response->setFromArray($responseData);
                 return $this->response;
             }
             Log::info("cache miss - no response found");
@@ -182,8 +186,10 @@ class JaossRequest {
         if ($this->cacheKey          !== null &&
             $this->isCacheDisabled() === false) { // make sure something hasn't explicitly disabled cache during the request
 
+            $cache = Cache::getInstance();
+
             Log::info("Caching response for URL [".$cacheUrl."] with ttl [".$path->getCacheTtl()."]");
-            $cached = Cache::store($this->cacheKey, $this->response, $path->getCacheTtl());
+            $cached = $cache->store($this->cacheKey, $this->response->toArray(), $path->getCacheTtl());
             if ($cached) {
                 Log::info("Response cached successfully");
             } else {
