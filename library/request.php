@@ -205,7 +205,7 @@ class JaossRequest {
         if (Settings::getValue("newrelic", "enabled", false) &&
             extension_loaded("newrelic")) {
 
-            $path = $response->getPath();
+            $path = $this->response->getPath();
             $transaction = $path->getApp()."/".$path->getController()."/".$path->getAction();
 
             Log::info("Tracking newrelic web transaction [".$transaction."]");
