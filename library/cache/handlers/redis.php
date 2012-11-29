@@ -35,6 +35,6 @@ class RedisCacheHandler extends CacheHandler {
     }
 
     public function store($key, $value, $ttl) {
-        $result = $this->redis->setex($key, $ttl, json_encode($value));
+        return $this->redis->setex($key, $ttl, json_encode($value));
     }
 }
