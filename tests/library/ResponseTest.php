@@ -98,4 +98,71 @@ class ResponseTest extends PHPUnit_Framework_TestCase {
 
         $this->assertTrue($this->response->isInitialised());
     }
+
+    public function testToArrayWithEmptyResponse() {
+        $this->assertEquals(array(
+            "body"         => null,
+            "isRedirect"   => false,
+            "redirectUrl"  => null,
+            "responseCode" => 200,
+            "path"         => null,
+            "headers"      => array(),
+            "ifNoneMatch"  => null,
+        ), $this->response->toArray());
+    }
+
+    public function testToArrayWithEmptyPath() {
+        $path = new JaossPath();
+        $this->response->setPath($path);
+
+        $this->assertEquals(array(
+            "body"         => null,
+            "isRedirect"   => false,
+            "redirectUrl"  => null,
+            "responseCode" => 200,
+            "path"         => array(
+                "pattern" => null,
+                "app" => null,
+                "controller" => null,
+                "action" => null,
+                "name" => null,
+                "cacheTtl" => null,
+                "requestMethods" => array(),
+            ),
+            "headers"      => array(),
+            "ifNoneMatch"  => null,
+        ), $this->response->toArray());
+    }
+
+    public function testToArrayWithPopulatedResponse() {
+        $path = new JaossPath();
+        $path->setApp("foo");
+        $path->setController("bar");
+        $path->setAction("baz");
+
+        $this->response->addHeader("Content-Type", "text/html");
+        $this->response->setPath($path);
+        $this->response->setBody("body");
+        $this->response->setRedirect("/foo/bar");
+
+        $this->assertEquals(array(
+            "body"         => "body",
+            "isRedirect"   => true,
+            "redirectUrl"  => "/foo/bar",
+            "responseCode" => 303,
+            "path"         => array(
+                "pattern" => null,
+                "app" => "foo",
+                "controller" => "bar",
+                "action" => "baz",
+                "name" => null,
+                "cacheTtl" => null,
+                "requestMethods" => array(),
+            ),
+            "headers"      => array(
+                "Content-Type" => "text/html",
+            ),
+            "ifNoneMatch"  => null,
+        ), $this->response->toArray());
+    }
 }

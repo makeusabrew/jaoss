@@ -2,14 +2,13 @@
 
 class JaossResponse {
     
-    protected $body = null;
-    protected $isRedirect = false;
-    protected $redirectUrl = null;
+    protected $body         = null;
+    protected $isRedirect   = false;
+    protected $redirectUrl  = null;
     protected $responseCode = 200;
-    protected $path = NULL;
-    protected $headers = array();
-    protected $etag = null;
-    protected $ifNoneMatch = null;
+    protected $path         = null;
+    protected $headers      = array();
+    protected $ifNoneMatch  = null;
 
     const HTTP_VERSION = "HTTP/1.1";
 
@@ -113,5 +112,21 @@ class JaossResponse {
 
     public function isInitialised() {
         return $this->body !== null || count($this->headers) || $this->redirectUrl !== null;
+    }
+
+    public function toArray() {
+        $pathData = null;
+        if ($this->path instanceof JaossPath) {
+            $pathData = $this->path->toArray();
+        }
+        return array(
+            "body"         => $this->body,
+            "isRedirect"   => $this->isRedirect,
+            "redirectUrl"  => $this->redirectUrl,
+            "responseCode" => $this->responseCode,
+            "path"         => $pathData,
+            "headers"      => $this->headers,
+            "ifNoneMatch"  => $this->ifNoneMatch,
+        );
     }
 }

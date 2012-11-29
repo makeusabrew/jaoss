@@ -1,4 +1,12 @@
 <?php
+/**
+ * be aware that the redis handler json_encodes data on storing it
+ * and json_decodes it as an array when fetching.
+ *
+ * This means you should only really be caching simple types - if you
+ * need to cache objects, toArray them first and then re-populate them
+ * with a fromArray method upon fetching data from the cache
+ */
 
 class RedisCacheHandler extends CacheHandler {
     protected $redis;
