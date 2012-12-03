@@ -7,11 +7,25 @@ class Cli_Database extends Cli {
             // ok, interactive
             $method = $this->promptOptions('Please choose an option', array(
                 1 => 'migrate',
+                2 => 'backup',
             ));
         } else {
             $method = $this->shiftArg();
         }
         $this->$method();
+    }
+
+    protected function backup() {
+        $user = Settings::getValue("db.user");
+        $host = Settings::getValue("db.host");
+        $pass = Settings::getValue("db.pass");
+        $db   = Settings::getValue("db.dbname");
+
+        $path = "db-".date("Y-m-d-h-i-s").".sql";
+
+        $cmd = "mysqldump -u ".($user)." -h ".($host)." -p".($pass)." ".($db)." > ".$path;
+
+        $this->exec($cmd, "Dumping database to ".$path);
     }
 
     protected function migrate() {
@@ -145,11 +159,12 @@ class Cli_Database extends Cli {
 
             $this->writeLine("Rollback");
             $sth = $dbh->prepare("ROLLBACK");
+            $sth->execute();
 
             throw new CliException("DB migration failed", 1);
         }
 
-        $this->writeLine("Comitting");
+        $this->writeLine("Committing");
         $sth = $dbh->prepare("COMMIT");
         $sth->execute();
     }
