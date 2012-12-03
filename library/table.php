@@ -174,7 +174,8 @@ class Table {
     }
     
     public function getColumnInfo($column) {
-        return isset($this->meta["columns"][$column]) ? $this->meta["columns"][$column] : NULL;
+        $columns = $this->getColumns();
+        return isset($columns[$column]) ? $columns[$column] : null;
     }
     
     public function getHasManyInfo($column) {
