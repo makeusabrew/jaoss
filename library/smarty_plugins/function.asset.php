@@ -1,14 +1,19 @@
 <?php
-function smarty_function_script($params, $template) {
-    static $files = array();
+function smarty_function_asset($params, $template) {
+    static $files = array(
+        "js"  => array(),
+        "css" => array(),
+    );
+
+    $type = $params["type"];
 
     if (isset($params["file"])) {
         $compress = (isset($params["min"]) && $params["min"]);
         
         if ($compress) {
-            $outputFile = $params["file"].".min.js";
+            $outputFile = $params["file"].".min.".$type;
         } else {
-            $outputFile = $params["file"].".js";
+            $outputFile = $params["file"].".".$type;
         }
 
         if (Settings::getValue("assets", "compile", false)) {
@@ -22,9 +27,9 @@ function smarty_function_script($params, $template) {
             $filePath = null;
 
             if (!$compress) {
-                $filePath = PROJECT_ROOT."public/assets/js/".$outputFile;
+                $filePath = PROJECT_ROOT."public/assets/".$type."/".$outputFile;
             } else {
-                $filePath = tempnam(sys_get_temp_dir(), "js");
+                $filePath = tempnam(sys_get_temp_dir(), $type);
             }
 
             // either way, write to the handle
@@ -33,26 +38,26 @@ function smarty_function_script($params, $template) {
             fclose($handle);
 
             if ($compress) {
-                $outputPath = PROJECT_ROOT."public/assets/js/".$outputFile;
+                $outputPath = PROJECT_ROOT."public/assets/".$type."/".$outputFile;
                 // now, if we've got compression, run it through a minifier
                 // @todo yes, of course this is awful and WILL definitely change ASAP
-                $cmd = "java -jar ".PROJECT_ROOT."yuicompressor-2.4.7.jar --type js -o ".escapeshellarg($outputPath)." ".escapeshellarg($filePath);
-                Log::info("Compressing JS [".$cmd."]");
+                $cmd = "java -jar ".PROJECT_ROOT."yuicompressor-2.4.7.jar --type ".$type." -o ".escapeshellarg($outputPath)." ".escapeshellarg($filePath);
+                Log::info("Compressing ".$type." [".$cmd."]");
                 $output = null;
                 $retval = null;
                 exec($cmd, $output, $retVal);
                 if ($retVal !== 0) {
-                    Log::warn("JS compression failed, return code [".$retVal."]");
+                    Log::warn($type." compression failed, return code [".$retVal."]");
                     Log::warn("Compression output: ".implode(",", $output));
                 }
             }
         }
 
-        return "<script src=\"/assets/js/".$outputFile."\"></script>";
+        return "<script src=\"/assets/".$type."/".$outputFile."\"></script>";
 
     } else if (isset($params["add"])) {
 
-        $files[] = $params["add"];
+        $files[$type][] = $params["add"];
     }
 }
 
