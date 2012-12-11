@@ -52,9 +52,23 @@ function smarty_function_asset($params, $template) {
                 }
                 unlink($filePath);
             }
+
+            $files[$type] = array();
         }
 
-        return "<script src=\"/assets/".$type."/".$outputFile."\"></script>";
+        if ($type === 'js') {
+            return "<script src=\"/assets/js/".$outputFile."\"></script>";
+        } else if ($type === 'css') {
+            $str = "<link href=\"/assets/css/".$outputFile."\" rel=\"stylesheet\" type=\"text/css\"";
+            if (isset($params['title'])) {
+                $str .= " title=\"".$params["title"]."\"";
+            }
+            if (isset($params['media'])) {
+                $str .= " media=\"".$params["media"]."\"";
+            }
+            $str .= " />";
+            return $str;
+        }
 
     } else if (isset($params["add"])) {
 
