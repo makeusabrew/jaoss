@@ -3,8 +3,15 @@ function smarty_function_script($params, $template) {
     static $files = array();
 
     if (isset($params["file"])) {
+        $compress = (isset($params["min"]) && $params["min"]);
+        
+        if ($compress) {
+            $outputFile = $params["file"].".min.js";
+        } else {
+            $outputFile = $params["file"].".js";
+        }
+
         if (Settings::getValue("assets", "compile", false)) {
-            $compress = Settings::getValue("assets", "compress", false);
 
             $data = "";
             foreach ($files as $file) {
@@ -12,14 +19,11 @@ function smarty_function_script($params, $template) {
                 $data .= "\n/***/\n";
             }
 
-            $filePath   = null;
-            $outputFile = null;
+            $filePath = null;
 
             if (!$compress) {
-                $outputFile = $params["file"].".js";
                 $filePath = PROJECT_ROOT."public/assets/js/".$outputFile;
             } else {
-                $outputFile = $params["file"].".min.js";
                 $filePath = tempnam(sys_get_temp_dir(), "js");
             }
 
