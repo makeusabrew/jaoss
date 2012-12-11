@@ -19,7 +19,7 @@ function smarty_function_asset($params, $template) {
         if (Settings::getValue("assets", "compile", false)) {
 
             $data = "";
-            foreach ($files as $file) {
+            foreach ($files[$type] as $file) {
                 $data .= file_get_contents(PROJECT_ROOT.$file);
                 $data .= "\n/***/\n";
             }
@@ -50,6 +50,7 @@ function smarty_function_asset($params, $template) {
                     Log::warn($type." compression failed, return code [".$retVal."]");
                     Log::warn("Compression output: ".implode(",", $output));
                 }
+                unlink($filePath);
             }
         }
 
