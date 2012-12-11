@@ -33,7 +33,7 @@ function smarty_function_script($params, $template) {
                 // now, if we've got compression, run it through a minifier
                 // @todo yes, of course this is awful and WILL definitely change ASAP
                 $cmd = "java -jar ".PROJECT_ROOT."yuicompressor-2.4.7.jar --type js -o ".escapeshellarg($outputPath)." ".escapeshellarg($filePath);
-                Log::debug("Compressing JS [".$cmd."]");
+                Log::info("Compressing JS [".$cmd."]");
                 $output = null;
                 $retval = null;
                 exec($cmd, $output, $retVal);
