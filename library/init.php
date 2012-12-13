@@ -31,6 +31,7 @@ include("library/utils.php");
 include("library/image.php");
 include("library/cache.php");
 include("library/statsd.php");
+include("library/asset_pipeline.php");
 
 // if we're running the CLI tool, include some extra helpers
 if (defined('JAOSS_CLI')) {
