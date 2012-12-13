@@ -15,9 +15,17 @@ function smarty_function_script($params, $template) {
     // definitely in output mode, carry on
     $pipeline->setOptions($params);
 
-    if (Settings::getValue("assets", "compile", false)) {
-        
+    if (Settings::getValue("assets", "compile_script", false)) {
+        $filters = Settings::getValue("assets", "pipeline_script");
+
         // @todo actual pipelining
+
+        foreach ($filters as $filter) {
+            $pipeline->pipe($filter);
+        }
+
+        // write to a file or whatever
+        $pipeline->finalise();
 
     }
 

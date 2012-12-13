@@ -6,6 +6,8 @@ abstract class AssetPipeline {
     protected $files = array();
     protected $options = array();
     protected $folderBase = "assets";
+    protected $usedFilters = array();
+    protected $output = "";
 
     public static function getInstance() {
         if (static::$instance === null) {
@@ -26,10 +28,22 @@ abstract class AssetPipeline {
         return isset($this->options[$key]) ? $this->options[$key] : null;
     }
 
+    protected function useFilter($filter) {
+        $this->usedFilters[$filter] = true;
+    }
+
+    protected function clearFilter($filter) {
+        unset($this->usedFilters[$filter]);
+    }
+
+    protected function usedFilter($filter) {
+        return isset($this->usedFilters[$filter]);
+    }
+
     public function getOutputPath() {
         $outputFile = $this->getOption("output");
 
-        if ($this->getOption("compress")) {
+        if ($this->usedFilter("minify")) {
             $outputFile .= ".min";
         }
 
@@ -38,4 +52,6 @@ abstract class AssetPipeline {
 
     abstract protected function getType();
     abstract public function getHtmlTag();
+    abstract public function pipe($filter);
+    abstract public function finalise();
 }
