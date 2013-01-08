@@ -59,7 +59,7 @@ class CurlRequest {
                 break;
             case "GET":
                 if (count($this->params)) {
-                    $this->url = $url."?".http_build_query($this->params);
+                    $this->url .= "?".http_build_query($this->params);
                 }
                 break;
         }
