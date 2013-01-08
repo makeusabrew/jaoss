@@ -58,7 +58,9 @@ class CurlRequest {
                 $this->setOpt(CURLOPT_POSTFIELDS, http_build_query($this->params));
                 break;
             case "GET":
-                $this->url = $url."?".http_build_query($this->params);
+                if (count($this->params)) {
+                    $this->url = $url."?".http_build_query($this->params);
+                }
                 break;
         }
 
