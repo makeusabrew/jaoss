@@ -76,16 +76,6 @@ class CurlRequest {
         );
         $response->setBody($body);
 
-        if ($response->getStatusClass() !== "2xx") {
-            throw new CoreException(
-                "Bad response code",
-                0,
-                array(
-                    "response" => $response,
-                )
-            );
-        }
-
         return $response;
     }
 
