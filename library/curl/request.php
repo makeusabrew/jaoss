@@ -1,4 +1,5 @@
 <?php
+require_once("library/exception/curl.php");
 
 class CurlRequest {
     protected $ch;
@@ -70,6 +71,13 @@ class CurlRequest {
 
         $body = curl_exec($this->ch);
 
+        if ($this->getError() !== 0) {
+            throw new CurlException(
+                $this->getErrorMessage(),
+                $this->getError()
+            );
+        }
+
         $response = new CurlResponse();
         $response->setInfo(
             $this->getRequestInfo()
@@ -81,5 +89,13 @@ class CurlRequest {
 
     protected function getRequestInfo() {
         return curl_getinfo($this->ch);
+    }
+
+    protected function getErrorMessage() {
+        return curl_error($this->ch);
+    }
+
+    protected function getError() {
+        return curl_errno($this->ch);
     }
 }
