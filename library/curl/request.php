@@ -10,7 +10,7 @@ class CurlRequest {
     public function __construct() {
         $this->ch = curl_init();
         $this->setOpt(CURLOPT_RETURNTRANSFER, true);
-        //$this->setOpt(CURLOPT_HEADER, true);
+        $this->setOpt(CURLOPT_HEADER, true);
     }
 
     protected function setOpt($key, $value) {
@@ -69,7 +69,7 @@ class CurlRequest {
 
         Log::debug("About to ".$this->method." ".$this->url);
 
-        $body = curl_exec($this->ch);
+        $rawResponse = curl_exec($this->ch);
 
         if ($this->getError() !== 0) {
             throw new CurlException(
@@ -79,10 +79,16 @@ class CurlRequest {
         }
 
         $response = new CurlResponse();
+
         $response->setInfo(
             $this->getRequestInfo()
         );
-        $response->setBody($body);
+        $response->setHeaders(
+            $this->getRequestHeaders($rawResponse)
+        );
+        $response->setBody(
+            $this->getRequestBody($rawResponse)
+        );
 
         return $response;
     }
@@ -97,5 +103,15 @@ class CurlRequest {
 
     protected function getError() {
         return curl_errno($this->ch);
+    }
+
+    protected function getRequestHeaders($raw) {
+        $headerSize = curl_getinfo($this->ch, CURLINFO_HEADER_SIZE);
+        return substr($raw, 0, $headerSize);
+    }
+
+    protected function getRequestBody($raw) {
+        $headerSize = curl_getinfo($this->ch, CURLINFO_HEADER_SIZE);
+        return substr($raw, $headerSize);
     }
 }
