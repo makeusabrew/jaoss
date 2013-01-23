@@ -9,12 +9,13 @@ class CurlRequest {
 
     public function __construct() {
         $this->ch = curl_init();
-        $this->setOpt(CURLOPT_RETURNTRANSFER, true);
-        $this->setOpt(CURLOPT_HEADER, true);
+        $this->setOpt(CURLOPT_RETURNTRANSFER, true)
+             ->setOpt(CURLOPT_HEADER, true);
     }
 
-    protected function setOpt($key, $value) {
+    public function setOpt($key, $value) {
         curl_setopt($this->ch, $key, $value);
+        return $this;
     }
 
     public function setMethod($method) {
@@ -83,7 +84,7 @@ class CurlRequest {
         $response->setInfo(
             $this->getRequestInfo()
         );
-        $response->setHeaders(
+        $response->setHeadersFromString(
             $this->getRequestHeaders($rawResponse)
         );
         $response->setBody(

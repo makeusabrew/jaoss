@@ -9,8 +9,14 @@ class CurlResponse {
         $this->info = $info;
     }
 
-    public function setHeaders($headerString) {
-        $this->headers = $this->parseHeaderString($headerString);
+    public function setHeadersFromString($headerString) {
+        $this->setHeaders(
+            $this->parseHeaderString($headerString)
+        );
+    }
+
+    public function setHeaders($headers) {
+        $this->headers = $headers;
     }
 
     public function setBody($body) {
@@ -19,6 +25,10 @@ class CurlResponse {
 
     public function getHeaders() {
         return $this->headers;
+    }
+
+    public function getHeader($key) {
+        return isset($this->headers[$key]) ? $this->headers[$key] : null;
     }
 
     public function getBody() {
