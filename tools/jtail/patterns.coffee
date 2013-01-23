@@ -28,7 +28,7 @@ module.exports = [
             "1": "red"
         }
     }, {
-        regex: /^(Error in file.+)$/,
+        regex: /^(CoreException:.+)$/,
         colors: {
             "1": "red"
         }
