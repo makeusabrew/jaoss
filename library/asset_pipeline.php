@@ -40,14 +40,17 @@ abstract class AssetPipeline {
         return isset($this->usedFilters[$filter]);
     }
 
-    public function getOutputPath() {
+    public function getWebPath() {
+        return "/".$this->getOutputPath();
+    }
+
+    public function getFilePath() {
+        return PROJECT_ROOT."public/".$this->getOutputPath();
+    }
+
+    protected function getOutputPath() {
         $outputFile = $this->getOption("output");
-
-        if ($this->usedFilter("minify")) {
-            $outputFile .= ".min";
-        }
-
-        return "/".$this->folderBase."/".$this->getType()."/".$outputFile.".".$this->getType();
+        return $this->folderBase."/".$this->getType()."/".$outputFile.".".$this->getType();
     }
 
     abstract protected function getType();

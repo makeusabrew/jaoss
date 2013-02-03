@@ -5,7 +5,7 @@ class ScriptPipeline extends AssetPipeline {
     }
 
     public function getHtmlTag() {
-        return "<script src=\"".$this->getOutputPath()."\"></script>";
+        return "<script src=\"".$this->getWebPath()."\"></script>";
     }
 
     // @todo how do we ensure filters know about each other?
@@ -36,13 +36,14 @@ class ScriptPipeline extends AssetPipeline {
     }
 
     protected function minify() {
-        // @todo...
-        // take current output
-        // minify (how to specify options / args?)
-        // update output
+        $output = array();
+        // @todo
+        $this->output = implode(PHP_EOL, $output);
     }
 
     public function finalise() {
-        //
+        $fp = fopen($this->getFilePath(), "w");
+        fwrite($fp, $this->output);
+        fclose($fp);
     }
 }
