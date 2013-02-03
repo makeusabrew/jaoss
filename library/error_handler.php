@@ -30,8 +30,12 @@ class ErrorHandler {
         $action = Settings::getValue("errors.action", false);
 
         try {
-            Log::warn("Handling error of type [".get_class($e)."] with message [".$e->getMessage()."] and code [".$e->getCode()."]");
-            Log::warn("Error in file [".$e->getFile()."] at line [".$e->getLine()."]");
+            if ($e instanceof CoreException && $e->getCode() === CoreException::URL_NOT_FOUND) {
+                Log::info("CoreException: ".$e->getMessage());
+            } else {
+                $msg = "Handling error [".get_class($e)."] message [".$e->getMessage()."] code [".$e->getCode()."] file [".$e->getFile()."] line [".$e->getLine()."]";
+                Log::warn($msg);
+            }
         } catch (CoreException $ex) {
             // if something goes wrong logging the error then we're probably in all sorts of trouble, so
             // just swallow the exception so the original error can be shown.
