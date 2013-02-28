@@ -61,7 +61,7 @@ class EmailTest extends PHPUnit_Framework_TestCase {
         $email = Email::factory();
         $email->setHtmlHeaders();
 
-        $this->assertEquals("MIME-Version: 1.0\r\nContent-type: text/html; charset=UTF-8", $email->getHeadersAsString());
+        $this->assertEquals("MIME-Version: 1.0\r\nContent-type: multipart/alternative; boundary=test--boundary", $email->getHeadersAsString());
     }
 
     public function testSendReturnValue() {

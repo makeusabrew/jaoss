@@ -5,7 +5,11 @@ class Email {
     protected $subject;
     protected $from;
     protected $body;
+    protected $plainBody;
     protected $handler;
+
+    protected $isHtml = false;
+    protected $boundary;
 
     public static function factory($handler = null) {
         $email = new Email();
@@ -62,7 +66,7 @@ class Email {
             $this->setHeader("From", $this->from);
             $handler = get_class($this->handler);
             Log::debug("[".$handler."] sending mail to [".$this->getToAsString()."], from [".$this->getFrom()."], subject [".$this->getSubject()."], body length [".strlen($this->getBody())."]");
-            return $this->handler->send($this->getToAsString(), $this->getSubject(), $this->getBody(), $this->getHeadersAsString(), $this->getFrom());
+            return $this->handler->send($this->getToAsString(), $this->getSubject(), $this->getFullBody(), $this->getHeadersAsString(), $this->getFrom());
         }
         return false;
     }
@@ -103,13 +107,46 @@ class Email {
         return $this->body;
     }
 
+    public function getFullBody() {
+        if (!$this->isHtml) {
+            return $this->getBody();
+        }
+
+        $html = $this->getBody();
+        $plain = $this->getPlainBody();
+
+        $body  = "This is a MIME encoded message.\r\n\r\n";
+        $body .= "--".$this->boundary."\r\n";
+        $body .= "Content-Type: text/plain; charset=utf-8\r\n";
+        $body .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
+        $body .= $plain."\r\n\r\n";
+        $body .= "--".$this->boundary."\r\n";
+        $body .= "Content-Type: text/html; charset=utf-8\r\n";
+        $body .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
+        $body .= $html."\r\n\r\n";
+        $body .= "--".$this->boundary."--\r\n";
+
+        return $body;
+    }
+
+    public function getPlainBody() {
+        return $this->plainBody;
+    }
+
+    public function setPlainBody($body) {
+        $this->plainBody = $body;
+    }
+
     public function getSubject() {
         return $this->subject;
     }
 
     public function setHtmlHeaders() {
+        $this->isHtml = true;
+        $this->boundary = $this->handler->generateBoundary();
+
         $this->setHeader("MIME-Version", "1.0");
-        $this->setHeader("Content-type", "text/html; charset=UTF-8");
+        $this->setHeader("Content-type", "multipart/alternative; boundary=".$this->boundary);
     }
 
     public function getHandlerName() {
@@ -125,6 +162,7 @@ interface IEmailHandler {
     public function send($to, $subject, $body, $headers, $from);
     public function getName();
     public function getLastIdentifier();
+    public function generateBoundary();
 }
 
 abstract class EmailHandler {
@@ -160,6 +198,10 @@ class DefaultEmailHandler implements IEmailHandler {
     public function getLastIdentifier() {
         return null;
     }
+
+    public function generateBoundary() {
+        return sha1(uniqid("em", true));
+    }
 }
 
 class TestEmailHandler implements IEmailHandler {
@@ -192,6 +234,10 @@ class TestEmailHandler implements IEmailHandler {
 
     public function getLastIdentifier() {
         return count(self::$sentEmails);
+    }
+
+    public function generateBoundary() {
+        return "test--boundary";
     }
 }
 
@@ -246,5 +292,9 @@ class DbEmailHandler implements IEmailHandler {
 
     public function getLastIdentifier() {
         return self::$lastIdentifier;
+    }
+
+    public function generateBoundary() {
+        return "test--boundary";
     }
 }
