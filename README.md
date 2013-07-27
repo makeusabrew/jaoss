@@ -19,6 +19,9 @@ Documentation is slowly but surely coming together on the [jaoss.org website](ht
 Your best bet for now is to check out the [tutorial](http://jaoss.org/docs/tutorial) and the 
 various open source websites linked from there which use the jaoss framework.
 
+Additionally, a [web template](https://github.com/makeusabrew/jaoss-web-template/) exists
+which demonstrates use of the library in a very basic website.
+
 Requirements
 ------------
 
@@ -29,7 +32,7 @@ License
 
 (The MIT License)
 
-Copyright (C) 2010-2012 by Nick Payne <nick@kurai.co.uk> 
+Copyright (C) 2010-2013 by Nick Payne <nick@kurai.co.uk>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
