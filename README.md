@@ -25,7 +25,7 @@ which demonstrates use of the library in a very basic website.
 Requirements
 ------------
 
-PHP >= 5.2
+PHP >= 5.3 (tiny adjustments would have to be made for 5.2 compatibility)
 
 License
 -------
