@@ -3,7 +3,7 @@ require_once("library/exception/curl.php");
 
 class CurlRequest {
     protected $ch;
-    protected $method;
+    protected $method = "GET";
     protected $url;
     protected $params = array();
 
@@ -37,7 +37,7 @@ class CurlRequest {
     }
 
     public function setUrl($url) {
-        $this->url =  $url;
+        $this->url = $url;
 
         return $this;
     }
