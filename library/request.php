@@ -114,7 +114,7 @@ class JaossRequest {
         $this->timestamp = isset($reqData["REQUEST_TIME"]) ? $reqData["REQUEST_TIME"] : NULL;
 
         if ($this->sapi !== "cli") {
-            $this->headers = apache_request_headers();
+            $this->headers = $this->getRequestHeaders();
         } else if (isset($reqData["_headers"])) {
             $this->headers = $reqData["_headers"];
         }
@@ -214,6 +214,24 @@ class JaossRequest {
         }
 
         return $this->response;
+    }
+
+    protected function getRequestHeaders() {
+        $headers = array();
+        foreach ($_SERVER as $key => $value) {
+            if (substr($key, 0, 5) !== "HTTP_") {
+                continue;
+            }
+            // whip off the HTTP_ prefix
+            $key = substr($key, 5);
+            // convert HEADER_NAME to Header Name
+            $key = ucwords(strtolower(str_replace("_", " ", $key)));
+            // convert Header Name to Header-Name
+            $key = str_replace(" ", "-", $key);
+
+            $headers[$key] = $value;
+        }
+        return $headers;
     }
 
     public function getResponse() {
