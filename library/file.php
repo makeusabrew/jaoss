@@ -22,7 +22,7 @@ class File {
         $this->error = $data["error"];
         $this->size = $data["size"];
     }
-    
+
     public function getError() {
         return $this->error;
     }
@@ -34,6 +34,7 @@ class File {
             case UPLOAD_ERR_INI_SIZE:
                 return "The uploaded file is too large";
             case File::ERR_NO_FILE:
+            case UPLOAD_ERR_NO_FILE:
                 return "No file uploaded";
             default:
                 return "Unknown error";
@@ -41,6 +42,10 @@ class File {
     }
 
     public function commitFile($path, $name = null, $addExtension = true) {
+        if ($this->getError() !== 0) {
+            throw new CoreException($this->getMessage());
+        }
+
         if ($name === null) {
             $name = $this->getFilename();
         } else if ($addExtension === true) {
@@ -74,5 +79,9 @@ class File {
 
     public function getCommittedName() {
         return $this->committedName;
+    }
+
+    public function getTmpName() {
+        return $this->tmp_name;
     }
 }
