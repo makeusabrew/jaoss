@@ -1,4 +1,4 @@
-#!/usr/local/bin/coffee
+#!/usr/bin/env coffee
 
 spawn    = require("child_process").spawn
 patterns = require "./patterns"
