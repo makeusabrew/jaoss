@@ -3,4 +3,7 @@
   "version": "0.0.0",
   "author": "Nick Payne <nick@kurai.co.uk>",
   "license": "MIT",
+  "dependencies": {
+    "colors": "^0.6.2"
+  }
 }
